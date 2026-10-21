@@ -20,7 +20,7 @@ const PXCSS = `.pxw{width:min(94%,760px)}.pxw.sm{width:min(94%,560px)}
 .pxdial .c{position:absolute;left:0;right:0;top:58px;text-align:center;line-height:1}.pxdial .c b{font-size:46px;font-weight:600}.pxdial .c b small{font-size:20px;vertical-align:top}.pxdial .c div{font-size:14px;font-weight:600;color:var(--sub);margin-top:6px}.pxdial .c div.h{color:#e0592a}
 .pxdial .pm{position:absolute;bottom:4px;width:46px;height:46px;border-radius:50%;border:0;background:var(--card2);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer}.pxdial .pm ha-icon{--mdc-icon-size:24px}.pxdial .pm.m{left:6px}.pxdial .pm.p{right:6px}.pxdial.off .pm{opacity:.35;pointer-events:none}
 .pxw .vchips{margin-top:0}.pic.on{background:#f5a623;color:#fff}.pic.red{background:#e5484d;color:#fff}.pic.heat{background:#f06a3c;color:#fff}
-@media (max-width:640px){.pxcl{grid-template-columns:1fr;justify-items:center}}`;
+@media (max-width:640px){.pxcl{grid-template-columns:1fr;justify-items:center}.pxcl>div:last-child{justify-self:stretch}.pxg{grid-template-columns:1fr 1fr}}`;
 customElements.whenDefined('home-panel-card').then(() => {
   const Base = customElements.get('home-panel-card'), P = Base.prototype;
   if (P._pxOpen) return;
@@ -219,7 +219,7 @@ customElements.whenDefined('home-panel-card').then(() => {
     _build() {
       this._built = true;
       const s = this.attachShadow({ mode: 'open' }), ov = (id, pid, st) => `<div class="ov" id="${id}" data-act="closebg"><div class="pop" id="${pid}"${st ? ` style="${st}"` : ''}></div></div>`;
-      s.innerHTML = `<style>${window.__HPC_CSS || ''}</style><style>${window.__HPC_CSS2 || ''}</style><style>:host{position:absolute;inset:0;z-index:6;pointer-events:none;display:block}.hroot{position:absolute;inset:0}.ov.open{pointer-events:auto}</style><div class="hroot">
+      s.innerHTML = `<style>${window.__HPC_CSS || ''}</style><style>${window.__HPC_CSS2 || ''}</style><style>:host{position:absolute;inset:0;z-index:6;pointer-events:none;display:block}@media (max-width:600px){:host{position:fixed !important}}.hroot{position:absolute;inset:0}.ov.open{pointer-events:auto}</style><div class="hroot">
         ${['wxov', 'calov', 'clkov', 'tflov', 'alov', 'pplov', 'vacov'].map(id => `<div class="ov" id="${id}"></div>`).join('')}
         ${ov('carov', 'carpop')}${ov('enov', 'enpop')}<div class="ov camov" id="camov" data-act="closebg"><div class="pop" id="campop"></div></div>${ov('pinov', 'pinpop', 'width:min(92%,360px)')}</div>`;
       this._$ = id => s.getElementById(id);

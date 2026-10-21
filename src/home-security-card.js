@@ -13,7 +13,8 @@ const HSC_CSS = `.sr{position:relative;background:var(--bg);height:calc(100vh - 
 .sside .alarm .as{font-size:20px}.sside .alarm .ash{width:44px;height:44px}.sside .alarm .ash ha-icon{--mdc-icon-size:24px}
 .sbox{padding:12px 14px}.sbox .lbl{display:block;margin-bottom:8px}.sbox .agrid{grid-template-columns:1fr;margin-top:0;gap:8px}.sbox .asr{padding:8px 12px;cursor:pointer}
 .sbox .asr ha-icon{--mdc-icon-size:20px}.sbox .agrid.two{grid-template-columns:1fr 1fr}.sbox .asr>div{min-width:0}.sbox .asr .nm,.sbox .asr .ds{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.slast{font-size:12px;color:var(--sub);margin-top:2px}
-@media (max-width:1000px){.sside{grid-template-columns:1fr 1fr}.sgrid{--cols:3 !important}}`;
+@media (max-width:1000px){.sside{grid-template-columns:1fr 1fr}.sgrid{--cols:3 !important}}
+@media (max-width:600px){.sr{height:auto;min-height:0;padding:12px}.sh h1{font-size:24px}.sh{flex-wrap:wrap;gap:4px 10px}.sgrid{--cols:2 !important;grid-auto-rows:120px;flex:0 0 auto}.sgrid .cam.big{grid-row:span 2}.sside{grid-template-columns:1fr}.scams{flex:0 0 auto}}`;
 const hscEsc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const hscAgo = t => { const s = (Date.now() - new Date(t)) / 1000; if (!isFinite(s)) return ''; if (s < 60) return 'now'; if (s < 3600) return Math.floor(s / 60) + 'm ago'; if (s < 86400) return Math.floor(s / 3600) + 'h ago'; return Math.floor(s / 86400) + 'd ago'; };
 const hscHm = d => { d = new Date(d); if (isNaN(d)) return ''; const h = d.getHours(), m = d.getMinutes(); return (h % 12 || 12) + ':' + String(m).padStart(2, '0') + ' ' + (h < 12 ? 'am' : 'pm'); };

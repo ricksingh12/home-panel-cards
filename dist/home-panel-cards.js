@@ -403,7 +403,8 @@ window.__HPC_CSS2 = `.ppl{flex:0 0 auto;padding:12px 14px;display:grid;grid-temp
 .pop .phd+.tabs{margin-top:14px}.pop .tabs+*{margin-top:12px}.pop>.cacts,.pop .vacts:last-child{margin-top:16px}.ast-trig{color:#e5484d}.ast-away{color:#e5484d}.ast-home{color:#d97706}.ast-disarmed{color:#22a06b}
 .pop .phd+.carhero,.pop .phd+.pmap,.pop .phd+.aseg,.pop .phd+.verr,.pop .phd+.vsec,.pop .phd+.wcg,.pop .phd+.dets,.pop .phd+.tgrid{margin-top:16px}
 .verr{margin-top:12px;font-size:14px;font-weight:600;color:#e5484d;display:flex;gap:6px;align-items:center}
-:host(:not(.dark)) .ov.npov{background:#eef1f5}:host(:not(.dark)) .npov::after{background:rgba(255,255,255,.5)}:host(:not(.dark)) .npbg{opacity:.5}:host(:not(.dark)) .npw{color:#14181d}:host(:not(.dark)) .npw .art{box-shadow:0 18px 44px rgba(0,0,0,.18)}:host(:not(.dark)) .npw .art.idle{background:rgba(0,0,0,.06)}:host(:not(.dark)) .prog .b{background:rgba(0,0,0,.12)}:host(:not(.dark)) .prog .b i{background:#14181d}:host(:not(.dark)) .ctl button{color:#14181d}:host(:not(.dark)) .npvol button{background:rgba(0,0,0,.07);color:#14181d}:host(:not(.dark)) .npvol input{accent-color:#14181d}:host(:not(.dark)) .nppanel{background:rgba(255,255,255,.66);color:#14181d;box-shadow:0 10px 40px rgba(0,0,0,.08)}:host(:not(.dark)) .nptabs button{background:rgba(0,0,0,.05);color:rgba(20,24,29,.7)}:host(:not(.dark)) .nptabs button.sel{background:#14181d;color:#fff}:host(:not(.dark)) .nphead .bk{background:rgba(0,0,0,.07);color:#14181d}:host(:not(.dark)) .li:active{background:rgba(0,0,0,.05)}:host(:not(.dark)) .li img,:host(:not(.dark)) .li .ph{background:rgba(0,0,0,.06)}:host(:not(.dark)) .sp.on{background:rgba(0,0,0,.05)}:host(:not(.dark)) .sp .chk{color:#14181d}:host(:not(.dark)) .sp.on .chk{color:#1db954}:host(:not(.dark)) .sx .t small{background:rgba(0,0,0,.08)}:host(:not(.dark)) .vol input{accent-color:#14181d}:host(:not(.dark)) .npsrch{background:rgba(0,0,0,.06)}:host(:not(.dark)) .npsrch input{color:#14181d}:host(:not(.dark)) .npsrch input::placeholder{color:rgba(20,24,29,.45)}:host(:not(.dark)) .npsrch .clr{color:#14181d}:host(:not(.dark)) .sorts button{background:rgba(0,0,0,.06);color:rgba(20,24,29,.8)}:host(:not(.dark)) .sorts button.sel{background:#14181d;color:#fff}:host(:not(.dark)) .npov .x{background:rgba(0,0,0,.08);color:#14181d}`;
+:host(:not(.dark)) .ov.npov{background:#eef1f5}:host(:not(.dark)) .npov::after{background:rgba(255,255,255,.5)}:host(:not(.dark)) .npbg{opacity:.5}:host(:not(.dark)) .npw{color:#14181d}:host(:not(.dark)) .npw .art{box-shadow:0 18px 44px rgba(0,0,0,.18)}:host(:not(.dark)) .npw .art.idle{background:rgba(0,0,0,.06)}:host(:not(.dark)) .prog .b{background:rgba(0,0,0,.12)}:host(:not(.dark)) .prog .b i{background:#14181d}:host(:not(.dark)) .ctl button{color:#14181d}:host(:not(.dark)) .npvol button{background:rgba(0,0,0,.07);color:#14181d}:host(:not(.dark)) .npvol input{accent-color:#14181d}:host(:not(.dark)) .nppanel{background:rgba(255,255,255,.66);color:#14181d;box-shadow:0 10px 40px rgba(0,0,0,.08)}:host(:not(.dark)) .nptabs button{background:rgba(0,0,0,.05);color:rgba(20,24,29,.7)}:host(:not(.dark)) .nptabs button.sel{background:#14181d;color:#fff}:host(:not(.dark)) .nphead .bk{background:rgba(0,0,0,.07);color:#14181d}:host(:not(.dark)) .li:active{background:rgba(0,0,0,.05)}:host(:not(.dark)) .li img,:host(:not(.dark)) .li .ph{background:rgba(0,0,0,.06)}:host(:not(.dark)) .sp.on{background:rgba(0,0,0,.05)}:host(:not(.dark)) .sp .chk{color:#14181d}:host(:not(.dark)) .sp.on .chk{color:#1db954}:host(:not(.dark)) .sx .t small{background:rgba(0,0,0,.08)}:host(:not(.dark)) .vol input{accent-color:#14181d}:host(:not(.dark)) .npsrch{background:rgba(0,0,0,.06)}:host(:not(.dark)) .npsrch input{color:#14181d}:host(:not(.dark)) .npsrch input::placeholder{color:rgba(20,24,29,.45)}:host(:not(.dark)) .npsrch .clr{color:#14181d}:host(:not(.dark)) .sorts button{background:rgba(0,0,0,.06);color:rgba(20,24,29,.8)}:host(:not(.dark)) .sorts button.sel{background:#14181d;color:#fff}:host(:not(.dark)) .npov .x{background:rgba(0,0,0,.08);color:#14181d}
+@media (max-width:600px){.ov{position:fixed;align-items:flex-end;padding:0}.ov .pop{width:100% !important;max-width:100%;max-height:88vh;border-radius:26px 26px 0 0;padding:20px 16px calc(20px + env(safe-area-inset-bottom));box-sizing:border-box}.ov.npov,.ov.dbov{align-items:stretch}.pop .tabs{max-width:100%;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}.pop .tabs::-webkit-scrollbar{display:none}.pop .tabs button{flex:0 0 auto;padding:8px 13px}.pop .dets,.pop .dets.d5{grid-template-columns:1fr 1fr}.pop .wxp{grid-template-columns:1fr}.pop .wcg{grid-template-columns:1fr 1fr}.pop .agrid,.pop .tgrid{grid-template-columns:1fr}.pop .cgrid{grid-template-columns:1fr 1fr}.pop .carhero{grid-template-columns:1fr}.pop .etab{font-size:12px}.pop .pti{font-size:20px}}`;
 })();
 
 /* ===== home-panel-card ===== */
@@ -1752,7 +1753,7 @@ const PXCSS = `.pxw{width:min(94%,760px)}.pxw.sm{width:min(94%,560px)}
 .pxdial .c{position:absolute;left:0;right:0;top:58px;text-align:center;line-height:1}.pxdial .c b{font-size:46px;font-weight:600}.pxdial .c b small{font-size:20px;vertical-align:top}.pxdial .c div{font-size:14px;font-weight:600;color:var(--sub);margin-top:6px}.pxdial .c div.h{color:#e0592a}
 .pxdial .pm{position:absolute;bottom:4px;width:46px;height:46px;border-radius:50%;border:0;background:var(--card2);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer}.pxdial .pm ha-icon{--mdc-icon-size:24px}.pxdial .pm.m{left:6px}.pxdial .pm.p{right:6px}.pxdial.off .pm{opacity:.35;pointer-events:none}
 .pxw .vchips{margin-top:0}.pic.on{background:#f5a623;color:#fff}.pic.red{background:#e5484d;color:#fff}.pic.heat{background:#f06a3c;color:#fff}
-@media (max-width:640px){.pxcl{grid-template-columns:1fr;justify-items:center}}`;
+@media (max-width:640px){.pxcl{grid-template-columns:1fr;justify-items:center}.pxcl>div:last-child{justify-self:stretch}.pxg{grid-template-columns:1fr 1fr}}`;
 customElements.whenDefined('home-panel-card').then(() => {
   const Base = customElements.get('home-panel-card'), P = Base.prototype;
   if (P._pxOpen) return;
@@ -1951,7 +1952,7 @@ customElements.whenDefined('home-panel-card').then(() => {
     _build() {
       this._built = true;
       const s = this.attachShadow({ mode: 'open' }), ov = (id, pid, st) => `<div class="ov" id="${id}" data-act="closebg"><div class="pop" id="${pid}"${st ? ` style="${st}"` : ''}></div></div>`;
-      s.innerHTML = `<style>${window.__HPC_CSS || ''}</style><style>${window.__HPC_CSS2 || ''}</style><style>:host{position:absolute;inset:0;z-index:6;pointer-events:none;display:block}.hroot{position:absolute;inset:0}.ov.open{pointer-events:auto}</style><div class="hroot">
+      s.innerHTML = `<style>${window.__HPC_CSS || ''}</style><style>${window.__HPC_CSS2 || ''}</style><style>:host{position:absolute;inset:0;z-index:6;pointer-events:none;display:block}@media (max-width:600px){:host{position:fixed !important}}.hroot{position:absolute;inset:0}.ov.open{pointer-events:auto}</style><div class="hroot">
         ${['wxov', 'calov', 'clkov', 'tflov', 'alov', 'pplov', 'vacov'].map(id => `<div class="ov" id="${id}"></div>`).join('')}
         ${ov('carov', 'carpop')}${ov('enov', 'enpop')}<div class="ov camov" id="camov" data-act="closebg"><div class="pop" id="campop"></div></div>${ov('pinov', 'pinpop', 'width:min(92%,360px)')}</div>`;
       this._$ = id => s.getElementById(id);
@@ -2070,7 +2071,8 @@ const HSC_CSS = `.sr{position:relative;background:var(--bg);height:calc(100vh - 
 .sside .alarm .as{font-size:20px}.sside .alarm .ash{width:44px;height:44px}.sside .alarm .ash ha-icon{--mdc-icon-size:24px}
 .sbox{padding:12px 14px}.sbox .lbl{display:block;margin-bottom:8px}.sbox .agrid{grid-template-columns:1fr;margin-top:0;gap:8px}.sbox .asr{padding:8px 12px;cursor:pointer}
 .sbox .asr ha-icon{--mdc-icon-size:20px}.sbox .agrid.two{grid-template-columns:1fr 1fr}.sbox .asr>div{min-width:0}.sbox .asr .nm,.sbox .asr .ds{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.slast{font-size:12px;color:var(--sub);margin-top:2px}
-@media (max-width:1000px){.sside{grid-template-columns:1fr 1fr}.sgrid{--cols:3 !important}}`;
+@media (max-width:1000px){.sside{grid-template-columns:1fr 1fr}.sgrid{--cols:3 !important}}
+@media (max-width:600px){.sr{height:auto;min-height:0;padding:12px}.sh h1{font-size:24px}.sh{flex-wrap:wrap;gap:4px 10px}.sgrid{--cols:2 !important;grid-auto-rows:120px;flex:0 0 auto}.sgrid .cam.big{grid-row:span 2}.sside{grid-template-columns:1fr}.scams{flex:0 0 auto}}`;
 const hscEsc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const hscAgo = t => { const s = (Date.now() - new Date(t)) / 1000; if (!isFinite(s)) return ''; if (s < 60) return 'now'; if (s < 3600) return Math.floor(s / 60) + 'm ago'; if (s < 86400) return Math.floor(s / 3600) + 'h ago'; return Math.floor(s / 86400) + 'd ago'; };
 const hscHm = d => { d = new Date(d); if (isNaN(d)) return ''; const h = d.getHours(), m = d.getMinutes(); return (h % 12 || 12) + ':' + String(m).padStart(2, '0') + ' ' + (h < 12 ? 'am' : 'pm'); };
@@ -2216,7 +2218,8 @@ const HEC_CSS = `.er{position:relative;background:var(--bg);height:calc(100vh - 
 .ecar .bbar{height:8px;margin:8px 0 6px}.ecar .cs{font-size:13px;color:var(--sub);display:flex;align-items:center;gap:5px}.ecar .cs ha-icon{--mdc-icon-size:16px}
 .ecar .cd{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 10px;margin-top:10px}.ecar .cd .k{font-size:11px;color:var(--sub);font-weight:600}.ecar .cd .v{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ecar .ch .cacts{margin:0 0 0 auto;gap:8px;flex-wrap:nowrap}.ecar .ch .wm{margin-left:10px}.ecar .cacts button{padding:7px 12px;font-size:13px}.ecar .cacts button ha-icon{--mdc-icon-size:16px}
-@media (max-width:1000px){.eg{grid-template-columns:1fr;grid-template-rows:auto}.er{height:auto}.ek{grid-template-columns:1fr 1fr}}`;
+@media (max-width:1000px){.eg{grid-template-columns:1fr;grid-template-rows:auto}.er{height:auto}.ek{grid-template-columns:1fr 1fr}}
+@media (max-width:600px){.er{padding:12px;min-height:0}.eh{flex-wrap:wrap;gap:4px 10px}.eh h1{font-size:24px}.euse .head{flex-wrap:wrap;gap:6px}.eseg{margin-left:0}.euse .ech{min-height:150px}.eg>.heat{display:grid;grid-template-columns:1fr 1fr;gap:12px}.eg>.heat .ht2{height:150px}.ecars{grid-template-columns:1fr}.ecar{grid-template-columns:1fr}.ecar .ch{flex-wrap:wrap}.ecar .ch .cacts{order:3;margin:6px 0 0;width:100%}.ecar .pic img{max-height:140px}.rday{min-height:90px}}`;
 const hecEsc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const hecHm = d => { d = new Date(d); if (isNaN(d)) return '—'; const h = d.getHours(), m = d.getMinutes(); return (h % 12 || 12) + ':' + String(m).padStart(2, '0') + ' ' + (h < 12 ? 'am' : 'pm'); };
 const hecAgo = t => { const s = (Date.now() - new Date(t)) / 1000; if (!isFinite(s)) return '—'; if (s < 60) return 'now'; if (s < 3600) return Math.floor(s / 60) + 'm ago'; if (s < 86400) return Math.floor(s / 3600) + 'h ago'; return Math.floor(s / 86400) + 'd ago'; };
@@ -2469,5 +2472,91 @@ customElements.whenDefined('home-panel-card').then(() => {
 });
 window.customCards = window.customCards || [];
 window.customCards.push({ type: 'home-music-card', name: 'Home Music Card', description: 'Full-page music player' });
+
+})();
+
+/* ===== home-phone-card ===== */
+(() => {
+/* home-phone-card — the home panel re-laid out as a single scrolling column for a phone */
+const HPH_CSS = `:host{display:block}
+.root.ph{height:auto;min-height:calc(100vh - var(--header-height,56px));overflow:visible;padding:12px 12px calc(24px + env(safe-area-inset-bottom));gap:12px}
+.ph .phs{display:flex;flex-direction:column;gap:12px}
+.ph .pht{display:flex;align-items:flex-end;justify-content:space-between;padding:6px 4px 2px}.ph .pht h1{margin:0;font-size:28px;font-weight:700;letter-spacing:-.02em;line-height:1.1}.ph .pht .s{font-size:13px;color:var(--sub);font-weight:500;margin-top:2px}
+.ph .sec{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--sub);margin:10px 6px -4px}
+.ph .clock{padding:12px 14px;gap:14px}.ph .clock .clocksvg{width:64px;height:64px;flex:0 0 auto}.ph .clock .date .num{font-size:34px}
+.ph .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.ph .two>*{min-width:0}
+.ph .card.wx{height:300px;flex:0 0 auto}
+.ph .cams{flex:0 0 auto;padding:12px}.ph .camgrid{grid-template-columns:1fr 1fr;grid-template-rows:200px 120px;gap:8px}.ph .camgrid .cam.big{grid-column:1 / -1;grid-row:auto}.ph .camgrid .cam{min-height:0}
+.ph .alarm{flex:0 0 auto}.ph .alarm .aseg button{padding:12px 4px}
+.ph .heat{display:grid;grid-template-columns:1fr 1fr;gap:12px}.ph .heat .ht2{height:150px;box-sizing:border-box}
+.ph .lights{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.ph .lights .tile{height:96px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;padding:10px 12px;min-width:0}.ph .lights .tile .ic{width:30px;height:30px}.ph .lights .tile .ic ha-icon{--mdc-icon-size:17px}.ph .lights .tile .n{margin-top:0;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ph .lights .tile .s{font-size:11px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ph .music{flex:0 0 auto}.ph .music.big .mart{width:84px;height:84px}.ph .music.art{min-height:150px}
+.ph .card.en{height:172px;flex:0 0 auto;padding:12px 14px}.ph .vac,.ph .ppl,.ph .carc{flex:0 0 auto}
+.ph .carc.multi{padding:10px 14px;gap:8px}.ph .crow+.crow{padding-top:8px}
+.ph .cal,.ph .tfl{flex:0 0 auto}`;
+customElements.whenDefined('home-panel-card').then(() => {
+  if (customElements.get('home-phone-card')) return;
+  const Base = customElements.get('home-panel-card');
+  const E = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  class HomePhoneCard extends Base {
+    getCardSize() { return 30; }
+    _build() {
+      this._built = true;
+      const c = this._c, s = this.attachShadow({ mode: 'open' }), sec = t => `<div class="sec">${t}</div>`;
+      const camLogo = c.cameras_logo === undefined ? 'https://brands.home-assistant.io/unifiprotect/icon.png' : c.cameras_logo;
+      s.innerHTML = `<style>${window.__HPC_CSS || ''}</style><style>${window.__HPC_CSS2 || ''}</style><style>${HPH_CSS}</style><div class="root ph"><div class="phs">
+        <div class="pht"><div><h1 id="phg"></h1><div class="s">${E(c.location)}</div></div></div>
+        <div class="card clock" data-act="clk">${this._clockSvg()}<div class="date"><div class="top"><span class="d" id="dow"></span><span id="mon"></span></div><div class="num" id="dnum"></div></div></div>
+        ${c.alarm ? '<div class="card alarm" id="alarm" data-act="alarm"></div>' : ''}
+        ${(c.people || []).length ? '<div class="card ppl" id="ppl"></div>' : ''}
+        ${c.cameras.length ? `${sec('Cameras')}<div class="card cams"><div class="head"><span class="chd">${camLogo ? `<img src="${E(camLogo)}" alt="" onerror="this.style.display='none'">` : ''}<span class="lbl">Cameras</span></span>${c.cameras_path ? '<button class="pill" data-act="allcams">All cameras ›</button>' : ''}</div><div class="camgrid" id="camgrid"></div></div>` : ''}
+        ${c.heating.length ? `${sec('Heating')}<div class="heat" id="heat"></div>` : ''}
+        ${c.lights.length ? `${sec('Lights')}<div class="lights" id="lights"></div>` : '<div id="lights" hidden></div>'}
+        ${c.media_players.length ? `${sec('Music')}<div class="card music big" id="music" data-act="np"></div>` : ''}
+        ${this._cars.length ? `${sec(this._cars.length > 1 ? 'Cars' : 'Car')}<div class="card carc${this._cars.length > 1 ? ' multi' : ''}" id="car"${this._cars.length > 1 ? '' : ' data-act="car" data-i="0"'}></div>` : ''}
+        ${c.energy || c.vacuum ? sec('Home') : ''}${c.energy ? '<div class="card en" id="en" data-act="en"></div>' : ''}${c.vacuum ? '<div class="card vac" id="vac" data-act="vac"></div>' : ''}
+        ${sec('Today')}<div class="card wx" id="wx" data-act="wx"></div>
+        ${c.calendars.length ? '<div class="card cal" id="cal" data-act="cal"></div>' : ''}
+        ${c.tfl_lines.length ? '<div class="card tfl" id="tfl" data-act="tfl"></div>' : ''}
+      </div>
+      <div class="ov" id="wxov" data-act="closebg"><div class="pop" id="wxpop"></div></div>
+      <div class="ov npov" id="npov"></div>
+      <div class="ov" id="calov" data-act="closebg"><div class="pop wide" id="calpop"></div></div>
+      <div class="ov" id="clkov" data-act="closebg"><div class="pop" id="clkpop"></div></div>
+      <div class="ov" id="tflov" data-act="closebg"><div class="pop" id="tflpop"></div></div>
+      <div class="ov" id="carov" data-act="closebg"><div class="pop" id="carpop"></div></div>
+      <div class="ov" id="enov" data-act="closebg"><div class="pop" id="enpop"></div></div>
+      <div class="ov" id="alov" data-act="closebg"><div class="pop apop" id="alpop"></div></div>
+      <div class="ov" id="vacov" data-act="closebg"><div class="pop" id="vacpop"></div></div>
+      <div class="ov camov" id="camov" data-act="closebg"><div class="pop" id="campop"></div></div>
+      <div class="ov" id="pplov" data-act="closebg"><div class="pop" id="pplpop"></div></div>
+      <div class="ov" id="pinov" data-act="closebg"><div class="pop" id="pinpop"></div></div>
+      <div class="ov dbov" id="dbov"></div></div>`;
+      this._$ = id => s.getElementById(id);
+      if (c.cameras.length) this._buildCams(); else this._buildCams = () => {};
+      s.addEventListener('click', e => this._click(e));
+      s.addEventListener('input', e => { const v = e.composedPath()[0]; if (v && v.dataset && v.dataset.search) { clearTimeout(this._sT); const q = v.value; this._sT = setTimeout(() => { if (q.trim().length >= 2 || !q.trim()) this._search(q); }, 600); } });
+      s.addEventListener('keydown', e => { const v = e.composedPath()[0]; if (v && v.dataset && v.dataset.search && e.key === 'Enter') { clearTimeout(this._sT); v.blur(); this._search(v.value); } });
+      s.addEventListener('change', e => this._chg(e.composedPath()[0]));
+      s.addEventListener('pointerdown', e => this._down(e));
+      s.addEventListener('pointerup', e => this._up(e));
+      s.addEventListener('pointerleave', () => clearTimeout(this._holdT));
+      s.addEventListener('pointercancel', () => clearTimeout(this._holdT));
+      this._tick();
+    }
+    _tick() {
+      super._tick();
+      const g = this._$ && this._$('phg'); if (!g) return;
+      const h = new Date().getHours(), t = h < 5 ? 'Good night' : h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+      const n = this._c.name || (this._hass && this._hass.user && this._hass.user.name ? this._hass.user.name.split(' ')[0] : '');
+      const txt = t + (n ? ', ' + n : ''); if (g.textContent !== txt) g.textContent = txt;
+    }
+    _updateCams() { if (this._c.cameras.length) super._updateCams(); }
+    _refreshCams() { if (this._c.cameras.length) super._refreshCams(); }
+  }
+  customElements.define('home-phone-card', HomePhoneCard);
+});
+window.customCards = window.customCards || [];
+window.customCards.push({ type: 'home-phone-card', name: 'Home Phone Card', description: 'Home panel laid out for a phone' });
 
 })();
