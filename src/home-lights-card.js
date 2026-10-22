@@ -58,7 +58,7 @@ class HomeLightsCard extends HTMLElement {
         <span class="rc">${n ? n + ' on' : ''}</span>${av > 1 || n ? `<button class="ab${n ? ' on' : ''}" data-act="room" data-i="${ri}">${n ? 'Turn off' : 'Turn on'}</button>` : ''}</div>
         <div class="rt${this._c.layout === 'tiles' ? ' tl4' : ''}">${tiles}</div></div>`;
     }).join('');
-    this._root.innerHTML = `<div class="lh"><h1>${hlcEsc(this._c.title)}</h1><span class="c">${total ? total + (total === 1 ? ' light on' : ' lights on') : 'All off'}</span>
+    this._root.innerHTML = `<div class="lh">${window.__hpcBack(this._c)}<h1>${hlcEsc(this._c.title)}</h1><span class="c">${total ? total + (total === 1 ? ' light on' : ' lights on') : 'All off'}</span>
       ${total ? '<button class="ab on" data-act="alloff"><ha-icon icon="mdi:lightbulb-group-off-outline"></ha-icon>All off</button>' : ''}</div><div class="rooms">${rooms}</div>`;
   }
   _click(e) {
@@ -66,6 +66,7 @@ class HomeLightsCard extends HTMLElement {
     const lt = path.find(n => n.dataset && n.dataset.light);
     if (lt) { const x = h.states[lt.dataset.light]; if (!this._held && x && x.state !== 'unavailable') h.callService('light', 'toggle', { entity_id: lt.dataset.light }); this._held = false; return; }
     const t = path.find(n => n.dataset && n.dataset.act); if (!t) return;
+    if (t.dataset.act === 'hback') { window.__hpcGoBack(); return; }
     const ok = id => h.states[id] && h.states[id].state !== 'unavailable';
     if (t.dataset.act === 'alloff') { const on = this._all().filter(id => (h.states[id] || {}).state === 'on'); if (on.length) h.callService('light', 'turn_off', { entity_id: on }); }
     else if (t.dataset.act === 'room') {

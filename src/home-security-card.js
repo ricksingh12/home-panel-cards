@@ -42,7 +42,7 @@ class HomeSecurityCard extends HTMLElement {
       <span class="live" id="cl${i}" hidden>MOTION</span><span class="ago" id="ca${i}" hidden></span><span class="nm">${hscEsc(c.name || c.entity)}</span><span class="play"><ha-icon icon="mdi:play"></ha-icon></span></div>`).join('');
     const u = this._c.cameras_logo === undefined ? 'https://brands.home-assistant.io/unifiprotect/icon.png' : this._c.cameras_logo;
     s.innerHTML = `<style>${window.__HPC_CSS || ''}</style><style>${HSC_CSS}</style><div class="sr">
-      <div class="sh"><h1>${hscEsc(this._c.title)}</h1><span class="c" id="sum"></span></div>
+      <div class="sh">${window.__hpcBack(this._c)}<h1>${hscEsc(this._c.title)}</h1><span class="c" id="sum"></span></div>
       <div class="sg"><div class="card scams"><div class="head"><span class="chd">${u ? `<img src="${hscEsc(u)}" alt="" onerror="this.style.display='none'">` : ''}<span class="lbl">Cameras</span></span></div><div class="sgrid" style="--cols:${cols}">${cams}</div></div>
         <div class="sside" id="side"><div class="card alarm" id="alarm"></div></div></div>
       <home-popup-host id="host"></home-popup-host></div>`;
@@ -118,6 +118,7 @@ class HomeSecurityCard extends HTMLElement {
     const path = e.composedPath(); if (path.includes(this._host)) return;
     const t = path.find(n => n.dataset && n.dataset.act); if (!t) return;
     const act = t.dataset.act;
+    if (act === 'hback') { window.__hpcGoBack(); return; }
     if (act === 'more') this._host._more(t.dataset.id);
     else if (act === 'cam') this._host.open('cam', +t.dataset.i);
     else if (act === 'arm') this._arm(t.dataset.m);

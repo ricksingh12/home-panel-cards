@@ -22,7 +22,7 @@ customElements.whenDefined('home-panel-card').then(() => {
     _build() {
       this._built = true;
       const s = this.attachShadow({ mode: 'open' });
-      s.innerHTML = `<style>${window.__HPC_CSS || ''}</style><style>${window.__HPC_CSS2 || ''}</style><style>${HMC_CSS}</style><div class="root mroot"><div class="ov npov" id="npov"></div></div>`;
+      s.innerHTML = `<style>${window.__HPC_CSS || ''}</style><style>${window.__HPC_CSS2 || ''}</style><style>${HMC_CSS}</style><div class="root mroot">${window.__hpcBack(this._c, 'float')}<div class="ov npov" id="npov"></div></div>`;
       this._$ = id => s.getElementById(id);
       s.addEventListener('click', e => this._click(e));
       s.addEventListener('input', e => { const v = e.composedPath()[0]; if (v && v.dataset && v.dataset.search) { clearTimeout(this._sT); const q = v.value; this._sT = setTimeout(() => { if (q.trim().length >= 2 || !q.trim()) this._search(q); }, 600); } });
@@ -37,6 +37,7 @@ customElements.whenDefined('home-panel-card').then(() => {
     }
     _click(e) {
       const t = e.composedPath().find(n => n.dataset && n.dataset.act);
+      if (t && t.dataset.act === 'hback') { window.__hpcGoBack(); return; }
       if (t && (t.dataset.act === 'closenp' || t.dataset.act === 'closebg')) return;
       super._click(e);
     }
