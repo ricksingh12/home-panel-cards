@@ -403,7 +403,8 @@ const PPLCSS = `.ppl{flex:0 0 auto;padding:12px 14px;display:grid;grid-template-
 @container wx (max-height:142px){.wx .row .temp{font-size:32px}.wx .row ha-icon{--mdc-icon-size:34px !important}.hc .t{font-size:11px}.hc .v{font-size:14px}.hc ha-icon{--mdc-icon-size:18px}}
 @container wx (max-height:126px){.chart{display:none}}
 .en{container-type:size;container-name:en}.side .en{padding:9px 14px;min-height:74px}.side{container-type:size;container-name:side}.side .en .head{align-items:center;margin-bottom:2px}.side .en .head .lbl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.side .en .elogo{width:24px;height:24px;margin:0}
-.etot.e3{grid-template-columns:1fr 1fr auto;gap:6px;align-items:end}.etc{text-align:right;padding-left:8px;border-left:1px solid var(--line)}.etc .k{justify-content:flex-end}.etc .v{color:var(--accent);font-weight:700}.side .en .etot{margin-top:0}
+.etot.e3{grid-template-columns:1fr 1fr auto;gap:6px;align-items:end}.etc{text-align:right;padding-left:8px;border-left:1px solid var(--line)}.etc .k{justify-content:flex-end}.etc .v{color:var(--accent);font-weight:700}
+.etot .k i.lvd{border-radius:50%;animation:lvp 1.6s infinite}@keyframes lvp{50%{opacity:.3}}.side .en .etot{margin-top:0}
 @container en (max-height:96px){.en .ech{display:none}}
 @container en (max-height:66px){.en .etot .c{display:none}}
 @container side (max-height:340px){.music.big{padding:10px 14px;gap:12px}.music.big .mart{width:76px;height:76px;border-radius:12px}.music.art{min-height:120px}.music.big .mn{font-size:16px;margin-top:2px}.music.big .mc{margin-top:6px}.music.big .mc button{width:34px;height:34px}.music.big .mc .pp{width:40px;height:40px}}
@@ -568,6 +569,7 @@ class HomePanelCard extends HTMLElement {
     const lsig = JSON.stringify(this._c.lights.map(l => { const e = this._st(l.entity); return e && [e.state, e.attributes.brightness]; }))
       + JSON.stringify(this._npPick());
     if (lsig !== this._sig.lights) { this._sig.lights = lsig; this._renderLights(); }
+    if (this._c.energy) { const k = this._c.energy, esig = JSON.stringify([k.live_power, k.today_electricity, k.today_electricity_cost, k.today_gas, k.today_gas_cost].map(id => { const e = id && this._st(id); return e && [e.state, e.last_updated]; })); if (esig !== this._sig.enl) { this._sig.enl = esig; this._renderEnergy(); } }
     const hsig = JSON.stringify(this._c.heating.map(z => { const e = this._st(z.entity); return e && [e.state, e.attributes.current_temperature, e.attributes.temperature, e.attributes.hvac_action, e.attributes.current_humidity]; })) + JSON.stringify(this._pend || {});
     if (hsig !== this._sig.heat) { this._sig.heat = hsig; this._renderHeat(); }
     const csig = JSON.stringify(this._c.cameras.map(c => { const e = this._st(c.entity), mo = c.motion && this._st(c.motion); return [e && e.state, mo && mo.last_changed]; }));
@@ -1022,9 +1024,26 @@ class HomePanelCard extends HTMLElement {
       <div class="exl">${days.map(x => `<span>${DOW[x.d.getDay()]}${big ? ' ' + x.d.getDate() : ''}</span>`).join('')}</div></div>`;
   }
   _enRange() { const d = this._en.days; if (!d.length) return ''; const a = d[0].d, b = d[d.length - 1].d; return `${a.getDate()} ${MON[a.getMonth()]} – ${b.getDate()} ${MON[b.getMonth()]}`; }
+  _enLive() {
+    const k = this._c.energy || {}, n = id => { const e = id && this._st(id), v = e ? parseFloat(e.state) : NaN; return isFinite(v) ? v : null; };
+    if (!k.live_power && !k.today_electricity && !k.today_gas) return null;
+    const L = { p: n(k.live_power), e: n(k.today_electricity), ec: n(k.today_electricity_cost), g: n(k.today_gas), gc: n(k.today_gas_cost) };
+    const pe = k.live_power && this._st(k.live_power); L.at = pe && pe.last_updated;
+    L.cost = L.ec != null || L.gc != null ? (L.ec || 0) + (L.gc || 0) : null;
+    L.col = L.p == null ? 'var(--sub)' : L.p < 1000 ? '#22a06b' : L.p < 3000 ? '#d97706' : '#e5484d';
+    L.pw = L.p == null ? '—' : L.p < 1000 ? Math.round(L.p) + '<small>W</small>' : (L.p / 1000).toFixed(L.p < 10000 ? 2 : 1) + '<small>kW</small>';
+    return L;
+  }
   _renderEnergy() {
     const el = this._$ && this._$('en'); if (!el) return;
-    const k = this._c.energy, CE = k.electricity_color || '#3b82f6', CG = k.gas_color || '#f0a43a';
+    const k = this._c.energy, CE = k.electricity_color || '#3b82f6', CG = k.gas_color || '#f0a43a', L = this._enLive();
+    if (L) {
+      const td = (lbl, c, kwh, cost) => `<div><div class="k"><i style="background:${c}"></i>${lbl}</div><div class="v">${kwh != null ? kwh.toFixed(1) : '—'}<small>kWh</small></div><div class="c">${cost != null ? '£' + cost.toFixed(2) : ''}</div></div>`;
+      el.innerHTML = `<div class="head"><div class="lbl">Energy · Today${L.cost != null ? ' £' + L.cost.toFixed(2) : ''}</div>${this._enLogo('elogo')}</div>
+        <div class="etot e3">${td('Electricity', CE, L.e, L.ec)}${k.today_gas || k.gas ? td('Gas', CG, L.g, L.gc) : '<div></div>'}<div class="etc"><div class="k"><i class="lvd" style="background:${L.col}"></i>Now</div><div class="v" style="color:${L.col}">${L.pw}</div><div class="c">${L.at ? hm(L.at) : ''}</div></div></div>
+        ${this._en && this._en.days.length ? this._enBars(false) : ''}`;
+      return;
+    }
     if (!this._en || !this._en.days.length) { el.innerHTML = `<div class="head"><span class="lbl">Energy</span>${this._enLogo('elogo')}</div><div class="empty">${this._enErr ? "Couldn't load energy data" : this._en ? 'No energy data yet' : 'Loading…'}</div>`; return; }
     const tot = (lbl, c, kwh, cost) => `<div><div class="k"><i style="background:${c}"></i>${lbl}</div><div class="v">${Math.round(kwh)}<small>kWh</small></div>${cost ? `<div class="c">£${cost.toFixed(2)}</div>` : ''}</div>`;
     const hasC = k.electricity_cost || k.gas_cost, TC = this._enSum('ec') + this._enSum('gc');

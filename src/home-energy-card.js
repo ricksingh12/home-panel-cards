@@ -6,7 +6,8 @@ const HEC_CSS = `.er{position:relative;background:var(--bg);height:calc(100vh - 
 .euse{padding:14px 16px;display:flex;flex-direction:column;min-height:0}.euse .head{margin-bottom:2px}.euse .head img{width:30px;height:30px;object-fit:contain}
 .ek{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:10px}.ek .blk{padding:10px 12px;border-radius:16px}.ek .lbl{text-transform:none;letter-spacing:0;display:flex;align-items:center;gap:6px}.ek .lbl i{width:9px;height:9px;border-radius:3px;display:block}
 .ek .v{font-size:22px;font-weight:600;margin-top:2px}.ek .v small{font-size:12px;color:var(--sub);font-weight:500;margin-left:3px}.ek .s{font-size:12px;color:var(--sub);margin-top:1px}.ek .blk.tot .v{color:var(--accent)}
-.euse .ech{flex:1 1 auto;min-height:120px;margin-top:22px}.euse .ech.mon{margin-top:14px}.euse .ech.mon .ebars,.euse .ech.mon .exl{gap:3px}.euse .ech.mon .ebd{gap:1px}.euse .ech.mon .ebd b{width:45%;border-radius:3px 3px 0 0}.euse .ech.mon .exl span{font-size:10px}
+.euse .ech{flex:1 1 auto;min-height:100px;margin-top:14px}.euse .ech.mon{margin-top:14px}.euse .ech.mon .ebars,.euse .ech.mon .exl{gap:3px}.euse .ech.mon .ebd{gap:1px}.euse .ech.mon .ebd b{width:45%;border-radius:3px 3px 0 0}.euse .ech.mon .exl span{font-size:10px}
+.ek .lbl i.lvd{border-radius:50%;animation:lvp 1.6s infinite}@keyframes lvp{50%{opacity:.3}}.ek .now .v{font-weight:700}.ek .s b{color:var(--text);font-weight:600}
 .emsum{font-size:12px;color:var(--sub);margin-top:6px}.emsum b{color:var(--text)}
 .eseg{margin-left:auto;margin-right:10px;display:flex;background:var(--card2);border-radius:999px;padding:2px}.eseg button{border:0;background:none;border-radius:999px;padding:5px 12px;font:inherit;font-size:12px;font-weight:600;color:var(--sub);cursor:pointer}.eseg button.sel{background:var(--card);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.08)}.euse .ech .ebd b{max-width:30px}.euse .ech .exl span{font-size:11px}
 .erate{padding:14px 16px;display:flex;flex-direction:column;gap:8px;min-height:0;overflow:hidden}
@@ -81,6 +82,30 @@ class HomeEnergyCard extends HTMLElement {
       }).catch(() => { this._err = true; })
       .finally(() => { this._busy = false; this._renderUse(); });
   }
+  _live() {
+    const k = this._c.energy || {}, n = id => { const e = this._st(id), v = e ? parseFloat(e.state) : NaN; return isFinite(v) ? v : null; };
+    if (!k.live_power && !k.today_electricity && !k.today_gas) return null;
+    const L = { p: n(k.live_power), e: n(k.today_electricity), ec: n(k.today_electricity_cost), g: n(k.today_gas), gc: n(k.today_gas_cost) }, pe = this._st(k.live_power);
+    L.at = pe && pe.last_updated; L.cost = L.ec != null || L.gc != null ? (L.ec || 0) + (L.gc || 0) : null;
+    L.col = L.p == null ? 'var(--sub)' : L.p < 1000 ? '#22a06b' : L.p < 3000 ? '#d97706' : '#e5484d';
+    L.word = L.p == null ? '' : L.p < 1000 ? 'Low' : L.p < 3000 ? 'Moderate' : 'High';
+    L.pw = L.p == null ? '—' : L.p < 1000 ? Math.round(L.p) + '<small>W</small>' : (L.p / 1000).toFixed(L.p < 10000 ? 2 : 1) + '<small>kW</small>';
+    return L;
+  }
+  _renderLive() {
+    const el = this._$ && this._$('elive'), L = this._live(), k = this._c.energy; if (!el || !L || !this._en) return;
+    const m = v => '£' + v.toFixed(2), d = this._en.days, t = this._en.mtd, E = this._sum('e'), G = this._sum('g'), EC = this._sum('ec'), GC = this._sum('gc');
+    const last = [...d].reverse().find(x => x.ec != null || x.gc != null || x.e != null);
+    let cmp = '';
+    if (last) { const y = new Date(); y.setHours(0, 0, 0, 0); y.setDate(y.getDate() - 1);
+      cmp = (+last.d === +y ? 'Yesterday' : HDOW[last.d.getDay()]) + ' <b>' + (last.ec != null || last.gc != null ? m((last.ec || 0) + (last.gc || 0)) : Math.round((last.e || 0) + (last.g || 0)) + ' kWh') + '</b>'; }
+    const kw = (e, g) => [e != null ? (e < 100 ? e.toFixed(1) : Math.round(e)) + ' elec' : '', k.gas || k.today_gas ? (g != null ? (g < 100 ? g.toFixed(1) : Math.round(g)) : '—') + ' gas' : ''].filter(Boolean).join(' · ') + ' kWh';
+    const blk = (lbl, col, v, u, sub, cls, vs) => `<div class="blk${cls ? ' ' + cls : ''}"><div class="lbl">${col ? `<i${col.cls ? ` class="${col.cls}"` : ''} style="background:${col.c || col}"></i>` : ''}${lbl}</div><div class="v"${vs ? ` style="${vs}"` : ''}>${v}${u ? `<small>${u}</small>` : ''}</div><div class="s">${sub}</div></div>`;
+    el.innerHTML = blk('Using now', { c: L.col, cls: 'lvd' }, L.pw, '', L.word + (L.at ? ' · ' + hecHm(L.at) : ''), 'now', 'color:' + L.col)
+      + blk('Today so far', '', L.cost != null ? m(L.cost) : '—', '', (L.e != null || L.g != null ? ((L.e || 0) + (L.g || 0)).toFixed(1) + ' kWh' : '') + (cmp ? ' · ' + cmp : ''), 'tot')
+      + blk('Last 7 days', '', m(EC + GC), '', kw(E, G))
+      + blk('Month to date', '', t.n ? m(t.ec + t.gc) : '—', '', t.n ? `1–${t.to.getDate()} ${HMON[t.to.getMonth()]} · ${Math.round(t.e + t.g)} kWh` : 'No data yet');
+  }
   _sum(f) { return ((this._en && this._en.days) || []).reduce((a, x) => a + (x[f] || 0), 0); }
   _renderUse() {
     const el = this._$('use'), k = this._c.energy; if (!el) return;
@@ -98,13 +123,14 @@ class HomeEnergyCard extends HTMLElement {
     const bar = (v, c) => `<b style="height:${v != null ? Math.max(1.5, v / max * 88) : 0}%;background:${c};${v == null ? 'opacity:0' : ''}">${v != null && few ? `<span>${Math.round(v)}</span>` : ''}</b>`;
     el.innerHTML = `<div class="head"><span class="lbl">Energy use · ${rng}</span><span class="eseg"><button class="${mon ? '' : 'sel'}" data-act="view" data-v="week">Last 7 days</button><button class="${mon ? 'sel' : ''}" data-act="view" data-v="month">This month</button></span>${logo}</div>
       <div class="legend"><span><i style="background:${CE}"></i>Electricity</span>${k.gas ? `<span><i style="background:${CG}"></i>Gas</span>` : ''}<span>Octopus data usually arrives a day or two late</span></div>
-      <div class="ek">${blk('Electricity', CE, Math.round(E), 'kWh', (k.electricity_cost ? m(EC) + ' · ' : '') + (E / d.length).toFixed(1) + ' kWh/day')}
+      ${this._live() ? '<div class="ek" id="elive"></div>' : `<div class="ek">${blk('Electricity', CE, Math.round(E), 'kWh', (k.electricity_cost ? m(EC) + ' · ' : '') + (E / d.length).toFixed(1) + ' kWh/day')}
         ${k.gas ? blk('Gas', CG, Math.round(G), 'kWh', (k.gas_cost ? m(GC) + ' · ' : '') + (G / d.length).toFixed(1) + ' kWh/day') : ''}
         ${blk('7-day total', '', m(EC + GC), '', Math.round(E + G) + ' kWh · incl. standing', 'tot')}
-        ${blk('Month to date', '', t.n ? m(t.ec + t.gc) : '—', '', t.n ? `1–${t.to.getDate()} ${HMON[t.to.getMonth()]} · ${Math.round(t.e + t.g)} kWh` : 'No data yet')}</div>
+        ${blk('Month to date', '', t.n ? m(t.ec + t.gc) : '—', '', t.n ? `1–${t.to.getDate()} ${HMON[t.to.getMonth()]} · ${Math.round(t.e + t.g)} kWh` : 'No data yet')}</div>`}
       <div class="ech big${mon ? ' mon' : ''}"><div class="ebars">${cd.map(x => `<div class="ebd">${bar(x.e, CE)}${bar(x.g, CG)}</div>`).join('')}</div>
         <div class="exl">${cd.map(x => `<span>${mon ? (x.d.getDay() === 1 ? 'Mon ' : '') + x.d.getDate() : HDOW[x.d.getDay()] + ' ' + x.d.getDate() + (x.ec != null || x.gc != null ? ' · ' + m((x.ec || 0) + (x.gc || 0)) : '')}</span>`).join('')}</div>
         ${mon ? `<div class="emsum">${t.n ? `Daily average <b>${m((t.ec + t.gc) / t.n)}</b> · ${((t.e + t.g) / t.n).toFixed(1)} kWh/day` : ''}${t.n ? ` · on track for about <b>${m((t.ec + t.gc) / t.n * new Date(cd[0].d.getFullYear(), cd[0].d.getMonth() + 1, 0).getDate())}</b> this month` : ''}</div>` : ''}</div>`;
+    this._renderLive();
     this._$('sum').textContent = `Last 7 days ${m(EC + GC)}` + (t.n ? ` · this month ${m(t.ec + t.gc)}` : '');
   }
   /* ---------- rates ---------- */
@@ -208,6 +234,8 @@ class HomeEnergyCard extends HTMLElement {
     const R = this._c.rates, ids = Object.values(R).concat(...this._c.cars.map(k => Object.values(k).filter(v => typeof v === 'string' && v.includes('.'))));
     const hsig = JSON.stringify(this._c.heating.map(z => { const e = this._st(z.entity); return e && [e.state, e.attributes]; })) + JSON.stringify(this._pend || {});
     if (hsig !== this._hsig) { this._hsig = hsig; this._renderHeat(); }
+    const k = this._c.energy, lsig = JSON.stringify([k.live_power, k.today_electricity, k.today_electricity_cost, k.today_gas, k.today_gas_cost].map(id => { const e = this._st(id); return e && [e.state, e.last_updated]; }));
+    if (lsig !== this._lsig) { this._lsig = lsig; this._renderLive(); }
     const sig = JSON.stringify(ids.map(id => { const e = this._st(id); return e && [e.state, e.last_updated]; }));
     if (sig === this._sig) return; this._sig = sig;
     this._renderRate(); this._c.cars.forEach((_, i) => this._renderCar(i));
