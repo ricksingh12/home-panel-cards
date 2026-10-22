@@ -70,7 +70,7 @@ customElements.whenDefined('home-panel-card').then(() => {
     const k = kind(e), hrs = k === 'bat' ? 168 : 24, id = p.id; p.hAt = Date.now();
     this._hass.callWS({ type: 'history/history_during_period', start_time: new Date(Date.now() - hrs * 3600000).toISOString(), end_time: new Date().toISOString(),
       entity_ids: [id], minimal_response: k !== 'clim', no_attributes: k !== 'clim', significant_changes_only: false })
-      .then(r => { if (!this._px || this._px.id !== id) return; this._px.h = ((r && r[id]) || []).map(x => ({ t: ((x.lc || x.lu) * 1000) || Date.parse(x.last_changed), s: x.s ?? x.state, a: x.a || x.attributes })); this._px.hrs = hrs; this._px.sig = null; this._pxRender(); })
+      .then(r => { if (!this._px || this._px.id !== id) return; this._px.h = ((r && r[id]) || []).map(x => ({ t: ((x.lu || x.lc) * 1000) || Date.parse(x.last_updated || x.last_changed), s: x.s ?? x.state, a: x.a || x.attributes })); this._px.hrs = hrs; this._px.sig = null; this._pxRender(); })
       .catch(() => { if (this._px && this._px.id === id) { this._px.herr = true; this._px.sig = null; this._pxRender(); } });
   };
   P._pxRender = function () {

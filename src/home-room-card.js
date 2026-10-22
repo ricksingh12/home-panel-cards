@@ -157,7 +157,7 @@ customElements.whenDefined('home-panel-card').then(() => {
       const r = this._c.room || {}, want = [r.temperature, r.humidity].filter(Boolean); if (!want.length || !this._hass.callWS) return;
       this._histAt = Date.now();
       this._hass.callWS({ type: 'history/history_during_period', start_time: new Date(Date.now() - 86400000).toISOString(), end_time: new Date().toISOString(), entity_ids: want, minimal_response: true, no_attributes: true, significant_changes_only: false })
-        .then(res => { want.forEach(id => { this._hist[id] = ((res && res[id]) || []).map(x => [((x.lc || x.lu) * 1000) || Date.parse(x.last_changed), NUM(x.s ?? x.state)]).filter(x => x[1] != null); }); this._renderGraphs(); })
+        .then(res => { want.forEach(id => { this._hist[id] = ((res && res[id]) || []).map(x => [((x.lu || x.lc) * 1000) || Date.parse(x.last_updated || x.last_changed), NUM(x.s ?? x.state)]).filter(x => x[1] != null); }); this._renderGraphs(); })
         .catch(() => { this._histAt = Date.now() - 540000; });
     }
     /* ---------- shared pieces ---------- */
