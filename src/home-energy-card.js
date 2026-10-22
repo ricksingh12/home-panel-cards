@@ -63,7 +63,7 @@ class HomeEnergyCard extends HTMLElement {
   /* ---------- energy ---------- */
   _fetch() {
     const k = this._c.energy; if (!this._hass || this._busy) return;
-    const ids = [k.electricity, k.gas, k.electricity_cost, k.gas_cost].filter(Boolean);
+    const ids = [k.electricity, k.gas, k.electricity_cost, k.gas_cost, k.today_electricity, k.today_gas, k.today_electricity_cost, k.today_gas_cost].filter(Boolean);
     const st = new Date(); st.setHours(0, 0, 0, 0); st.setDate(st.getDate() - 12);
     const ms = new Date(); ms.setHours(0, 0, 0, 0); ms.setDate(1); if (ms < st) st.setTime(+ms);
     this._busy = true;
@@ -71,11 +71,21 @@ class HomeEnergyCard extends HTMLElement {
       .then(r => {
         const map = {}, put = (id, f) => ((r && r[id]) || []).forEach(x => { const d = new Date(x.start); d.setHours(0, 0, 0, 0); const key = +d; (map[key] = map[key] || { d }); if (x.change != null) map[key][f] = (map[key][f] || 0) + x.change; });
         put(k.electricity, 'e'); put(k.gas, 'g'); put(k.electricity_cost, 'ec'); put(k.gas_cost, 'gc');
+        if (k.today_electricity || k.today_gas) {
+          const lv = {}, putL = (id, f) => id && ((r && r[id]) || []).forEach(x => { const d = new Date(x.start); d.setHours(0, 0, 0, 0); const key = +d; (lv[key] = lv[key] || {}); if (x.change != null) lv[key][f] = (lv[key][f] || 0) + x.change; });
+          putL(k.today_electricity, 'e'); putL(k.today_gas, 'g'); putL(k.today_electricity_cost, 'ec'); putL(k.today_gas_cost, 'gc');
+          const t0 = new Date(); t0.setHours(0, 0, 0, 0); const num = id => { const e = id && this._hass.states[id], v = e ? parseFloat(e.state) : NaN; return isFinite(v) ? v : null; };
+          const now = { e: num(k.today_electricity), g: num(k.today_gas), ec: num(k.today_electricity_cost), gc: num(k.today_gas_cost) };
+          lv[+t0] = Object.assign(lv[+t0] || {}, ...Object.keys(now).filter(f => now[f] != null).map(f => ({ [f]: now[f] })));
+          Object.keys(lv).forEach(t => { const o = map[t]; if (!o || (o.e == null && o.g == null)) map[t] = Object.assign({ d: new Date(+t), live: true }, lv[t]); });
+          if (map[+t0] && map[+t0].live) map[+t0].today = true;
+        }
         const keys = Object.keys(map).map(Number).filter(t => map[t].e != null || map[t].g != null).sort((a, b) => a - b);
         const last = keys.length ? new Date(keys[keys.length - 1]) : null, days = [];
-        if (last) for (let i = 6; i >= 0; i--) { const d = new Date(last); d.setDate(d.getDate() - i); d.setHours(0, 0, 0, 0); days.push(map[+d] || { d }); }
+        if (last) { const tl = map[+last] && map[+last].today, end = new Date(last); if (tl) end.setDate(end.getDate() - 1);
+          for (let i = 6; i >= 0; i--) { const d = new Date(end); d.setDate(d.getDate() - i); d.setHours(0, 0, 0, 0); days.push(map[+d] || { d }); } if (tl) days.push(map[+last]); }
         const mtd = { e: 0, g: 0, ec: 0, gc: 0, n: 0, to: null };
-        keys.filter(t => t >= +ms).forEach(t => { const x = map[t]; ['e', 'g', 'ec', 'gc'].forEach(f => { mtd[f] += x[f] || 0; }); mtd.n++; mtd.to = x.d; });
+        keys.filter(t => t >= +ms && !map[t].today).forEach(t => { const x = map[t]; ['e', 'g', 'ec', 'gc'].forEach(f => { mtd[f] += x[f] || 0; }); mtd.n++; mtd.to = x.d; });
         const month = [], today = new Date(); today.setHours(0, 0, 0, 0);
         for (let d = new Date(ms); d <= today; d.setDate(d.getDate() + 1)) { const x = new Date(d); month.push(map[+x] || { d: x }); }
         this._en = { at: Date.now(), days, mtd, month }; this._err = false;
@@ -95,7 +105,7 @@ class HomeEnergyCard extends HTMLElement {
   _renderLive() {
     const el = this._$ && this._$('elive'), L = this._live(), k = this._c.energy; if (!el || !L || !this._en) return;
     const m = v => '£' + v.toFixed(2), d = this._en.days, t = this._en.mtd, E = this._sum('e'), G = this._sum('g'), EC = this._sum('ec'), GC = this._sum('gc');
-    const last = [...d].reverse().find(x => x.ec != null || x.gc != null || x.e != null);
+    const t0 = new Date(); t0.setHours(0, 0, 0, 0); const last = [...d].reverse().find(x => +x.d < +t0 && !x.live && (x.ec != null || x.gc != null || x.e != null));
     let cmp = '';
     if (last) { const y = new Date(); y.setHours(0, 0, 0, 0); y.setDate(y.getDate() - 1);
       cmp = (+last.d === +y ? 'Yesterday' : HDOW[last.d.getDay()]) + ' <b>' + (last.ec != null || last.gc != null ? m((last.ec || 0) + (last.gc || 0)) : Math.round((last.e || 0) + (last.g || 0)) + ' kWh') + '</b>'; }
@@ -106,7 +116,7 @@ class HomeEnergyCard extends HTMLElement {
       + blk('Last 7 days', '', m(EC + GC), '', kw(E, G))
       + blk('Month to date', '', t.n ? m(t.ec + t.gc) : '—', '', t.n ? `1–${t.to.getDate()} ${HMON[t.to.getMonth()]} · ${Math.round(t.e + t.g)} kWh` : 'No data yet');
   }
-  _sum(f) { return ((this._en && this._en.days) || []).reduce((a, x) => a + (x[f] || 0), 0); }
+  _sum(f) { return ((this._en && this._en.days) || []).reduce((a, x) => a + (x.today ? 0 : x[f] || 0), 0); }
   _renderUse() {
     const el = this._$('use'), k = this._c.energy; if (!el) return;
     const CE = k.electricity_color || '#3b82f6', CG = k.gas_color || '#f0a43a';
@@ -120,14 +130,14 @@ class HomeEnergyCard extends HTMLElement {
     const lastM = mon ? [...cd].reverse().find(x => x.e != null || x.g != null) : null;
     const rng = mon ? `1 ${HMON[cd[0].d.getMonth()]} – ${(lastM || cd[cd.length - 1]).d.getDate()} ${HMON[cd[0].d.getMonth()]}` : r;
     const max = Math.max(1, ...cd.map(x => Math.max(x.e || 0, x.g || 0)));
-    const bar = (v, c) => `<b style="height:${v != null ? Math.max(1.5, v / max * 88) : 0}%;background:${c};${v == null ? 'opacity:0' : ''}">${v != null && few ? `<span>${Math.round(v)}</span>` : ''}</b>`;
+    const bar = (v, c, lv) => `<b style="height:${v != null ? Math.max(1.5, v / max * 88) : 0}%;background:${c};${v == null ? 'opacity:0' : lv ? 'opacity:.45' : ''}">${v != null && few ? `<span>${Math.round(v)}</span>` : ''}</b>`;
     el.innerHTML = `<div class="head"><span class="lbl">Energy use · ${rng}</span><span class="eseg"><button class="${mon ? '' : 'sel'}" data-act="view" data-v="week">Last 7 days</button><button class="${mon ? 'sel' : ''}" data-act="view" data-v="month">This month</button></span>${logo}</div>
-      <div class="legend"><span><i style="background:${CE}"></i>Electricity</span>${k.gas ? `<span><i style="background:${CG}"></i>Gas</span>` : ''}<span>Octopus data usually arrives a day or two late</span></div>
+      <div class="legend"><span><i style="background:${CE}"></i>Electricity</span>${k.gas ? `<span><i style="background:${CG}"></i>Gas</span>` : ''}<span>${cd.some(x => x.live) ? 'Paler bars: live Home Mini readings, until Octopus confirms them' : 'Octopus data usually arrives a day or two late'}</span></div>
       ${this._live() ? '<div class="ek" id="elive"></div>' : `<div class="ek">${blk('Electricity', CE, Math.round(E), 'kWh', (k.electricity_cost ? m(EC) + ' · ' : '') + (E / d.length).toFixed(1) + ' kWh/day')}
         ${k.gas ? blk('Gas', CG, Math.round(G), 'kWh', (k.gas_cost ? m(GC) + ' · ' : '') + (G / d.length).toFixed(1) + ' kWh/day') : ''}
         ${blk('7-day total', '', m(EC + GC), '', Math.round(E + G) + ' kWh · incl. standing', 'tot')}
         ${blk('Month to date', '', t.n ? m(t.ec + t.gc) : '—', '', t.n ? `1–${t.to.getDate()} ${HMON[t.to.getMonth()]} · ${Math.round(t.e + t.g)} kWh` : 'No data yet')}</div>`}
-      <div class="ech big${mon ? ' mon' : ''}"><div class="ebars">${cd.map(x => `<div class="ebd">${bar(x.e, CE)}${bar(x.g, CG)}</div>`).join('')}</div>
+      <div class="ech big${mon ? ' mon' : ''}"><div class="ebars">${cd.map(x => `<div class="ebd">${bar(x.e, CE, x.live)}${bar(x.g, CG, x.live)}</div>`).join('')}</div>
         <div class="exl">${cd.map(x => `<span>${mon ? (x.d.getDay() === 1 ? 'Mon ' : '') + x.d.getDate() : HDOW[x.d.getDay()] + ' ' + x.d.getDate() + (x.ec != null || x.gc != null ? ' · ' + m((x.ec || 0) + (x.gc || 0)) : '')}</span>`).join('')}</div>
         ${mon ? `<div class="emsum">${t.n ? `Daily average <b>${m((t.ec + t.gc) / t.n)}</b> · ${((t.e + t.g) / t.n).toFixed(1)} kWh/day` : ''}${t.n ? ` · on track for about <b>${m((t.ec + t.gc) / t.n * new Date(cd[0].d.getFullYear(), cd[0].d.getMonth() + 1, 0).getDate())}</b> this month` : ''}</div>` : ''}</div>`;
     this._renderLive();
@@ -235,7 +245,7 @@ class HomeEnergyCard extends HTMLElement {
     const hsig = JSON.stringify(this._c.heating.map(z => { const e = this._st(z.entity); return e && [e.state, e.attributes]; })) + JSON.stringify(this._pend || {});
     if (hsig !== this._hsig) { this._hsig = hsig; this._renderHeat(); }
     const k = this._c.energy, lsig = JSON.stringify([k.live_power, k.today_electricity, k.today_electricity_cost, k.today_gas, k.today_gas_cost].map(id => { const e = this._st(id); return e && [e.state, e.last_updated]; }));
-    if (lsig !== this._lsig) { this._lsig = lsig; this._renderLive(); }
+    if (lsig !== this._lsig) { this._lsig = lsig; if (this._en && Date.now() - this._en.at > 300000) this._fetch(); else this._renderLive(); }
     const sig = JSON.stringify(ids.map(id => { const e = this._st(id); return e && [e.state, e.last_updated]; }));
     if (sig === this._sig) return; this._sig = sig;
     this._renderRate(); this._c.cars.forEach((_, i) => this._renderCar(i));
