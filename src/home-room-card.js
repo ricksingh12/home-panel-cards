@@ -32,7 +32,7 @@ const HRC_CSS = `:host{display:block}.rc .rheat .ht2{height:150px;box-sizing:bor
 .rc .md.art2{color:#fff;border-color:transparent;background:#222}.rc .md.art2 .bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(18px) saturate(1.2);transform:scale(1.3);opacity:.7}.rc .md.art2::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.45)}.rc .md.art2>*:not(.bg){position:relative}.rc .md.art2 .ms{color:rgba(255,255,255,.75)}.rc .md.art2 .mctl button{background:rgba(255,255,255,.2);color:#fff}.rc .md.art2 .mctl .pp{background:#fff;color:#111}.rc .md.art2 .mctl input{accent-color:#fff}.rc .md.art2 .mctl ha-icon.vi{color:rgba(255,255,255,.8)}
 .rc .md.off .mctl{opacity:.4;pointer-events:none}
 .rc .cams{flex:0 0 auto;padding:0;background:none;border:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}.rc .cams .head{display:none}
-.rc .camgrid{display:grid;grid-template-columns:1fr;grid-template-rows:none;grid-auto-rows:210px;gap:10px;flex:0 0 auto}.rc .camgrid .cam,.rc .camgrid .cam.big{grid-column:auto;grid-row:auto;min-height:0}
+.rc .camgrid{display:grid;grid-template-columns:1fr;grid-template-rows:none;grid-auto-rows:210px;gap:10px;flex:0 0 auto;min-height:0 !important}.rc .camgrid .cam,.rc .camgrid .cam.big{grid-column:auto;grid-row:auto;min-height:0}
 .rc .vac,.rc .carc{flex:0 0 auto}.rc .carc.multi{padding:12px 14px;gap:10px}
 @media (min-width:600px){.rc .camgrid{grid-template-columns:1fr 1fr}}`;
 customElements.whenDefined('home-panel-card').then(() => {
