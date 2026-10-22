@@ -2485,9 +2485,9 @@ window.customCards.push({ type: 'home-music-card', name: 'Home Music Card', desc
 const HRC_CSS = `:host{display:block}
 .root.rc{height:auto;min-height:calc(100vh - var(--header-height,56px));overflow:visible;padding:12px 12px calc(28px + env(safe-area-inset-bottom));gap:0}
 .rc .rcw{display:flex;flex-direction:column;gap:10px;max-width:640px;margin:0 auto;width:100%}
-.rc .chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:2px 0 4px}
-.rc .chip{display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 14px 0 10px;border-radius:19px;border:1px solid var(--line);background:var(--card);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:var(--shadow);color:var(--text);font:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
-.rc .chip ha-icon{--mdc-icon-size:18px}.rc .chip.ic{padding:0;width:38px;justify-content:center}
+.rc .chips{display:flex;gap:6px;justify-content:safe center;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -12px;padding:2px 12px 4px}.rc .chips::-webkit-scrollbar{display:none}
+.rc .chip{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;height:36px;padding:0 11px 0 8px;border-radius:18px;border:1px solid var(--line);background:var(--card);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:var(--shadow);color:var(--text);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap}
+.rc .chip ha-icon{--mdc-icon-size:18px}.rc .chip.ic{padding:0;width:36px;justify-content:center}
 .rc .hello{padding:16px 18px;font-size:20px;font-weight:700;letter-spacing:-.01em}.rc .hello small{display:block;font-size:13px;font-weight:500;color:var(--sub);margin-top:3px}
 .rc .rtitle{padding:4px 6px 0}.rc .rtitle h1{margin:0;font-size:28px;font-weight:700;letter-spacing:-.02em;line-height:1.15}.rc .rtitle div{font-size:13px;color:var(--sub);font-weight:500;margin-top:3px}
 .rc .sec{font-size:17px;font-weight:700;letter-spacing:-.01em;margin:14px 6px 0}
@@ -2648,10 +2648,10 @@ customElements.whenDefined('home-panel-card').then(() => {
       (c.tfl_lines || []).forEach(id => {
         const l = this._tfl && (this._tfl.lines || []).find(x => x.id === id), t = this._tflInfo(id, l), col = { ok: RGB.green, minor: RGB.amber, bad: RGB.red, idle: RGB.grey }[t.cls] || RGB.grey;
         const lc = { bakerloo: '#B36305', central: '#E32017', circle: '#FFD300', district: '#00782A', 'hammersmith-city': '#F3A9BB', jubilee: '#A0A5A9', metropolitan: '#9B0056', northern: '#000000', piccadilly: '#003688', victoria: '#0098D4', 'waterloo-city': '#95CDBA', elizabeth: '#6950A1' }[id] || '#8a8f98';
-        const word = !this._tfl ? (this._tflErr ? 'No status' : '…') : t.w ? t.w.statusSeverityDescription : '—';
-        out.push(`<button class="chip" data-act="tfl"><span style="width:16px;height:16px;border-radius:50%;background:${lc};box-shadow:0 0 0 3px rgba(${col},.35);flex:0 0 auto"></span><span>${E(t.name.replace(/ line$/i, ''))} · <span style="color:rgb(${col})">${E(word)}</span></span></button>`);
+        const word = !this._tfl ? (this._tflErr ? 'No status' : '…') : t.w ? ({ 'Good Service': 'Good', 'Minor Delays': 'Minor delays', 'Severe Delays': 'Severe delays', 'Part Suspended': 'Part suspended', 'Part Closure': 'Part closed', 'Planned Closure': 'Closed', 'Reduced Service': 'Reduced' }[t.w.statusSeverityDescription] || t.w.statusSeverityDescription) : '—';
+        out.push(`<button class="chip" data-act="tfl"><span style="width:14px;height:14px;border-radius:50%;background:${lc};box-shadow:0 0 0 3px rgba(${col},.35);flex:0 0 auto"></span><span>${E(t.name.replace(/ line$/i, ''))} · <span style="color:rgb(${col})">${E(word)}</span></span></button>`);
       });
-      const w = this._st(c.weather); if (w) out.push(`<button class="chip" data-act="wx"><ha-icon icon="${WXI[w.state] || 'mdi:weather-cloudy'}" style="color:rgb(${RGB.blue})"></ha-icon><span>${E(WXL[w.state] || w.state)} · ${Math.round(w.attributes.temperature)}${E(w.attributes.temperature_unit || '°')}</span></button>`);
+      const w = this._st(c.weather); if (w) out.push(`<button class="chip" data-act="wx"><ha-icon icon="${WXI[w.state] || 'mdi:weather-cloudy'}" style="color:rgb(${RGB.blue})"></ha-icon><span>${Math.round(w.attributes.temperature)}°</span></button>`);
       return out.join('');
     }
     _renderTfl() { if (this._built && this._hass && this._$('chips')) this._$('chips').innerHTML = this._chips(this._mode === 'room'); }
