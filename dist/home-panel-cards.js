@@ -2488,7 +2488,7 @@ window.customCards.push({ type: 'home-music-card', name: 'Home Music Card', desc
    One card, two modes:
    - home:  config has `rooms` (list of floors) → chips, greeting, shortcuts, people, room tiles
    - room:  config has `room` → chips with back, temperature/humidity graphs, every device in the room */
-const HRC_CSS = `:host{display:block}
+const HRC_CSS = `:host{display:block}.rc .rheat .ht2{height:150px;box-sizing:border-box}
 .root.rc{height:auto;min-height:calc(100vh - var(--header-height,56px));overflow:visible;padding:12px 12px calc(28px + env(safe-area-inset-bottom));gap:0}
 .rc .rcw{display:flex;flex-direction:column;gap:10px;max-width:640px;margin:0 auto;width:100%}
 .rc .chips{display:flex;gap:4px;justify-content:safe center;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -12px;padding:2px 8px 4px}.rc .chips::-webkit-scrollbar{display:none}
@@ -2540,7 +2540,7 @@ customElements.whenDefined('home-panel-card').then(() => {
         cameras: c.room ? ids(r.cameras) : [],
         media_players: c.room ? (r.media || []).map(m => typeof m === 'string' ? m : m.entity) : (c.media_players || []),
         cars: c.room ? r.cars || [] : c.cars || [], vacuum: c.room ? r.vacuum || null : null, doorbell: c.room ? r.doorbell || null : null,
-        heating: [], lights: [], calendars: c.calendars || [], tfl_lines: c.tfl_lines || [], energy: null, world_clocks: c.world_clocks || []
+        heating: c.room && r.climate ? [{ entity: r.climate, name: r.climate_name || c.room.name }] : [], lights: [], calendars: c.calendars || [], tfl_lines: c.tfl_lines || [], energy: null, world_clocks: c.world_clocks || []
       }));
       this._mode = c.rooms ? 'home' : 'room'; this._hist = {}; this._histAt = 0;
     }
@@ -2559,7 +2559,7 @@ customElements.whenDefined('home-panel-card').then(() => {
         ${r.temperature || r.humidity ? '<div class="g2" id="graphs"></div>' : ''}
         ${c.cameras.length ? '<div class="sec">Cameras</div><div class="card cams"><div class="camgrid" id="camgrid"></div></div>' : ''}
         <div class="sec" id="devh">Devices</div>
-        ${r.climate ? '<div id="clim"></div>' : ''}
+        ${r.climate ? '<div class="heat rheat" id="heat"></div>' : ''}
         ${(r.lights || []).length ? '<div class="g4 lt4" id="lts"></div>' : ''}
         ${(r.switches || []).length ? '<div class="g2" id="sws"></div>' : ''}
         ${(r.sensors || []).length ? '<div class="g2" id="sns"></div>' : ''}
@@ -2696,7 +2696,7 @@ customElements.whenDefined('home-panel-card').then(() => {
       const lts = ids(r.lights), on = lts.filter(l => (this._st(l.entity) || {}).state === 'on').length, t = this._val(r.temperature, 1);
       $('rsub').textContent = [t != null ? t + '°' : '', lts.length ? (on ? on + ' of ' + lts.length + ' lights on' : 'Lights off') : ''].filter(Boolean).join(' · ');
       this._renderGraphs();
-      if ($('clim')) $('clim').innerHTML = this._climCard(r.climate, r.climate_name);
+      this._renderHeat();
       if ($('lts')) $('lts').innerHTML = lts.map(l => this._lightCard(l)).join('');
       if ($('sws')) $('sws').innerHTML = ids(r.switches).map(x => this._switchCard(x)).join('');
       if ($('sns')) $('sns').innerHTML = ids(r.sensors).map(x => this._sensorCard(x)).join('');
