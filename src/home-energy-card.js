@@ -100,6 +100,8 @@ class HomeEnergyCard extends HTMLElement {
     L.col = L.p == null ? 'var(--sub)' : L.p < 1000 ? '#22a06b' : L.p < 3000 ? '#d97706' : '#e5484d';
     L.word = L.p == null ? '' : L.p < 1000 ? 'Low' : L.p < 3000 ? 'Moderate' : 'High';
     L.pw = L.p == null ? '—' : L.p < 1000 ? Math.round(L.p) + '<small>W</small>' : (L.p / 1000).toFixed(L.p < 10000 ? 2 : 1) + '<small>kW</small>';
+    L.rate = n(k.live_rate || (this._c.rates || {}).electricity_rate); L.ph = L.p != null && L.rate != null ? L.p / 1000 * L.rate : null;
+    L.phs = L.ph == null ? '' : L.ph < 1 ? Math.round(L.ph * 100) + 'p/hr' : '£' + L.ph.toFixed(2) + '/hr';
     return L;
   }
   _renderLive() {
@@ -111,7 +113,7 @@ class HomeEnergyCard extends HTMLElement {
       cmp = (+last.d === +y ? 'Yesterday' : HDOW[last.d.getDay()]) + ' <b>' + (last.ec != null || last.gc != null ? m((last.ec || 0) + (last.gc || 0)) : Math.round((last.e || 0) + (last.g || 0)) + ' kWh') + '</b>'; }
     const kw = (e, g) => [e != null ? (e < 100 ? e.toFixed(1) : Math.round(e)) + ' elec' : '', k.gas || k.today_gas ? (g != null ? (g < 100 ? g.toFixed(1) : Math.round(g)) : '—') + ' gas' : ''].filter(Boolean).join(' · ') + ' kWh';
     const blk = (lbl, col, v, u, sub, cls, vs) => `<div class="blk${cls ? ' ' + cls : ''}"><div class="lbl">${col ? `<i${col.cls ? ` class="${col.cls}"` : ''} style="background:${col.c || col}"></i>` : ''}${lbl}</div><div class="v"${vs ? ` style="${vs}"` : ''}>${v}${u ? `<small>${u}</small>` : ''}</div><div class="s">${sub}</div></div>`;
-    el.innerHTML = blk('Using now', { c: L.col, cls: 'lvd' }, L.pw, '', L.word + (L.at ? ' · ' + hecHm(L.at) : ''), 'now', 'color:' + L.col)
+    el.innerHTML = blk('Using now', { c: L.col, cls: 'lvd' }, L.pw, '', [L.phs, L.word].filter(Boolean).join(' · ') + (L.at ? ' · ' + hecHm(L.at) : ''), 'now', 'color:' + L.col)
       + blk('Today so far', '', L.cost != null ? m(L.cost) : '—', '', (L.e != null || L.g != null ? ((L.e || 0) + (L.g || 0)).toFixed(1) + ' kWh' : '') + (cmp ? ' · ' + cmp : ''), 'tot')
       + blk('Last 7 days', '', m(EC + GC), '', kw(E, G))
       + blk('Month to date', '', t.n ? m(t.ec + t.gc) : '—', '', t.n ? `1–${t.to.getDate()} ${HMON[t.to.getMonth()]} · ${Math.round(t.e + t.g)} kWh` : 'No data yet');
