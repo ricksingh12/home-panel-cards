@@ -2534,7 +2534,7 @@ customElements.whenDefined('home-panel-card').then(() => {
         cameras: c.room ? ids(r.cameras) : [],
         media_players: c.room ? (r.media || []).map(m => typeof m === 'string' ? m : m.entity) : (c.media_players || []),
         cars: c.room ? r.cars || [] : [], vacuum: c.room ? r.vacuum || null : null, doorbell: c.room ? r.doorbell || null : null,
-        heating: [], lights: [], calendars: [], tfl_lines: [], energy: null, world_clocks: c.world_clocks || []
+        heating: [], lights: [], calendars: [], tfl_lines: c.tfl_lines || [], energy: null, world_clocks: c.world_clocks || []
       }));
       this._mode = c.rooms ? 'home' : 'room'; this._hist = {}; this._histAt = 0;
     }
@@ -2564,7 +2564,7 @@ customElements.whenDefined('home-panel-card').then(() => {
       s.innerHTML = `<style>${window.__HPC_CSS || ''}</style><style>${window.__HPC_CSS2 || ''}</style><style>${HRC_CSS}</style><div class="root rc"><div class="rcw">${body}</div>
         <div class="ov" id="wxov" data-act="closebg"><div class="pop" id="wxpop"></div></div>
         <div class="ov npov" id="npov"></div>
-        <div class="ov" id="calov"><div class="pop" id="calpop"></div></div><div class="ov" id="clkov"><div class="pop" id="clkpop"></div></div><div class="ov" id="tflov"><div class="pop" id="tflpop"></div></div><div class="ov" id="enov"><div class="pop" id="enpop"></div></div>
+        <div class="ov" id="calov"><div class="pop" id="calpop"></div></div><div class="ov" id="clkov"><div class="pop" id="clkpop"></div></div><div class="ov" id="tflov" data-act="closebg"><div class="pop" id="tflpop"></div></div><div class="ov" id="enov"><div class="pop" id="enpop"></div></div>
         <div class="ov" id="carov" data-act="closebg"><div class="pop" id="carpop"></div></div>
         <div class="ov" id="alov" data-act="closebg"><div class="pop apop" id="alpop"></div></div>
         <div class="ov" id="vacov" data-act="closebg"><div class="pop" id="vacpop"></div></div>
@@ -2645,9 +2645,16 @@ customElements.whenDefined('home-panel-card').then(() => {
       const c = this._c, out = [];
       if (back) out.push('<button class="chip ic" data-act="rback" title="Back"><ha-icon icon="mdi:arrow-left"></ha-icon></button>');
       if (c.alarm) { const i = this._alInfo(); if (i) { const col = i.cls === 'disarmed' ? RGB.green : i.cls === 'home' || i.cls === 'wait' ? RGB.amber : RGB.red; out.push(`<button class="chip" data-act="alarm"><ha-icon icon="${i.icon}" style="color:rgb(${col})"></ha-icon><span>${E(i.label.replace(' · ', ' '))}</span></button>`); } }
+      (c.tfl_lines || []).forEach(id => {
+        const l = this._tfl && (this._tfl.lines || []).find(x => x.id === id), t = this._tflInfo(id, l), col = { ok: RGB.green, minor: RGB.amber, bad: RGB.red, idle: RGB.grey }[t.cls] || RGB.grey;
+        const lc = { bakerloo: '#B36305', central: '#E32017', circle: '#FFD300', district: '#00782A', 'hammersmith-city': '#F3A9BB', jubilee: '#A0A5A9', metropolitan: '#9B0056', northern: '#000000', piccadilly: '#003688', victoria: '#0098D4', 'waterloo-city': '#95CDBA', elizabeth: '#6950A1' }[id] || '#8a8f98';
+        const word = !this._tfl ? (this._tflErr ? 'No status' : '…') : t.w ? t.w.statusSeverityDescription : '—';
+        out.push(`<button class="chip" data-act="tfl"><span style="width:16px;height:16px;border-radius:50%;background:${lc};box-shadow:0 0 0 3px rgba(${col},.35);flex:0 0 auto"></span><span>${E(t.name.replace(/ line$/i, ''))} · <span style="color:rgb(${col})">${E(word)}</span></span></button>`);
+      });
       const w = this._st(c.weather); if (w) out.push(`<button class="chip" data-act="wx"><ha-icon icon="${WXI[w.state] || 'mdi:weather-cloudy'}" style="color:rgb(${RGB.blue})"></ha-icon><span>${E(WXL[w.state] || w.state)} · ${Math.round(w.attributes.temperature)}${E(w.attributes.temperature_unit || '°')}</span></button>`);
       return out.join('');
     }
+    _renderTfl() { if (this._built && this._hass && this._$('chips')) this._$('chips').innerHTML = this._chips(this._mode === 'room'); }
     _val(id, digits) { const e = id && this._st(id), v = e && NUM(e.state); return v == null ? null : (digits != null ? v.toFixed(digits) : Math.round(v)); }
     _render() { if (this._mode === 'home') this._renderHome(); else this._renderRoom(); }
     /* ---------- home view ---------- */
