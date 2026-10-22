@@ -2491,9 +2491,9 @@ window.customCards.push({ type: 'home-music-card', name: 'Home Music Card', desc
 const HRC_CSS = `:host{display:block}
 .root.rc{height:auto;min-height:calc(100vh - var(--header-height,56px));overflow:visible;padding:12px 12px calc(28px + env(safe-area-inset-bottom));gap:0}
 .rc .rcw{display:flex;flex-direction:column;gap:10px;max-width:640px;margin:0 auto;width:100%}
-.rc .chips{display:flex;gap:6px;justify-content:safe center;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -12px;padding:2px 12px 4px}.rc .chips::-webkit-scrollbar{display:none}
-.rc .chip{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;height:36px;padding:0 11px 0 8px;border-radius:18px;border:1px solid var(--line);background:var(--card);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:var(--shadow);color:var(--text);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap}
-.rc .chip ha-icon{--mdc-icon-size:18px}.rc .chip.ic{padding:0;width:36px;justify-content:center}
+.rc .chips{display:flex;gap:4px;justify-content:safe center;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -12px;padding:2px 8px 4px}.rc .chips::-webkit-scrollbar{display:none}
+.rc .chips>.chip{flex:0 0 auto;display:inline-flex;align-items:center;gap:4px;height:36px;padding:0 10px 0 7px;border-radius:18px;border:1px solid var(--line);background:var(--card);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:var(--shadow);color:var(--text);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap}
+.rc .chips>.chip ha-icon{--mdc-icon-size:18px}.rc .chips>.chip.ic{padding:0;width:36px;justify-content:center}
 .rc .hello{padding:16px 18px;font-size:20px;font-weight:700;letter-spacing:-.01em}.rc .hello small{display:block;font-size:13px;font-weight:500;color:var(--sub);margin-top:3px}
 .rc .rtitle{padding:4px 6px 0}.rc .rtitle h1{margin:0;font-size:28px;font-weight:700;letter-spacing:-.02em;line-height:1.15}.rc .rtitle div{font-size:13px;color:var(--sub);font-weight:500;margin-top:3px}
 .rc .sec{font-size:17px;font-weight:700;letter-spacing:-.01em;margin:14px 6px 0}
@@ -2540,7 +2540,7 @@ customElements.whenDefined('home-panel-card').then(() => {
         cameras: c.room ? ids(r.cameras) : [],
         media_players: c.room ? (r.media || []).map(m => typeof m === 'string' ? m : m.entity) : (c.media_players || []),
         cars: c.room ? r.cars || [] : c.cars || [], vacuum: c.room ? r.vacuum || null : null, doorbell: c.room ? r.doorbell || null : null,
-        heating: [], lights: [], calendars: [], tfl_lines: c.tfl_lines || [], energy: null, world_clocks: c.world_clocks || []
+        heating: [], lights: [], calendars: c.calendars || [], tfl_lines: c.tfl_lines || [], energy: null, world_clocks: c.world_clocks || []
       }));
       this._mode = c.rooms ? 'home' : 'room'; this._hist = {}; this._histAt = 0;
     }
@@ -2654,7 +2654,7 @@ customElements.whenDefined('home-panel-card').then(() => {
       (c.tfl_lines || []).forEach(id => {
         const l = this._tfl && (this._tfl.lines || []).find(x => x.id === id), t = this._tflInfo(id, l), col = { ok: RGB.green, minor: RGB.amber, bad: RGB.red, idle: RGB.grey }[t.cls] || RGB.grey;
         const lc = { bakerloo: '#B36305', central: '#E32017', circle: '#FFD300', district: '#00782A', 'hammersmith-city': '#F3A9BB', jubilee: '#A0A5A9', metropolitan: '#9B0056', northern: '#000000', piccadilly: '#003688', victoria: '#0098D4', 'waterloo-city': '#95CDBA', elizabeth: '#6950A1' }[id] || '#8a8f98';
-        const word = !this._tfl ? (this._tflErr ? 'No status' : '…') : t.w ? ({ 'Good Service': 'Good', 'Minor Delays': 'Minor delays', 'Severe Delays': 'Severe delays', 'Part Suspended': 'Part suspended', 'Part Closure': 'Part closed', 'Planned Closure': 'Closed', 'Reduced Service': 'Reduced' }[t.w.statusSeverityDescription] || t.w.statusSeverityDescription) : '—';
+        const word = !this._tfl ? (this._tflErr ? 'No status' : '…') : t.w ? ({ 'Good Service': 'Good', 'Minor Delays': 'Delays', 'Severe Delays': 'Severe', 'Part Suspended': 'Part susp.', 'Part Closure': 'Part closed', 'Planned Closure': 'Closed', 'Reduced Service': 'Reduced' }[t.w.statusSeverityDescription] || t.w.statusSeverityDescription) : '—';
         out.push(`<button class="chip" data-act="tfl"><span style="width:14px;height:14px;border-radius:50%;background:${lc};box-shadow:0 0 0 3px rgba(${col},.35);flex:0 0 auto"></span><span style="color:rgb(${col})">${E(word)}</span></button>`);
       });
       if (this._mode === 'home' && this._cars.length) {
@@ -2662,9 +2662,14 @@ customElements.whenDefined('home-panel-card').then(() => {
         const col = lo == null ? RGB.grey : lo < 20 ? RGB.red : lo < 50 ? RGB.amber : RGB.green;
         out.push(`<button class="chip" data-act="car" data-i="0"><ha-icon icon="${chg ? 'mdi:car-electric' : 'mdi:car'}" style="color:rgb(${col})"></ha-icon><span>${cs.map(x => `<span${x.charging ? ' style="color:rgb(' + RGB.green + ')"' : ''}>${x.soc != null ? Math.round(x.soc) + '%' : '—'}</span>`).join(' · ')}</span></button>`);
       }
+      if ((c.calendars || []).length) {
+        const now = new Date(), eod = new Date(now); eod.setHours(24, 0, 0, 0); const n = this._events ? this._events.filter(e => e.f > now && e.s < eod).length : null;
+        out.push(`<button class="chip" data-act="cal"><ha-icon icon="mdi:calendar-today" style="color:rgb(${n ? RGB.purple : RGB.grey})"></ha-icon><span>${n == null ? '…' : n}</span></button>`);
+      }
       const w = this._st(c.weather); if (w) out.push(`<button class="chip" data-act="wx"><ha-icon icon="${WXI[w.state] || 'mdi:weather-cloudy'}" style="color:rgb(${RGB.blue})"></ha-icon><span>${Math.round(w.attributes.temperature)}°</span></button>`);
       return out.join('');
     }
+    _renderCal() { this._renderTfl(); if (this._calOpen) this._renderCalPop(); }
     _renderTfl() { if (this._built && this._hass && this._$('chips')) this._$('chips').innerHTML = this._chips(this._mode === 'room'); }
     _val(id, digits) { const e = id && this._st(id), v = e && NUM(e.state); return v == null ? null : (digits != null ? v.toFixed(digits) : Math.round(v)); }
     _render() { if (this._mode === 'home') this._renderHome(); else this._renderRoom(); }
