@@ -2505,7 +2505,7 @@ const HRC_CSS = `:host{display:block}
 .rc .mctl{display:flex;align-items:center;gap:8px}.rc .mctl button{flex:1;height:40px;border:0;border-radius:12px;background:var(--card2);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;font:inherit;font-weight:600}.rc .mctl button ha-icon{--mdc-icon-size:20px}.rc .mctl .tv{flex:1.2;text-align:center;font-size:18px;font-weight:700}
 .rc .mbr{position:absolute;left:0;bottom:0;height:4px;background:rgb(var(--rgb));opacity:.75;border-radius:0 2px 2px 0}
 .rc .na{opacity:.5}
-.rc .vt{align-items:center;text-align:center;padding:14px 8px 12px;gap:8px}.rc .vt .msh{width:46px;height:46px}.rc .vt .mp{font-size:13px}
+.rc .vt{align-items:center;text-align:center;padding:14px 8px 12px;gap:8px}.rc .lt4{gap:8px}.rc .lt4 .vt{padding:13px 6px 11px;gap:7px}.rc .lt4 .mp{font-size:12px;font-weight:700;line-height:1.2;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere;min-height:2.4em;max-width:100%}.rc .lt4 .ms{font-size:11px;margin-top:-4px}.rc .lt4 .mbr{height:3px}.rc .vt .msh{width:46px;height:46px}.rc .vt .mp{font-size:13px}
 .rc .pc{align-items:center;text-align:center;padding:16px 10px 14px;gap:8px}.rc .pc .av{position:relative;width:60px;height:60px}.rc .pc .av img,.rc .pc .av span.ph{width:60px;height:60px;border-radius:50%;object-fit:cover;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:var(--sub)}
 .rc .pc .bdg{position:absolute;right:-2px;top:-2px;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;border:2px solid var(--card)}.rc .pc .bdg ha-icon{--mdc-icon-size:13px}.rc .pc .mp{font-size:15px}
 .rc .rt.lit .msh{background:rgba(240,138,36,.22);color:#f08a24}
@@ -2560,7 +2560,7 @@ customElements.whenDefined('home-panel-card').then(() => {
         ${c.cameras.length ? '<div class="sec">Cameras</div><div class="card cams"><div class="camgrid" id="camgrid"></div></div>' : ''}
         <div class="sec" id="devh">Devices</div>
         ${r.climate ? '<div id="clim"></div>' : ''}
-        ${(r.lights || []).length ? '<div class="g2" id="lts"></div>' : ''}
+        ${(r.lights || []).length ? '<div class="g4 lt4" id="lts"></div>' : ''}
         ${(r.switches || []).length ? '<div class="g2" id="sws"></div>' : ''}
         ${(r.sensors || []).length ? '<div class="g2" id="sns"></div>' : ''}
         ${(r.values || []).length ? '<div class="g2" id="vals"></div>' : ''}
@@ -2720,7 +2720,7 @@ customElements.whenDefined('home-panel-card').then(() => {
     _lightCard(l) {
       const e = this._st(l.entity), on = e && e.state === 'on', b = e && e.attributes.brightness, na = !e || e.state === 'unavailable', pct = on && b ? Math.max(1, Math.round(b / 2.55)) : on ? 100 : 0;
       const st = !e ? 'Missing' : na ? 'Unavailable' : on ? (b ? pct + '%' : 'On') : 'Off', rgb = on && e.attributes.rgb_color ? e.attributes.rgb_color.join(',') : RGB.yellow;
-      return `<div class="card mc2 ml${na ? ' na' : ''}" data-light="${E(l.entity)}" style="--rgb:${on ? rgb : RGB.grey}"><div class="mrow"><span class="msh"><ha-icon icon="${E(l.icon || (on ? 'mdi:lightbulb' : 'mdi:lightbulb-outline'))}"></ha-icon></span><div class="mx"><div class="mp">${E(l.name || (e && e.attributes.friendly_name) || l.entity)}</div><div class="ms">${st}</div></div></div>${on ? `<i class="mbr" style="width:${pct}%"></i>` : ''}</div>`;
+      return `<div class="card mc2 vt ml${na ? ' na' : ''}" data-light="${E(l.entity)}" style="--rgb:${on ? rgb : RGB.grey}"><span class="msh"><ha-icon icon="${E(l.icon || (on ? 'mdi:lightbulb' : 'mdi:lightbulb-outline'))}"></ha-icon></span><div class="mp">${E(l.name || (e && e.attributes.friendly_name) || l.entity)}</div><div class="ms">${st}</div>${on ? `<i class="mbr" style="width:${pct}%"></i>` : ''}</div>`;
     }
     _switchCard(x) {
       const e = this._st(x.entity), on = e && e.state === 'on', na = !e || e.state === 'unavailable', pw = x.power && this._val(x.power, 1);
