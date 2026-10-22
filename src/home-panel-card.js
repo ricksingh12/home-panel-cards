@@ -410,7 +410,7 @@ const PPLCSS = `.ppl{flex:0 0 auto;padding:12px 14px;display:grid;grid-template-
 @container side (max-height:340px){.music.big{padding:10px 14px;gap:12px}.music.big .mart{width:76px;height:76px;border-radius:12px}.music.art{min-height:120px}.music.big .mn{font-size:16px;margin-top:2px}.music.big .mc{margin-top:6px}.music.big .mc button{width:34px;height:34px}.music.big .mc .pp{width:40px;height:40px}}
 .cal{padding:12px 16px}.cal .head{margin-bottom:4px}.cal .empty{padding:4px 0;font-size:13px}
 .ev2{display:grid;grid-template-columns:auto 3px minmax(0,1fr);align-items:center;gap:9px;padding:6px 0;border-bottom:1px solid var(--line);min-width:0}.ev2:last-child{border:0}
-.ev2 .tm{font-size:12px;color:var(--sub);font-weight:600;width:84px;white-space:nowrap;overflow:hidden}.ev2 .tm b{color:var(--text);font-weight:700;margin-right:4px}
+.ev2 .tm{font-size:12px;color:var(--sub);font-weight:600;width:116px;white-space:nowrap;overflow:hidden}.ev2 .tm b{color:var(--text);font-weight:700;margin-right:4px}
 .ev2 i{width:3px;height:18px;border-radius:2px;display:block}.ev2 .t{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ev2 .w{display:none}.ev2.live .tm{color:#22a06b}
 .cdiv{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--sub);margin-top:8px;padding:6px 0 2px;border-top:1px solid var(--line)}
@@ -1169,7 +1169,7 @@ class HomePanelCard extends HTMLElement {
   _evRow(e, showDay) {
     const name = this._c.calendars[e.ci].name || '', now = new Date(), live = !e.allDay && e.s <= now && e.f > now;
     const ts = d => { const h = d.getHours(), m = d.getMinutes(); return (h % 12 || 12) + (m ? ':' + pad(m) : '') + (h < 12 ? 'am' : 'pm'); };
-    const dl = d => { const t = new Date(); t.setHours(0, 0, 0, 0); const x = new Date(d); x.setHours(0, 0, 0, 0); const n = Math.round((x - t) / 86400000); return n === 1 ? 'Tmrw' : n < 7 ? DOW[x.getDay()] : x.getDate() + ' ' + MON[x.getMonth()]; };
+    const dl = d => { const t = new Date(); t.setHours(0, 0, 0, 0); const x = new Date(d); x.setHours(0, 0, 0, 0); const n = Math.round((x - t) / 86400000); return n === 1 ? 'Tomorrow' : n < 7 ? DOW[x.getDay()] : x.getDate() + ' ' + MON[x.getMonth()]; };
     const time = live ? 'Now' : e.allDay ? 'All day' : ts(e.s);
     return `<div class="ev2${live ? ' live' : ''}"><span class="tm">${showDay ? `<b>${dl(e.s)}</b>` : ''}${time}</span><i style="background:${this._calColor(e.ci)}"></i><span class="t">${esc(e.title)}</span><span class="w">${esc(name)}</span></div>`;
   }
@@ -1203,7 +1203,7 @@ class HomePanelCard extends HTMLElement {
           : `<div class="chip" style="border-color:${col}"><div class="ct">${when}</div><div class="tt">${esc(e.title)}</div></div>`;
       }).join('');
       const dow = ds.getDay();
-      cells += `<div class="cday ${i === 0 ? 'today' : ''} ${dow === 0 || dow === 6 ? 'we' : ''}"><div class="dh"><span>${i === 0 ? 'Today' : i === 1 ? 'Tmrw' : DOW[dow]}</span><b>${ds.getDate()}</b></div>
+      cells += `<div class="cday ${i === 0 ? 'today' : ''} ${dow === 0 || dow === 6 ? 'we' : ''}"><div class="dh"><span>${i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : DOW[dow]}</span><b>${ds.getDate()}</b></div>
         ${chips || '<div class="none">Free</div>'}</div>`;
     }
     const end = new Date(t0); end.setDate(end.getDate() + 13);
