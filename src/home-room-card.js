@@ -53,7 +53,7 @@ customElements.whenDefined('home-panel-card').then(() => {
         weather: c.weather || 'weather.none',
         cameras: c.room ? ids(r.cameras) : [],
         media_players: c.room ? (r.media || []).map(m => typeof m === 'string' ? m : m.entity) : (c.media_players || []),
-        cars: c.room ? r.cars || [] : [], vacuum: c.room ? r.vacuum || null : null, doorbell: c.room ? r.doorbell || null : null,
+        cars: c.room ? r.cars || [] : c.cars || [], vacuum: c.room ? r.vacuum || null : null, doorbell: c.room ? r.doorbell || null : null,
         heating: [], lights: [], calendars: [], tfl_lines: c.tfl_lines || [], energy: null, world_clocks: c.world_clocks || []
       }));
       this._mode = c.rooms ? 'home' : 'room'; this._hist = {}; this._histAt = 0;
@@ -135,7 +135,7 @@ customElements.whenDefined('home-panel-card').then(() => {
     /* ---------- data ---------- */
     _watch() {
       const c = this._c, r = c.room || {}, out = [c.sun, c.weather, c.alarm && c.alarm.entity];
-      if (this._mode === 'home') { (c.people || []).forEach(p => out.push(p.tracker, p.person, p.geocoded)); (c.rooms || []).forEach(f => (f.rooms || []).forEach(x => out.push(x.temperature, ...ids(x.lights).map(l => l.entity)))); }
+      if (this._mode === 'home') { (c.people || []).forEach(p => out.push(p.tracker, p.person, p.geocoded)); this._cars.forEach(k => out.push(k.battery, k.charging, k.power)); (c.rooms || []).forEach(f => (f.rooms || []).forEach(x => out.push(x.temperature, ...ids(x.lights).map(l => l.entity)))); }
       else { out.push(r.temperature, r.humidity, r.climate, ...ids(r.lights).map(l => l.entity), ...ids(r.switches).map(l => l.entity), ...ids(r.sensors).map(l => l.entity), ...ids(r.values).map(l => l.entity), ...c.media_players, ...c.cameras.flatMap(x => [x.entity, x.motion])); }
       return out.filter(Boolean);
     }
@@ -164,13 +164,18 @@ customElements.whenDefined('home-panel-card').then(() => {
     _chips(back) {
       const c = this._c, out = [];
       if (back) out.push('<button class="chip ic" data-act="rback" title="Back"><ha-icon icon="mdi:arrow-left"></ha-icon></button>');
-      if (c.alarm) { const i = this._alInfo(); if (i) { const col = i.cls === 'disarmed' ? RGB.green : i.cls === 'home' || i.cls === 'wait' ? RGB.amber : RGB.red; out.push(`<button class="chip" data-act="alarm"><ha-icon icon="${i.icon}" style="color:rgb(${col})"></ha-icon><span>${E(i.label.replace(' · ', ' '))}</span></button>`); } }
+      if (c.alarm) { const i = this._alInfo(); if (i) { const col = i.cls === 'disarmed' ? RGB.green : i.cls === 'home' || i.cls === 'wait' ? RGB.amber : RGB.red; out.push(`<button class="chip" data-act="alarm"><ha-icon icon="${i.icon}" style="color:rgb(${col})"></ha-icon><span>${E(({ disarmed: 'Off', armed_home: 'Home', armed_away: 'Away', armed_night: 'Night', arming: 'Arming', pending: 'Entry', triggered: 'ALARM', unavailable: '—' })[i.s] || i.label)}</span></button>`); } }
       (c.tfl_lines || []).forEach(id => {
         const l = this._tfl && (this._tfl.lines || []).find(x => x.id === id), t = this._tflInfo(id, l), col = { ok: RGB.green, minor: RGB.amber, bad: RGB.red, idle: RGB.grey }[t.cls] || RGB.grey;
         const lc = { bakerloo: '#B36305', central: '#E32017', circle: '#FFD300', district: '#00782A', 'hammersmith-city': '#F3A9BB', jubilee: '#A0A5A9', metropolitan: '#9B0056', northern: '#000000', piccadilly: '#003688', victoria: '#0098D4', 'waterloo-city': '#95CDBA', elizabeth: '#6950A1' }[id] || '#8a8f98';
         const word = !this._tfl ? (this._tflErr ? 'No status' : '…') : t.w ? ({ 'Good Service': 'Good', 'Minor Delays': 'Minor delays', 'Severe Delays': 'Severe delays', 'Part Suspended': 'Part suspended', 'Part Closure': 'Part closed', 'Planned Closure': 'Closed', 'Reduced Service': 'Reduced' }[t.w.statusSeverityDescription] || t.w.statusSeverityDescription) : '—';
-        out.push(`<button class="chip" data-act="tfl"><span style="width:14px;height:14px;border-radius:50%;background:${lc};box-shadow:0 0 0 3px rgba(${col},.35);flex:0 0 auto"></span><span>${E(t.name.replace(/ line$/i, ''))} · <span style="color:rgb(${col})">${E(word)}</span></span></button>`);
+        out.push(`<button class="chip" data-act="tfl"><span style="width:14px;height:14px;border-radius:50%;background:${lc};box-shadow:0 0 0 3px rgba(${col},.35);flex:0 0 auto"></span><span style="color:rgb(${col})">${E(word)}</span></button>`);
       });
+      if (this._mode === 'home' && this._cars.length) {
+        const cs = this._cars.map((_, i) => this._carInfo(i)), soc = cs.map(x => x.soc).filter(v => v != null), lo = soc.length ? Math.min(...soc) : null, chg = cs.some(x => x.charging);
+        const col = lo == null ? RGB.grey : lo < 20 ? RGB.red : lo < 50 ? RGB.amber : RGB.green;
+        out.push(`<button class="chip" data-act="car" data-i="0"><ha-icon icon="${chg ? 'mdi:car-electric' : 'mdi:car'}" style="color:rgb(${col})"></ha-icon><span>${cs.map(x => `<span${x.charging ? ' style="color:rgb(' + RGB.green + ')"' : ''}>${x.soc != null ? Math.round(x.soc) + '%' : '—'}</span>`).join(' · ')}</span></button>`);
+      }
       const w = this._st(c.weather); if (w) out.push(`<button class="chip" data-act="wx"><ha-icon icon="${WXI[w.state] || 'mdi:weather-cloudy'}" style="color:rgb(${RGB.blue})"></ha-icon><span>${Math.round(w.attributes.temperature)}°</span></button>`);
       return out.join('');
     }
