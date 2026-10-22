@@ -2,7 +2,7 @@
 /* the shared pop-up host is defined in hpc-pops.js */
 const HEC_CSS = `.er{position:relative;background:var(--bg);height:calc(100vh - var(--header-height,56px));min-height:660px;padding:18px;box-sizing:border-box;display:flex;flex-direction:column}
 .eh{display:flex;align-items:center;gap:12px;margin:0 4px 14px}.eh h1{font-size:28px;font-weight:700;letter-spacing:-.02em;margin:0;line-height:1.1}.eh .c{font-size:14px;color:var(--sub);font-weight:500}
-.eg{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto auto;gap:14px}.eg>.heat{grid-column:1 / -1;min-height:128px}.eg>.heat .ht2{height:132px;box-sizing:border-box}
+.eg{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto auto;gap:14px}.eg>.heat,.eg>.hrow2{grid-column:1 / -1;min-height:128px}.eg .heat .ht2{height:132px;box-sizing:border-box}.hrow2{display:flex;gap:14px}.hrow2>.heat{flex:4 1 0;min-width:0}.lnd{flex:1.15 1 0;min-width:250px;height:132px;box-sizing:border-box;padding:10px 12px;display:flex;flex-direction:column;gap:6px;overflow:hidden}.lnd .lh{display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:700;letter-spacing:.07em;color:var(--sub)}.lnd .lh span:last-child{letter-spacing:0;font-weight:600}.lap{flex:1;display:flex;align-items:center;gap:10px;min-height:0;cursor:pointer;border-radius:14px;padding:2px 4px;margin:0 -4px}.lap .li{width:36px;height:36px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:rgba(var(--rgb),.16);color:rgb(var(--rgb))}.lap .li ha-icon{--mdc-icon-size:20px}.lap.run .li{animation:lvp 2s infinite}.lap .lt{flex:1;min-width:0}.lap .ln{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lap .ls{font-size:11.5px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lap.run .ls{color:rgb(var(--rgb))}.lap .lr{text-align:right;flex:0 0 auto}.lap .lr b{display:block;font-size:16px;font-weight:600;line-height:1.1}.lap .lr small{font-size:11px;color:var(--sub)}
 .euse{padding:14px 16px;display:flex;flex-direction:column;min-height:0}.euse .head{margin-bottom:2px}.euse .head img{width:30px;height:30px;object-fit:contain}
 .ek{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:10px}.ek .blk{padding:10px 12px;border-radius:16px}.ek .lbl{text-transform:none;letter-spacing:0;display:flex;align-items:center;gap:6px}.ek .lbl i{width:9px;height:9px;border-radius:3px;display:block}
 .ek .v{font-size:22px;font-weight:600;margin-top:2px}.ek .v small{font-size:12px;color:var(--sub);font-weight:500;margin-left:3px}.ek .s{font-size:12px;color:var(--sub);margin-top:1px}.ek .blk.tot .v{color:var(--accent)}
@@ -29,7 +29,7 @@ const HEC_CSS = `.er{position:relative;background:var(--bg);height:calc(100vh - 
 .ecar .cd{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 10px;margin-top:10px}.ecar .cd .k{font-size:11px;color:var(--sub);font-weight:600}.ecar .cd .v{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ecar .ch .cacts{margin:0 0 0 auto;gap:8px;flex-wrap:nowrap}.ecar .ch .wm{margin-left:10px}.ecar .cacts button{padding:7px 12px;font-size:13px}.ecar .cacts button ha-icon{--mdc-icon-size:16px}
 @media (max-width:1000px){.eg{grid-template-columns:1fr;grid-template-rows:auto}.er{height:auto}.ek{grid-template-columns:1fr 1fr}}
-@media (max-width:600px){.er{padding:12px;min-height:0}.eh{flex-wrap:wrap;gap:4px 10px}.eh h1{font-size:24px}.euse .head{flex-wrap:wrap;gap:6px}.eseg{margin-left:0}.euse .ech{min-height:150px}.eg>.heat{display:grid;grid-template-columns:1fr 1fr;gap:12px}.eg>.heat .ht2{height:150px}.ecars{grid-template-columns:1fr}.ecar{grid-template-columns:1fr}.ecar .ch{flex-wrap:wrap}.ecar .ch .cacts{order:3;margin:6px 0 0;width:100%}.ecar .pic img{max-height:140px}.rday{min-height:90px}}`;
+@media (max-width:600px){.er{padding:12px;min-height:0}.eh{flex-wrap:wrap;gap:4px 10px}.eh h1{font-size:24px}.euse .head{flex-wrap:wrap;gap:6px}.eseg{margin-left:0}.euse .ech{min-height:150px}.eg .heat{display:grid;grid-template-columns:1fr 1fr;gap:12px}.eg .heat .ht2{height:150px}.hrow2{flex-direction:column;gap:12px}.lnd{min-width:0;height:auto;min-height:132px}.ecars{grid-template-columns:1fr}.ecar{grid-template-columns:1fr}.ecar .ch{flex-wrap:wrap}.ecar .ch .cacts{order:3;margin:6px 0 0;width:100%}.ecar .pic img{max-height:140px}.rday{min-height:90px}}`;
 const hecEsc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const hecHm = d => { d = new Date(d); if (isNaN(d)) return '—'; const h = d.getHours(), m = d.getMinutes(); return (h % 12 || 12) + ':' + String(m).padStart(2, '0') + ' ' + (h < 12 ? 'am' : 'pm'); };
 const hecAgo = t => { const s = (Date.now() - new Date(t)) / 1000; if (!isFinite(s)) return '—'; if (s < 60) return 'now'; if (s < 3600) return Math.floor(s / 60) + 'm ago'; if (s < 86400) return Math.floor(s / 3600) + 'h ago'; return Math.floor(s / 86400) + 'd ago'; };
@@ -37,7 +37,7 @@ const HDOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], HMON = ['Jan', '
 class HomeEnergyCard extends HTMLElement {
   setConfig(c) {
     if (!c || !c.energy) throw new Error('home-energy-card: "energy" is required');
-    this._c = Object.assign({ title: 'Energy', sun: 'sun.sun', cars: [], rates: {}, heating: [] }, c);
+    this._c = Object.assign({ title: 'Energy', sun: 'sun.sun', cars: [], rates: {}, heating: [], appliances: [] }, c);
   }
   getCardSize() { return 12; }
   connectedCallback() { this._t = setInterval(() => { if (!this._en || Date.now() - this._en.at > 1800000) this._fetch(); this._sig = null; this._update(); }, 60000); }
@@ -55,7 +55,7 @@ class HomeEnergyCard extends HTMLElement {
   _build() {
     const s = this.attachShadow({ mode: 'open' });
     s.innerHTML = `<style>${window.__HPC_CSS || ''}</style><style>${window.__HPC_CSS2 || ''}</style><style>${HEC_CSS}</style><div class="er"><div class="eh"><h1>${hecEsc(this._c.title)}</h1><span class="c" id="sum"></span></div>
-      <div class="eg"><div class="card euse" id="use" data-act="enpop" style="cursor:pointer"></div><div class="card erate" id="rate"></div>${this._c.heating.length ? '<div class="heat" id="heat"></div>' : ''}${this._c.cars.length ? `<div class="ecars">${this._c.cars.map((_, i) => `<div class="card ecar" id="car${i}" data-act="carpop" data-i="${i}" style="cursor:pointer"></div>`).join('')}</div>` : ''}</div><home-popup-host id="host"></home-popup-host></div>`;
+      <div class="eg"><div class="card euse" id="use" data-act="enpop" style="cursor:pointer"></div><div class="card erate" id="rate"></div>${this._c.appliances.length ? `<div class="hrow2">${this._c.heating.length ? '<div class="heat" id="heat"></div>' : ''}<div class="card lnd" id="lnd"></div></div>` : this._c.heating.length ? '<div class="heat" id="heat"></div>' : ''}${this._c.cars.length ? `<div class="ecars">${this._c.cars.map((_, i) => `<div class="card ecar" id="car${i}" data-act="carpop" data-i="${i}" style="cursor:pointer"></div>`).join('')}</div>` : ''}</div><home-popup-host id="host"></home-popup-host></div>`;
     this._root = s; this._$ = id => s.getElementById(id);
     const H = this._$('host'); H.setConfig({ cars: this._c.cars, energy: this._c.energy, sun: this._c.sun, dark_mode: this._c.dark_mode, heating_logo: this._c.heating_logo, heating_range: this._c.heating_range }); this._host = H;
     s.addEventListener('click', e => this._click(e));
@@ -63,7 +63,7 @@ class HomeEnergyCard extends HTMLElement {
   /* ---------- energy ---------- */
   _fetch() {
     const k = this._c.energy; if (!this._hass || this._busy) return;
-    const ids = [k.electricity, k.gas, k.electricity_cost, k.gas_cost, k.today_electricity, k.today_gas, k.today_electricity_cost, k.today_gas_cost].filter(Boolean);
+    const ids = [k.electricity, k.gas, k.electricity_cost, k.gas_cost, k.today_electricity, k.today_gas, k.today_electricity_cost, k.today_gas_cost, ...this._c.appliances.map(x => x.energy)].filter(Boolean);
     const st = new Date(); st.setHours(0, 0, 0, 0); st.setDate(st.getDate() - 12);
     const ms = new Date(); ms.setHours(0, 0, 0, 0); ms.setDate(1); if (ms < st) st.setTime(+ms);
     this._busy = true;
@@ -88,9 +88,11 @@ class HomeEnergyCard extends HTMLElement {
         keys.filter(t => t >= +ms && !map[t].today).forEach(t => { const x = map[t]; ['e', 'g', 'ec', 'gc'].forEach(f => { mtd[f] += x[f] || 0; }); mtd.n++; mtd.to = x.d; });
         const month = [], today = new Date(); today.setHours(0, 0, 0, 0);
         for (let d = new Date(ms); d <= today; d.setDate(d.getDate() + 1)) { const x = new Date(d); month.push(map[+x] || { d: x }); }
+        const w0 = new Date(); w0.setHours(0, 0, 0, 0); w0.setDate(w0.getDate() - 6);
+        this._apE = this._c.appliances.map(x => { let wk = 0, mo = 0; ((x.energy && r && r[x.energy]) || []).forEach(z => { const t = new Date(z.start); if (z.change == null) return; if (t >= w0) wk += z.change; if (t >= ms) mo += z.change; }); return { wk, mo }; });
         this._en = { at: Date.now(), days, mtd, month }; this._err = false;
       }).catch(() => { this._err = true; })
-      .finally(() => { this._busy = false; this._renderUse(); });
+      .finally(() => { this._busy = false; this._renderUse(); this._renderLnd(); });
   }
   _live() {
     const k = this._c.energy || {}, n = id => { const e = this._st(id), v = e ? parseFloat(e.state) : NaN; return isFinite(v) ? v : null; };
@@ -166,6 +168,27 @@ class HomeEnergyCard extends HTMLElement {
         ${R.electricity_standing ? `<div class="blk"><div class="k">Elec standing</div><div class="v">${p(num(R.electricity_standing))}<small>p/day</small></div></div>` : ''}
         ${R.gas_standing ? `<div class="blk"><div class="k">Gas standing</div><div class="v">${p(num(R.gas_standing))}<small>p/day</small></div></div>` : ''}
         ${R.points ? `<div class="blk"><div class="k">Octoplus points</div><div class="v">${pts != null ? pts.toLocaleString('en-GB') : '—'}${pts != null ? `<small>≈ £${(pts / 800).toFixed(2)}</small>` : ''}</div></div>` : ''}</div>`;
+  }
+  /* ---------- laundry ---------- */
+  _renderLnd() {
+    const el = this._$ && this._$('lnd'); if (!el) return;
+    const JOB = { wash: 'Washing', ai_wash: 'Washing', pre_wash: 'Pre-wash', rinse: 'Rinsing', ai_rinse: 'Rinsing', spin: 'Spinning', ai_spin: 'Spinning', drying: 'Drying', ai_drying: 'Drying', cooling: 'Cooling down', weight_sensing: 'Weighing load', wrinkle_prevent: 'Anti-crease', air_wash: 'Air wash', delay_wash: 'Delayed start', refreshing: 'Refreshing', sanitizing: 'Sanitising', finish: 'Finished', finished: 'Finished' };
+    const num = id => { const e = this._st(id), v = e ? parseFloat(e.state) : NaN; return isFinite(v) ? v : null; };
+    const left = ms => { const m = Math.max(0, Math.round(ms / 60000)); return m >= 60 ? Math.floor(m / 60) + 'h ' + String(m % 60).padStart(2, '0') + 'm' : m + ' min'; };
+    const day = d => { const t = new Date(); t.setHours(0, 0, 0, 0); const x = new Date(d); x.setHours(0, 0, 0, 0); const n = Math.round((t - x) / 86400000); return n === 0 ? 'today' : n === 1 ? 'yesterday' : n < 7 ? HDOW[x.getDay()] : x.getDate() + ' ' + HMON[x.getMonth()]; };
+    let tot = 0;
+    const rows = this._c.appliances.map((a, i) => {
+      const ms = this._st(a.state), st = ms ? ms.state : 'unavailable', job = (this._st(a.job) || {}).state, ce = this._st(a.completion), done = ce && Date.parse(ce.state);
+      const run = st === 'run', pause = st === 'pause', w = num(a.power), E = this._apE && this._apE[i]; if (E) tot += E.wk;
+      const dryer = /dry/i.test(a.name || a.state || ''), rgb = run ? (dryer ? '240,106,60' : '59,130,246') : pause ? '217,119,6' : '138,143,152';
+      let sub, rt = '';
+      if (st === 'unavailable' || !ms) sub = 'Unavailable';
+      else if (run || pause) { sub = (pause ? 'Paused' : JOB[job] || 'Running') + (done && done > Date.now() ? ' · done ' + hecHm(done) : ''); rt = done && done > Date.now() ? `<b>${left(done - Date.now())}</b><small>left</small>` : w != null ? `<b>${Math.round(w)}</b><small>W</small>` : ''; }
+      else { sub = done && done <= Date.now() ? 'Finished ' + day(done) + ' ' + hecHm(done) : 'Off'; rt = E ? `<b>${E.wk.toFixed(1)}</b><small>kWh · 7 days</small>` : ''; }
+      return `<div class="lap${run ? ' run' : ''}" data-act="more" data-id="${hecEsc(a.power || a.state)}" style="--rgb:${rgb}"><span class="li"><ha-icon icon="${hecEsc(a.icon || (dryer ? 'mdi:tumble-dryer' : 'mdi:washing-machine'))}"></ha-icon></span><div class="lt"><div class="ln">${hecEsc(a.name || 'Appliance')}</div><div class="ls">${hecEsc(sub)}</div></div><div class="lr">${rt}</div></div>`;
+    }).join('');
+    const mo = (this._apE || []).reduce((s2, x) => s2 + x.mo, 0);
+    el.innerHTML = `<div class="lh"><span>LAUNDRY</span><span>${this._apE ? mo.toFixed(1) + ' kWh this month' : ''}</span></div>${rows}`;
   }
   /* ---------- heating ---------- */
   _renderHeat() {
@@ -246,6 +269,8 @@ class HomeEnergyCard extends HTMLElement {
     const R = this._c.rates, ids = Object.values(R).concat(...this._c.cars.map(k => Object.values(k).filter(v => typeof v === 'string' && v.includes('.'))));
     const hsig = JSON.stringify(this._c.heating.map(z => { const e = this._st(z.entity); return e && [e.state, e.attributes]; })) + JSON.stringify(this._pend || {});
     if (hsig !== this._hsig) { this._hsig = hsig; this._renderHeat(); }
+    const asig = JSON.stringify(this._c.appliances.map(a => [a.state, a.job, a.completion, a.power].map(id => { const e = this._st(id); return e && e.state; }))) + Math.floor(Date.now() / 60000);
+    if (asig !== this._asig) { this._asig = asig; this._renderLnd(); }
     const k = this._c.energy, lsig = JSON.stringify([k.live_power, k.today_electricity, k.today_electricity_cost, k.today_gas, k.today_gas_cost].map(id => { const e = this._st(id); return e && [e.state, e.last_updated]; }));
     if (lsig !== this._lsig) { this._lsig = lsig; if (this._en && Date.now() - this._en.at > 300000) this._fetch(); else this._renderLive(); }
     const sig = JSON.stringify(ids.map(id => { const e = this._st(id); return e && [e.state, e.last_updated]; }));
