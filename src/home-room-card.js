@@ -66,7 +66,6 @@ customElements.whenDefined('home-panel-card').then(() => {
         <div class="chips" id="chips"></div>
         <div class="card hello" id="hello"></div>
         <div class="g4" id="nav"></div>
-        ${(c.calendars || []).length ? '<div class="card cal" id="cal" data-act="cal"></div>' : ''}
         ${(c.people || []).length ? '<div class="g2" id="ppl2"></div>' : ''}
         <div id="floors"></div>` : `
         <div class="chips" id="chips"></div>
@@ -184,7 +183,7 @@ customElements.whenDefined('home-panel-card').then(() => {
       const w = this._st(c.weather); if (w) out.push(`<button class="chip" data-act="wx"><ha-icon icon="${WXI[w.state] || 'mdi:weather-cloudy'}" style="color:rgb(${RGB.blue})"></ha-icon><span>${Math.round(w.attributes.temperature)}°</span></button>`);
       return out.join('');
     }
-    _renderCal() { this._renderTfl(); if (this._$ && this._$('cal')) Base.prototype._renderCal.call(this); else if (this._calOpen) this._renderCalPop(); }
+    _renderCal() { this._renderTfl(); if (this._calOpen) this._renderCalPop(); }
     _renderTfl() { if (this._built && this._hass && this._$('chips')) this._$('chips').innerHTML = this._chips(this._mode === 'room'); }
     _val(id, digits) { const e = id && this._st(id), v = e && NUM(e.state); return v == null ? null : (digits != null ? v.toFixed(digits) : Math.round(v)); }
     _render() { if (this._mode === 'home') this._renderHome(); else this._renderRoom(); }
