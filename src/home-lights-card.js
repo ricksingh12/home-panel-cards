@@ -13,6 +13,7 @@ const HLC_CSS = `.lr{position:relative;background:var(--bg);min-height:calc(100v
 .rt .vt .br{position:absolute;left:0;bottom:0;height:3px;background:rgb(var(--rgb));opacity:.75}
 .rt .tile{height:108px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;padding:10px 12px;min-width:0}
 .rt .tile .ic{width:30px;height:30px;flex:0 0 auto}.rt .tile .ic ha-icon{--mdc-icon-size:17px}.rt .tile .tx{min-width:0}
+@media (min-width:601px) and (max-width:1000px){.rooms{columns:2 240px}.rt.tl4{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .rt .tile .n{margin-top:0;font-size:13px}.rt .tile .s{font-size:11px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rt .tile.na{opacity:.5}`;
 const hlcEsc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 class HomeLightsCard extends HTMLElement {

@@ -219,7 +219,7 @@ customElements.whenDefined('home-panel-card').then(() => {
     _build() {
       this._built = true;
       const s = this.attachShadow({ mode: 'open' }), ov = (id, pid, st) => `<div class="ov" id="${id}" data-act="closebg"><div class="pop" id="${pid}"${st ? ` style="${st}"` : ''}></div></div>`;
-      s.innerHTML = `<style>${window.__HPC_CSS || ''}</style><style>${window.__HPC_CSS2 || ''}</style><style>:host{position:absolute;inset:0;z-index:6;pointer-events:none;display:block}@media (max-width:600px){:host{position:fixed !important}}.hroot{position:absolute;inset:0}.ov.open{pointer-events:auto}</style><div class="hroot">
+      s.innerHTML = `<style>${window.__HPC_CSS || ''}</style><style>${window.__HPC_CSS2 || ''}</style><style>:host{position:absolute;inset:0;z-index:6;pointer-events:none;display:block}@media (max-width:760px){:host{position:fixed !important}}.hroot{position:absolute;inset:0}.ov.open{pointer-events:auto}</style><div class="hroot">
         ${['wxov', 'calov', 'clkov', 'tflov', 'alov', 'pplov', 'vacov'].map(id => `<div class="ov" id="${id}"></div>`).join('')}
         ${ov('carov', 'carpop')}${ov('enov', 'enpop')}<div class="ov camov" id="camov" data-act="closebg"><div class="pop" id="campop"></div></div>${ov('pinov', 'pinpop', 'width:min(92%,360px)')}</div>`;
       this._$ = id => s.getElementById(id);

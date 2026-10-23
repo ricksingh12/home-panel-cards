@@ -34,7 +34,12 @@ const HRC_CSS = `:host{display:block}.rc .rheat .ht2{height:150px;box-sizing:bor
 .rc .cams{flex:0 0 auto;padding:0;background:none;border:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}.rc .cams .head{display:none}
 .rc .camgrid{display:grid;grid-template-columns:1fr;grid-template-rows:none;grid-auto-rows:210px;gap:10px;flex:0 0 auto;min-height:0 !important}.rc .camgrid .cam,.rc .camgrid .cam.big{grid-column:auto;grid-row:auto;min-height:0}
 .rc .vac,.rc .carc{flex:0 0 auto}.rc .carc.multi{padding:12px 14px;gap:10px}
-@media (min-width:600px){.rc .camgrid{grid-template-columns:1fr 1fr}}`;
+@media (min-width:600px){.rc .camgrid{grid-template-columns:1fr 1fr}}
+.rc .rcols,.rc .rcl,.rc .rcr{display:flex;flex-direction:column;gap:10px;min-width:0}.rc .rcols.solo>.rcl{display:none}
+@media (min-width:601px){.rc .rcw{max-width:980px}.rc .ov{position:fixed}.rc #floors .g2{grid-template-columns:repeat(3,minmax(0,1fr))}
+.rc .rcols:not(.solo){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+.rc .rcl .camgrid{grid-template-columns:1fr;grid-auto-rows:auto}.rc .rcl .camgrid .cam{aspect-ratio:16/9}.rc .rcl #graphs{order:3}.rc .rcols:not(.solo) .rcl>.sec,.rc .rcols:not(.solo) .rcr>.sec:first-child{margin-top:4px}
+.rc .rcols.solo .lt4{grid-template-columns:repeat(6,minmax(0,1fr))}.rc .rcols.solo .g2{grid-template-columns:repeat(3,minmax(0,1fr))}}`;
 customElements.whenDefined('home-panel-card').then(() => {
   if (customElements.get('home-room-card')) return;
   const Base = customElements.get('home-panel-card');
@@ -70,8 +75,10 @@ customElements.whenDefined('home-panel-card').then(() => {
         <div id="floors"></div>` : `
         <div class="chips" id="chips"></div>
         <div class="rtitle"><h1>${E(r.name || 'Room')}</h1><div id="rsub"></div></div>
+        <div class="rcols${r.temperature || r.humidity || c.cameras.length ? '' : ' solo'}"><div class="rcl">
         ${r.temperature || r.humidity ? '<div class="g2" id="graphs"></div>' : ''}
         ${c.cameras.length ? '<div class="sec">Cameras</div><div class="card cams"><div class="camgrid" id="camgrid"></div></div>' : ''}
+        </div><div class="rcr">
         <div class="sec" id="devh">Devices</div>
         ${r.climate ? '<div class="heat rheat" id="heat"></div>' : ''}
         ${(r.lights || []).length ? '<div class="g4 lt4" id="lts"></div>' : ''}
@@ -80,7 +87,7 @@ customElements.whenDefined('home-panel-card').then(() => {
         ${(r.values || []).length ? '<div class="g2" id="vals"></div>' : ''}
         ${c.vacuum ? '<div class="card vac" id="vac" data-act="vac"></div>' : ''}
         ${this._cars.length ? `<div class="card carc${this._cars.length > 1 ? ' multi' : ''}" id="car"${this._cars.length > 1 ? '' : ' data-act="car" data-i="0"'}></div>` : ''}
-        ${c.media_players.length ? '<div id="mds" style="display:flex;flex-direction:column;gap:10px"></div>' : ''}`;
+        ${c.media_players.length ? '<div id="mds" style="display:flex;flex-direction:column;gap:10px"></div>' : ''}</div></div>`;
       s.innerHTML = `<style>${window.__HPC_CSS || ''}</style><style>${window.__HPC_CSS2 || ''}</style><style>${HRC_CSS}</style><div class="root rc"><div class="rcw">${body}</div>
         <div class="ov" id="wxov" data-act="closebg"><div class="pop" id="wxpop"></div></div>
         <div class="ov npov" id="npov"></div>
