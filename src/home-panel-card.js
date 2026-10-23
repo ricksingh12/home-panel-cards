@@ -1016,8 +1016,8 @@ class HomePanelCard extends HTMLElement {
         }
         const keys = Object.keys(map).map(Number).filter(t => map[t].e != null || map[t].g != null).sort((a, b) => a - b);
         const last = keys.length ? new Date(keys[keys.length - 1]) : null, days = [];
-        if (last) { const tl = map[+last] && map[+last].today, end = new Date(last); if (tl) end.setDate(end.getDate() - 1);
-          for (let i = 6; i >= 0; i--) { const d = new Date(end); d.setDate(d.getDate() - i); d.setHours(0, 0, 0, 0); days.push(map[+d] || { d }); } if (tl) days.push(map[+last]); }
+        if (last) { const w0 = new Date(); w0.setHours(0, 0, 0, 0); w0.setDate(w0.getDate() - ((w0.getDay() + 6) % 7));
+          for (let i = 0; i < 7; i++) { const d = new Date(w0); d.setDate(d.getDate() + i); d.setHours(0, 0, 0, 0); days.push(map[+d] || { d }); } }
         const mtd = { e: 0, g: 0, ec: 0, gc: 0, n: 0, from: ms, to: null };
         keys.filter(t => t >= +ms && !map[t].today).forEach(t => { const x = map[t]; ['e', 'g', 'ec', 'gc'].forEach(f => { mtd[f] += x[f] || 0; }); mtd.n++; mtd.to = x.d; });
         this._en = { at: Date.now(), days, mtd }; this._enErr = false;
@@ -1028,7 +1028,7 @@ class HomePanelCard extends HTMLElement {
     const u = this._c.energy.logo === undefined ? 'https://raw.githubusercontent.com/home-assistant/brands/master/custom_integrations/octopus_energy/icon.png' : this._c.energy.logo;
     return u ? `<img class="${cls}" src="${esc(u)}" alt="" onerror="this.style.display='none'">` : '';
   }
-  _enSum(f) { return ((this._en && this._en.days) || []).reduce((a, x) => a + (x.today ? 0 : x[f] || 0), 0); }
+  _enSum(f) { return ((this._en && this._en.days) || []).reduce((a, x) => a + (x[f] || 0), 0); }
   _enBars(big) {
     const days = this._en.days, max = Math.max(1, ...days.map(x => Math.max(x.e || 0, x.g || 0)));
     const CE = this._c.energy.electricity_color || '#3b82f6', CG = this._c.energy.gas_color || '#f0a43a';
@@ -1063,14 +1063,14 @@ class HomePanelCard extends HTMLElement {
     const tot = (lbl, c, kwh, cost) => `<div><div class="k"><i style="background:${c}"></i>${lbl}</div><div class="v">${Math.round(kwh)}<small>kWh</small></div>${cost ? `<div class="c">£${cost.toFixed(2)}</div>` : ''}</div>`;
     const hasC = k.electricity_cost || k.gas_cost, TC = this._enSum('ec') + this._enSum('gc');
     el.innerHTML = `<div class="head"><div class="lbl">Energy · ${this._enRange()}</div>${this._enLogo('elogo')}</div>
-      <div class="etot${hasC ? ' e3' : ''}">${tot('Electricity', CE, this._enSum('e'), k.electricity_cost && this._enSum('ec'))}${k.gas ? tot('Gas', CG, this._enSum('g'), k.gas_cost && this._enSum('gc')) : ''}${hasC ? `<div class="etc"><div class="k">7-day total</div><div class="v">£${TC.toFixed(2)}</div><div class="c">${this._enSum('e') + this._enSum('g') ? Math.round(this._enSum('e') + this._enSum('g')) + ' kWh' : ''}</div></div>` : ''}</div>
+      <div class="etot${hasC ? ' e3' : ''}">${tot('Electricity', CE, this._enSum('e'), k.electricity_cost && this._enSum('ec'))}${k.gas ? tot('Gas', CG, this._enSum('g'), k.gas_cost && this._enSum('gc')) : ''}${hasC ? `<div class="etc"><div class="k">This week</div><div class="v">£${TC.toFixed(2)}</div><div class="c">${this._enSum('e') + this._enSum('g') ? Math.round(this._enSum('e') + this._enSum('g')) + ' kWh' : ''}</div></div>` : ''}</div>
       ${this._enBars(false)}`;
   }
   _renderEnergyPop() {
     const el = this._$('enpop'), k = this._c.energy, CE = k.electricity_color || '#3b82f6', CG = k.gas_color || '#f0a43a';
-    const head = this._ph('closeen', this._enLogo('plg'), 'Energy', this._enLive() ? 'Today and last 7 days' : 'Last 7 days', this._en && this._en.days.length ? this._enRange() + (this._en.days.some(x => x.live) ? '' : ' · Octopus data usually arrives a day or two late') : '');
+    const head = this._ph('closeen', this._enLogo('plg'), 'Energy', this._enLive() ? 'Today and this week' : 'This week', this._en && this._en.days.length ? this._enRange() + (this._en.days.some(x => x.live) ? '' : ' · Octopus data usually arrives a day or two late') : '');
     if (!this._en || !this._en.days.length) { el.innerHTML = head + `<div class="wxmsg">${this._enErr ? "Couldn't load energy data" : 'Loading…'}</div>`; return; }
-    const E = this._enSum('e'), G = this._enSum('g'), EC = this._enSum('ec'), GC = this._enSum('gc'), n = this._en.days.filter(x => !x.today).length || 1;
+    const E = this._enSum('e'), G = this._enSum('g'), EC = this._enSum('ec'), GC = this._enSum('gc'), n = this._en.days.filter(x => x.e != null || x.g != null).length || 1;
     const det = (t, v, u, sub) => `<div class="blk det" style="padding:10px 12px"><div class="lbl" style="text-transform:none;letter-spacing:0">${t}</div><div class="v">${v}${u ? ` <small>${u}</small>` : ''}</div>${sub ? `<div class="cond" style="margin-top:2px;font-size:12px">${sub}</div>` : ''}</div>`;
     const f = v => v != null ? (Math.round(v * 10) / 10).toFixed(1) : '—', m = v => v != null ? '£' + v.toFixed(2) : '—';
     const L = this._enLive();
@@ -1079,16 +1079,16 @@ class HomePanelCard extends HTMLElement {
         ${det('Electricity today', L.e != null ? f(L.e) : '—', 'kWh', L.ec != null ? m(L.ec) : '')}
         ${k.today_gas ? det('Gas today', L.g != null ? f(L.g) : '—', 'kWh', L.gc != null ? m(L.gc) : '') : ''}
         ${det('Today so far', L.cost != null ? m(L.cost) : '—', '', (L.e != null || L.g != null ? f((L.e || 0) + (L.g || 0)) + ' kWh · ' : '') + 'incl. standing')}</div>
-      <div class="lbl" style="margin-top:18px">Last 7 days</div>` : '';
+      <div class="lbl" style="margin-top:18px">This week</div>` : '';
     el.innerHTML = head + liveRow + `
       <div class="legend" style="margin-top:14px"><span><i style="background:${CE}"></i>Electricity</span>${k.gas ? `<span><i style="background:${CG}"></i>Gas</span>` : ''}${this._en.days.some(x => x.live) ? '<span>Paler bars: live Home Mini readings, until Octopus confirms them</span>' : ''}</div>
       <div class="dets d5" style="margin-top:12px">${det('Electricity', Math.round(E), 'kWh', k.electricity_cost ? m(EC) + ' · ' + f(E / n) + ' kWh/day' : f(E / n) + ' kWh/day')}
         ${k.gas ? det('Gas', Math.round(G), 'kWh', k.gas_cost ? m(GC) + ' · ' + f(G / n) + ' kWh/day' : f(G / n) + ' kWh/day') : ''}
-        ${k.electricity_cost || k.gas_cost ? det('Total cost', m(EC + GC), '', 'last 7 days · incl. standing charges') : ''}
+        ${k.electricity_cost || k.gas_cost ? det('Total cost', m(EC + GC), '', 'this week so far · incl. standing charges') : ''}
         ${(k.electricity_cost || k.gas_cost) && this._en.mtd ? (() => { const t = this._en.mtd; return det('Month to date', t.n ? m(t.ec + t.gc) : '—', '', t.n ? `1–${t.to.getDate()} ${MON[t.to.getMonth()]} · ${Math.round(t.e + t.g)} kWh` : 'No data this month yet'); })() : ''}${det('Busiest day', (() => { const b = this._en.days.slice().sort((a, c) => ((c.e || 0) + (c.g || 0)) - ((a.e || 0) + (a.g || 0)))[0]; return DOW[b.d.getDay()] + ' ' + b.d.getDate(); })(), '')}</div>
       ${this._enBars(true)}
       <table class="etab"><tr><th>Day</th><th>Electricity</th>${k.electricity_cost ? '<th>£</th>' : ''}${k.gas ? '<th>Gas</th>' : ''}${k.gas_cost ? '<th>£</th>' : ''}${k.electricity_cost && k.gas_cost ? '<th>Total £</th>' : ''}</tr>
-        ${this._en.days.map(x => `<tr><td>${DOW[x.d.getDay()]} ${x.d.getDate()} ${MON[x.d.getMonth()]}${x.live ? (+x.d === new Date().setHours(0, 0, 0, 0) ? ' <small>so far</small>' : ' <small>live</small>') : ''}</td><td>${f(x.e)} kWh</td>${k.electricity_cost ? `<td>${m(x.ec)}</td>` : ''}${k.gas ? `<td>${f(x.g)} kWh</td>` : ''}${k.gas_cost ? `<td>${m(x.gc)}</td>` : ''}${k.electricity_cost && k.gas_cost ? `<td><b>${x.ec == null && x.gc == null ? '—' : m((x.ec || 0) + (x.gc || 0))}</b></td>` : ''}</tr>`).join('')}
+        ${this._en.days.filter(x => +x.d <= new Date().setHours(0, 0, 0, 0)).map(x => `<tr><td>${DOW[x.d.getDay()]} ${x.d.getDate()} ${MON[x.d.getMonth()]}${x.live ? (+x.d === new Date().setHours(0, 0, 0, 0) ? ' <small>so far</small>' : ' <small>live</small>') : ''}</td><td>${f(x.e)} kWh</td>${k.electricity_cost ? `<td>${m(x.ec)}</td>` : ''}${k.gas ? `<td>${f(x.g)} kWh</td>` : ''}${k.gas_cost ? `<td>${m(x.gc)}</td>` : ''}${k.electricity_cost && k.gas_cost ? `<td><b>${x.ec == null && x.gc == null ? '—' : m((x.ec || 0) + (x.gc || 0))}</b></td>` : ''}</tr>`).join('')}
         <tr class="tot"><td>Total</td><td>${f(E)} kWh</td>${k.electricity_cost ? `<td>${m(EC)}</td>` : ''}${k.gas ? `<td>${f(G)} kWh</td>` : ''}${k.gas_cost ? `<td>${m(GC)}</td>` : ''}${k.electricity_cost && k.gas_cost ? `<td>${m(EC + GC)}</td>` : ''}</tr></table>`;
   }
   /* ---------- tfl ---------- */

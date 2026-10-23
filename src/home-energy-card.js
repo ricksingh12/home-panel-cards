@@ -82,8 +82,8 @@ class HomeEnergyCard extends HTMLElement {
         }
         const keys = Object.keys(map).map(Number).filter(t => map[t].e != null || map[t].g != null).sort((a, b) => a - b);
         const last = keys.length ? new Date(keys[keys.length - 1]) : null, days = [];
-        if (last) { const tl = map[+last] && map[+last].today, end = new Date(last); if (tl) end.setDate(end.getDate() - 1);
-          for (let i = 6; i >= 0; i--) { const d = new Date(end); d.setDate(d.getDate() - i); d.setHours(0, 0, 0, 0); days.push(map[+d] || { d }); } if (tl) days.push(map[+last]); }
+        if (last) { const w0 = new Date(); w0.setHours(0, 0, 0, 0); w0.setDate(w0.getDate() - ((w0.getDay() + 6) % 7));
+          for (let i = 0; i < 7; i++) { const d = new Date(w0); d.setDate(d.getDate() + i); d.setHours(0, 0, 0, 0); days.push(map[+d] || { d }); } }
         const mtd = { e: 0, g: 0, ec: 0, gc: 0, n: 0, to: null };
         keys.filter(t => t >= +ms && !map[t].today).forEach(t => { const x = map[t]; ['e', 'g', 'ec', 'gc'].forEach(f => { mtd[f] += x[f] || 0; }); mtd.n++; mtd.to = x.d; });
         const month = [], today = new Date(); today.setHours(0, 0, 0, 0);
@@ -117,10 +117,10 @@ class HomeEnergyCard extends HTMLElement {
     const blk = (lbl, col, v, u, sub, cls, vs) => `<div class="blk${cls ? ' ' + cls : ''}"><div class="lbl">${col ? `<i${col.cls ? ` class="${col.cls}"` : ''} style="background:${col.c || col}"></i>` : ''}${lbl}</div><div class="v"${vs ? ` style="${vs}"` : ''}>${v}${u ? `<small>${u}</small>` : ''}</div><div class="s">${sub}</div></div>`;
     el.innerHTML = blk('Using now', { c: L.col, cls: 'lvd' }, L.pw, '', [L.phs, L.word].filter(Boolean).join(' · ') + (L.at ? ' · ' + hecHm(L.at) : ''), 'now', 'color:' + L.col)
       + blk('Today so far', '', L.cost != null ? m(L.cost) : '—', '', (L.e != null || L.g != null ? ((L.e || 0) + (L.g || 0)).toFixed(1) + ' kWh' : '') + (cmp ? ' · ' + cmp : ''), 'tot')
-      + blk('Last 7 days', '', m(EC + GC), '', kw(E, G))
+      + blk('This week', '', m(EC + GC), '', kw(E, G))
       + blk('Month to date', '', t.n ? m(t.ec + t.gc) : '—', '', t.n ? `1–${t.to.getDate()} ${HMON[t.to.getMonth()]} · ${Math.round(t.e + t.g)} kWh` : 'No data yet');
   }
-  _sum(f) { return ((this._en && this._en.days) || []).reduce((a, x) => a + (x.today ? 0 : x[f] || 0), 0); }
+  _sum(f) { return ((this._en && this._en.days) || []).reduce((a, x) => a + (x[f] || 0), 0); }
   _renderUse() {
     const el = this._$('use'), k = this._c.energy; if (!el) return;
     const CE = k.electricity_color || '#3b82f6', CG = k.gas_color || '#f0a43a';
@@ -135,17 +135,17 @@ class HomeEnergyCard extends HTMLElement {
     const rng = mon ? `1 ${HMON[cd[0].d.getMonth()]} – ${(lastM || cd[cd.length - 1]).d.getDate()} ${HMON[cd[0].d.getMonth()]}` : r;
     const max = Math.max(1, ...cd.map(x => Math.max(x.e || 0, x.g || 0)));
     const bar = (v, c, lv) => `<b style="height:${v != null ? Math.max(1.5, v / max * 88) : 0}%;background:${c};${v == null ? 'opacity:0' : lv ? 'opacity:.45' : ''}">${v != null && few ? `<span>${Math.round(v)}</span>` : ''}</b>`;
-    el.innerHTML = `<div class="head"><span class="lbl">Energy use · ${rng}</span><span class="eseg"><button class="${mon ? '' : 'sel'}" data-act="view" data-v="week">Last 7 days</button><button class="${mon ? 'sel' : ''}" data-act="view" data-v="month">This month</button></span>${logo}</div>
+    el.innerHTML = `<div class="head"><span class="lbl">Energy use · ${rng}</span><span class="eseg"><button class="${mon ? '' : 'sel'}" data-act="view" data-v="week">This week</button><button class="${mon ? 'sel' : ''}" data-act="view" data-v="month">This month</button></span>${logo}</div>
       <div class="legend"><span><i style="background:${CE}"></i>Electricity</span>${k.gas ? `<span><i style="background:${CG}"></i>Gas</span>` : ''}<span>${cd.some(x => x.live) ? 'Paler bars: live Home Mini readings, until Octopus confirms them' : 'Octopus data usually arrives a day or two late'}</span></div>
-      ${this._live() ? '<div class="ek" id="elive"></div>' : `<div class="ek">${blk('Electricity', CE, Math.round(E), 'kWh', (k.electricity_cost ? m(EC) + ' · ' : '') + (E / d.length).toFixed(1) + ' kWh/day')}
-        ${k.gas ? blk('Gas', CG, Math.round(G), 'kWh', (k.gas_cost ? m(GC) + ' · ' : '') + (G / d.length).toFixed(1) + ' kWh/day') : ''}
-        ${blk('7-day total', '', m(EC + GC), '', Math.round(E + G) + ' kWh · incl. standing', 'tot')}
+      ${this._live() ? '<div class="ek" id="elive"></div>' : `<div class="ek">${blk('Electricity', CE, Math.round(E), 'kWh', (k.electricity_cost ? m(EC) + ' · ' : '') + (E / (d.filter(x => x.e != null).length || 1)).toFixed(1) + ' kWh/day')}
+        ${k.gas ? blk('Gas', CG, Math.round(G), 'kWh', (k.gas_cost ? m(GC) + ' · ' : '') + (G / (d.filter(x => x.g != null).length || 1)).toFixed(1) + ' kWh/day') : ''}
+        ${blk('This week', '', m(EC + GC), '', Math.round(E + G) + ' kWh · incl. standing', 'tot')}
         ${blk('Month to date', '', t.n ? m(t.ec + t.gc) : '—', '', t.n ? `1–${t.to.getDate()} ${HMON[t.to.getMonth()]} · ${Math.round(t.e + t.g)} kWh` : 'No data yet')}</div>`}
       <div class="ech big${mon ? ' mon' : ''}"><div class="ebars">${cd.map(x => `<div class="ebd">${bar(x.e, CE, x.live)}${bar(x.g, CG, x.live)}</div>`).join('')}</div>
         <div class="exl">${cd.map(x => `<span>${mon ? (x.d.getDay() === 1 ? 'Mon ' : '') + x.d.getDate() : HDOW[x.d.getDay()] + ' ' + x.d.getDate() + (x.ec != null || x.gc != null ? ' · ' + m((x.ec || 0) + (x.gc || 0)) : '')}</span>`).join('')}</div>
         ${mon ? `<div class="emsum">${t.n ? `Daily average <b>${m((t.ec + t.gc) / t.n)}</b> · ${((t.e + t.g) / t.n).toFixed(1)} kWh/day` : ''}${t.n ? ` · on track for about <b>${m((t.ec + t.gc) / t.n * new Date(cd[0].d.getFullYear(), cd[0].d.getMonth() + 1, 0).getDate())}</b> this month` : ''}</div>` : ''}</div>`;
     this._renderLive();
-    this._$('sum').textContent = `Last 7 days ${m(EC + GC)}` + (t.n ? ` · this month ${m(t.ec + t.gc)}` : '');
+    this._$('sum').textContent = `This week ${m(EC + GC)}` + (t.n ? ` · this month ${m(t.ec + t.gc)}` : '');
   }
   /* ---------- rates ---------- */
   _renderRate() {
