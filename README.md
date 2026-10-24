@@ -9,6 +9,7 @@ Custom Home Assistant cards for a wall-mounted tablet dashboard (Lenovo Tab P12)
 | `custom:home-security-card` | Cameras and Ring alarm |
 | `custom:home-energy-card` | Energy use, Octopus rates, thermostats, cars |
 | `custom:home-music-card` | Full-page Spotify / Sonos player |
+| `custom:home-glass-card` | Dark "glass" panel – greeting, status tiles, alert pills, today ticker, people, security, doors, calendar, rooms, weather, rain radar, home vs outside, energy flow, car, music |
 
 Light/dark mode follows sunrise and sunset. Tapping a device opens a matching pop-up (lights, thermostats, door/window/motion sensors, batteries, cameras, cars, energy, alarm).
 
