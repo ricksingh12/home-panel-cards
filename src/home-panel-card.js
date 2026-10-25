@@ -1172,21 +1172,18 @@ class HomePanelCard extends HTMLElement {
   _evRow(e, showDay) {
     const name = this._c.calendars[e.ci].name || '', now = new Date(), live = !e.allDay && e.s <= now && e.f > now;
     const ts = d => { const h = d.getHours(), m = d.getMinutes(); return (h % 12 || 12) + (m ? ':' + pad(m) : '') + (h < 12 ? 'am' : 'pm'); };
-    const dl = d => { const t = new Date(); t.setHours(0, 0, 0, 0); const x = new Date(d); x.setHours(0, 0, 0, 0); const n = Math.round((x - t) / 86400000); return n === 1 ? 'Tomorrow' : n < 7 ? DOW[x.getDay()] : x.getDate() + ' ' + MON[x.getMonth()]; };
+    const dl = d => { const t = new Date(); t.setHours(0, 0, 0, 0); const x = new Date(d); x.setHours(0, 0, 0, 0); const n = Math.round((x - t) / 86400000); return n <= 0 ? 'Today' : n === 1 ? 'Tomorrow' : n < 7 ? DOW[x.getDay()] : x.getDate() + ' ' + MON[x.getMonth()]; };
     const time = live ? 'Now' : e.allDay ? 'All day' : ts(e.s);
     return `<div class="ev2${live ? ' live' : ''}"><span class="tm">${showDay ? `<b>${dl(e.s)}</b>` : ''}${time}</span><i style="background:${this._calColor(e.ci)}"></i><span class="t">${esc(e.title)}</span><span class="w">${esc(name)}</span></div>`;
   }
   _renderCal() {
     const el = this._$ && this._$('cal'); if (!el) return;
-    if (!this._events) { el.innerHTML = '<div class="head"><span class="lbl">Today</span></div><div class="empty">Loading…</div>'; return; }
+    if (!this._events) { el.innerHTML = '<div class="head"><span class="lbl">Upcoming</span></div><div class="empty">Loading…</div>'; return; }
     const now = new Date(), eod = new Date(now); eod.setHours(24, 0, 0, 0);
     const live = this._events.filter(e => e.f > now);
-    const cap = this._c.calendar_items || 4, todayAll = live.filter(e => e.s < eod);
-    const today = todayAll.slice(0, cap), later = live.filter(e => e.s >= eod).slice(0, Math.max(0, cap - today.length));
-    el.innerHTML = `<div class="head"><span class="lbl">Today</span><span class="cnt">${todayAll.length ? todayAll.length + (todayAll.length === 1 ? ' event' : ' events') : ''}</span></div>` +
-      (today.length ? today.map(e => this._evRow(e, false)).join('') : '<div class="empty">Nothing else today</div>') +
-      (later.length || !today.length ? `<div class="cdiv">Upcoming</div>` +
-      (later.length ? later.map(e => this._evRow(e, true)).join('') : '<div class="empty">Nothing coming up this week</div>') : '');
+    const cap = this._c.calendar_items || 4, todayN = live.filter(e => e.s < eod).length, next = live.slice(0, cap);
+    el.innerHTML = `<div class="head"><span class="lbl">Upcoming</span><span class="cnt">${todayN ? todayN + ' today' : 'Nothing else today'}</span></div>` +
+      (next.length ? next.map(e => this._evRow(e, true)).join('') : '<div class="empty">Nothing coming up in the next two weeks</div>');
     if (this._calOpen) this._renderCalPop();
   }
   _renderCalPop() {
