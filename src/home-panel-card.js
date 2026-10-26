@@ -52,6 +52,7 @@ border:1px solid rgba(255,255,255,.35)}
 .st .sk{font-size:9.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
 .ewk{display:flex;gap:14px;font-size:12px;color:var(--sub);font-weight:600;margin-top:2px}.ewk span{display:flex;align-items:center;gap:5px}.ewk i{width:9px;height:9px;border-radius:3px;display:block}
 .en .efh{display:flex;align-items:center;gap:8px;margin-bottom:2px}.efi{width:26px;height:26px;border-radius:8px;background:rgba(34,160,107,.14);color:#22a06b;display:flex;align-items:center;justify-content:center;flex:0 0 auto}.efi ha-icon{--mdc-icon-size:16px}.en .efh .lbl{flex:1;min-width:0}.efr{font-size:13px;font-weight:700;white-space:nowrap}.en .efh .elogo{width:24px;height:24px;margin:0}.efl{position:relative;flex:1 1 auto;min-height:80px}.efl svg{position:absolute;left:0;right:0;top:calc(50% - 38px);width:100%;height:60px}.efln{fill:none;stroke:var(--line);stroke-width:2}.effl{fill:none;stroke-width:2.6;stroke-linecap:round;stroke-dasharray:2 9;animation:efa var(--sp,1.6s) linear infinite}@keyframes efa{to{stroke-dashoffset:-22}}.efn{position:absolute;top:calc(50% - 8px);transform:translate(-50%,-50%);width:54px;height:54px;border-radius:50%;background:var(--card);border:2.5px solid rgb(var(--c));box-shadow:0 0 0 4px rgba(var(--c),.1);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.05;box-sizing:border-box}.efn.big{width:62px;height:62px}.efn ha-icon{--mdc-icon-size:14px;color:rgb(var(--c))}.efn b{font-size:11.5px;font-weight:700;white-space:nowrap;letter-spacing:-.02em}.efn.big b{font-size:15px}.efn span{font-size:8.5px;color:var(--sub);font-weight:600}.efn i{position:absolute;top:calc(100% + 9px);left:50%;transform:translateX(-50%);font-style:normal;font-size:8.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--sub);white-space:nowrap}.efb{display:none;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:6px}.efb>div{background:var(--card2);border-radius:12px;padding:6px 8px;min-width:0}.efb .k{display:block;font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--sub)}.efb b{display:block;font-size:14px;font-weight:700}.efb small{display:block;font-size:10px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.en .ok{color:#22a06b}.efs{font-size:11.5px;color:var(--sub);text-align:center;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.efs b{color:var(--text);font-weight:700}.en .eft{display:none;font-style:normal}@container en (min-height:200px){.en .efb{display:grid}.en .efc{display:none}.en .eft{display:inline}}.efn.big i{top:calc(100% + 5px)}.en .efc{font-style:normal}.efn i .efc{color:var(--text)}.efs{display:none}
+.card.wx{min-height:100px}.hvo{flex:0 1 auto;padding:12px 16px 10px;display:flex;flex-direction:column;cursor:pointer;min-height:0;overflow:hidden}.hvo .head{margin-bottom:4px}.hvr{font-size:11px;color:var(--sub);font-weight:600}.hvt{display:flex;align-items:flex-end;gap:18px}.hvt .k{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--sub);display:flex;align-items:center;gap:5px}.hvt .k i{width:8px;height:8px;border-radius:50%;display:block}.hvt b{font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1.15}.hvd{margin-left:auto;text-align:right}.hvd b{font-size:15px;display:block}.hvd span{font-size:10.5px;color:var(--sub)}.hvc{position:relative;flex:1 1 74px;min-height:30px;max-height:74px;margin-top:6px}.hvc svg{position:absolute;inset:0;width:100%;height:100%}.hyl{position:absolute;right:0;font-size:9px;font-weight:700;color:var(--sub);line-height:12px;background:var(--card);padding-left:3px;border-radius:4px}.hvx{display:flex;justify-content:space-between;font-size:9.5px;font-weight:700;color:var(--sub);margin-top:3px}
 .card.st.hi{background:rgba(var(--rgb),.13);box-shadow:inset 0 0 0 1px rgba(var(--rgb),.35),var(--shadow)}.st.hi .sti{background:rgb(var(--rgb));color:#fff}
 @media (max-width:1000px){.stats{grid-template-columns:repeat(4,minmax(0,1fr))}}@media (max-width:600px){.stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}}
 .lbl{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--sub);font-weight:600}
@@ -469,7 +470,7 @@ class HomePanelCard extends HTMLElement {
     { const md = this._c.dark_mode || 'sun', sn = h.states[this._c.sun], td = !!(h.themes && h.themes.darkMode);
       this.classList.toggle('dark', md === 'dark' || (md === 'sun' ? (sn ? sn.state === 'below_horizon' : td) : md !== 'light' && td)); }
     if (first || this._conn !== h.connection) this._subscribe();
-    if (first) { this._fetchCal(); this._fetchTfl(); this._fetchPop(); this._fetchEnergy(); }
+    if (first) { this._fetchCal(); this._fetchTfl(); this._fetchPop(); this._fetchEnergy(); this._fetchHvo(); }
     this._dbWatch(first);
     this._update();
   }
@@ -511,6 +512,7 @@ class HomePanelCard extends HTMLElement {
           ${this._c.calendars.length ? '<div class="card cal" id="cal" data-act="cal"></div>' : ''}
           ${this._c.tfl_lines.length ? '<div class="card tfl" id="tfl" data-act="tfl"></div>' : ''}
           <div class="card wx" id="wx" data-act="wx"></div>
+          ${(this._c.inside_temperatures || []).length ? '<div class="card hvo" id="hvo" data-act="wx"></div>' : ''}
         </div>
         <div class="right">
           <div class="toprow"><div class="card cams"><div class="head"><span class="chd">${(u => u ? `<img src="${esc(u)}" alt="" onerror="this.style.display='none'">` : '')(this._c.cameras_logo === undefined ? 'https://brands.home-assistant.io/unifiprotect/icon.png' : this._c.cameras_logo)}<span class="lbl">Cameras</span></span>
@@ -566,7 +568,7 @@ class HomePanelCard extends HTMLElement {
     if (this._npOpen) this._renderNp();
     this._musicProg();
     if (this._clkOpen) this._tickWorld();
-    if (s === 0) { this._sig.cams = null; this._renderCal(); this._update(); if (!this._pop || Date.now() - this._pop.at > 1800000) this._fetchPop(); if (!this._en || Date.now() - this._en.at > 1800000) this._fetchEnergy(); }
+    if (s === 0) { this._sig.cams = null; this._renderCal(); this._update(); this._fetchHvo(); if (!this._pop || Date.now() - this._pop.at > 1800000) this._fetchPop(); if (!this._en || Date.now() - this._en.at > 1800000) this._fetchEnergy(); }
   }
   _st(id) { return this._hass && this._hass.states[id]; }
   _ph(close, logo, lbl, title, sub) { return `<button class="x" data-act="${close}"><ha-icon icon="mdi:close"></ha-icon></button><div class="phd">${logo || ''}<div class="phx"><div class="lbl">${lbl}</div><div class="pti">${title}</div>${sub ? `<div class="psub">${sub}</div>` : ''}</div></div>`; }
@@ -586,6 +588,7 @@ class HomePanelCard extends HTMLElement {
     if (this._c.energy) { const k = this._c.energy, esig = JSON.stringify([k.live_power, k.live_rate, k.today_electricity, k.today_electricity_cost, k.today_gas, k.today_gas_cost].map(id => { const e = id && this._st(id); return e && [e.state, e.last_updated]; })); if (esig !== this._sig.enl) { this._sig.enl = esig; if ((k.today_electricity || k.today_gas) && this._en && Date.now() - this._en.at > 300000) this._fetchEnergy(); else { this._renderEnergy(); if (this._enOpen) this._renderEnergyPop(); } } }
     const hsig = JSON.stringify(this._c.heating.map(z => { const e = this._st(z.entity); return e && [e.state, e.attributes.current_temperature, e.attributes.temperature, e.attributes.hvac_action, e.attributes.current_humidity]; })) + JSON.stringify(this._pend || {});
     if (hsig !== this._sig.heat) { this._sig.heat = hsig; this._renderHeat(); }
+    if ((this._c.inside_temperatures || []).length) { const w = this._st(this._c.weather), hs = JSON.stringify([...this._c.inside_temperatures.map(id => (this._st(id) || {}).state), w && w.attributes.temperature]); if (hs !== this._sig.hvo) { this._sig.hvo = hs; this._renderHvo(); } }
     const csig = JSON.stringify(this._c.cameras.map(c => { const e = this._st(c.entity), mo = c.motion && this._st(c.motion); return [e && e.state, mo && mo.last_changed]; }));
     if (csig !== this._sig.cams) { this._sig.cams = csig; this._updateCams(); }
     if ((this._c.people || []).length) { const psig = JSON.stringify(this._c.people.map(p => [p.tracker, p.battery, p.battery_state, p.geocoded, p.permission].map(id => { const e = id && this._st(id); return e && [e.state, e.last_updated, e.attributes.latitude]; }))) + Math.floor(Date.now() / 60000);
@@ -944,6 +947,45 @@ class HomePanelCard extends HTMLElement {
     if (hz.length) out.push(tile(heating ? 'mdi:fire' : 'mdi:thermometer', heating ? 'orange' : 'purple', heating ? heating + ' heating' : tin != null ? r1(tin) + '°' : '—', heating ? (tin != null ? r1(tin) + '° inside' : 'Heating') : 'Inside avg', `data-act="more" data-id="${esc(c.heating[0].entity)}"`, heating > 0));
     el.innerHTML = out.join('');
     el.style.gridTemplateColumns = out.length && out.length !== 8 && matchMedia('(min-width:1001px)').matches ? `repeat(${out.length},minmax(0,1fr))` : '';
+  }
+  /* ---------- home vs outside ---------- */
+  _fetchHvo() {
+    const ids = this._c.inside_temperatures || []; if (!ids.length || !this._hass || !this._hass.callWS) return;
+    const H = this._hv = this._hv || {}; if (H.busy || (H.at && Date.now() - H.at < 900000)) return;
+    H.busy = true; const end = new Date(), start = new Date(end - 48 * 3600000), cf = this._hass.config || {};
+    const inside = this._hass.callWS({ type: 'history/history_during_period', start_time: start.toISOString(), end_time: end.toISOString(), entity_ids: ids, minimal_response: true, no_attributes: true, significant_changes_only: false })
+      .then(res => { H.hist = ids.map(id => ((res && res[id]) || []).map(x => [x.lu != null ? x.lu * 1000 : Date.parse(x.last_updated || x.last_changed), parseFloat(x.s != null ? x.s : x.state)]).filter(q => isFinite(q[1]) && isFinite(q[0])).sort((a, b) => a[0] - b[0])); }).catch(() => {});
+    const lat = this._c.latitude ?? cf.latitude, lon = this._c.longitude ?? cf.longitude;
+    const outside = lat == null ? Promise.resolve() : fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m&past_days=2&forecast_days=1&timezone=UTC`)
+      .then(r => r.ok ? r.json() : null).then(j => { if (j && j.hourly) H.out = j.hourly.time.map((t, i) => [Date.parse(t + ':00Z'), j.hourly.temperature_2m[i]]).filter(q => q[1] != null); }).catch(() => {});
+    Promise.all([inside, outside]).finally(() => { H.busy = false; H.at = Date.now(); this._renderHvo(); });
+  }
+  _renderHvo() {
+    const el = this._$ && this._$('hvo'); if (!el) return;
+    const H = this._hv || {}, ids = this._c.inside_temperatures || [], num = v => { const x = parseFloat(v); return isFinite(x) ? x : null; };
+    const cur = ids.map(id => num((this._st(id) || {}).state)).filter(v => v != null), tin = cur.length ? cur.reduce((a, b) => a + b, 0) / cur.length : null;
+    const w = this._st(this._c.weather), now = Date.now(), t0 = now - 48 * 3600000, N = 97, xs = [...Array(N)].map((_, i) => t0 + i * 1800000);
+    const at = (ser, t) => { let v = null; for (const q of ser) { if (q[0] <= t) v = q[1]; else break; } return v != null ? v : (ser[0] && ser[0][0] - t < 3 * 3600000 ? ser[0][1] : null); };
+    const hs = H.hist || [], home = xs.map(t => { const v = hs.map(q => at(q, t)).filter(x => x != null); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; });
+    const os = H.out || [], lin = t => { for (let i = 1; i < os.length; i++) if (os[i][0] >= t) { const [a, va] = os[i - 1], [b, vb] = os[i]; return t < a ? null : va + (vb - va) * (t - a) / (b - a); } return null; };
+    const out = xs.map(lin), oNow = w && num(w.attributes.temperature) != null ? num(w.attributes.temperature) : out.filter(x => x != null).slice(-1)[0];
+    if (tin != null) home[N - 1] = tin; if (oNow != null) out[N - 1] = oNow;
+    const r1 = v => v == null ? '—' : (Math.round(v * 10) / 10).toFixed(1), dl = tin != null && oNow != null ? tin - oNow : null, CH = '59,130,246', CO = '240,164,58';
+    const all = [...home, ...out].filter(x => x != null);
+    let svg = '<div class="empty">Collecting history…</div>';
+    if (all.length >= 4) {
+      const lo = Math.floor(Math.min(...all) - 1), hi = Math.ceil(Math.max(...all) + 1), W = 300, HH = 100, Y = v => (HH - (v - lo) / (hi - lo) * HH).toFixed(1), X = i => (i / (N - 1) * W).toFixed(1);
+      const path = arr => { let d = '', pen = false; arr.forEach((v, i) => { if (v == null) { pen = false; return; } d += (pen ? 'L' : 'M') + X(i) + ',' + Y(v); pen = true; }); return d; };
+      const area = arr => { const f = arr.findIndex(v => v != null), l = arr.length - 1 - [...arr].reverse().findIndex(v => v != null); if (f < 0) return ''; return path(arr.map((v, i) => i < f || i > l ? null : v == null ? arr.slice(0, i).filter(x => x != null).pop() : v)) + `L${X(l)},${HH}L${X(f)},${HH}Z`; };
+      const grid = [lo, (lo + hi) / 2, hi].map(v => `<line x1="0" x2="${W}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" stroke-dasharray="2 4" vector-effect="non-scaling-stroke"/>`).join('');
+      svg = `<svg viewBox="0 0 ${W} ${HH}" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="hvh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgb(${CH})" stop-opacity=".22"/><stop offset="1" stop-color="rgb(${CH})" stop-opacity="0"/></linearGradient><linearGradient id="hvo2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgb(${CO})" stop-opacity=".22"/><stop offset="1" stop-color="rgb(${CO})" stop-opacity="0"/></linearGradient></defs>${grid}
+        <path d="${area(out)}" fill="url(#hvo2)"/><path d="${area(home)}" fill="url(#hvh)"/><path d="${path(out)}" fill="none" stroke="rgb(${CO})" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="${path(home)}" fill="none" stroke="rgb(${CH})" stroke-width="2.4" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>
+        <span class="hyl" style="top:0">${hi}°</span><span class="hyl" style="bottom:0">${lo}°</span>`;
+    }
+    el.innerHTML = `<div class="head"><span class="lbl">Home vs outside</span><span class="hvr">Last 48 hours</span></div>
+      <div class="hvt"><div><div class="k"><i style="background:rgb(${CH})"></i>Home</div><b>${r1(tin)}°</b></div><div><div class="k"><i style="background:rgb(${CO})"></i>Outside</div><b>${r1(oNow)}°</b></div>
+      ${dl != null ? `<div class="hvd"><b style="color:${dl >= 0 ? '#22a06b' : '#3b82f6'}">${dl >= 0 ? '+' : ''}${r1(dl)}°</b><span>${dl >= 0 ? 'warmer' : 'colder'} inside</span></div>` : ''}</div>
+      <div class="hvc">${svg}</div><div class="hvx"><span>48h ago</span><span>24h</span><span>Now</span></div>`;
   }
   _alInfo() {
     const A = this._c.alarm, e = this._st(A.entity); if (!e) return null;
