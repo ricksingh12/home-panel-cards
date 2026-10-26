@@ -45,6 +45,14 @@ font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter","Segoe UI"
 .card{background:var(--card);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-radius:26px;box-shadow:var(--shadow);
 border:1px solid rgba(255,255,255,.35)}
 :host(.dark) .card{border-color:rgba(255,255,255,.06)}
+.stats{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:10px;flex:0 0 auto;margin-bottom:14px}
+.st{display:flex;align-items:center;gap:9px;padding:9px 10px;min-width:0;cursor:pointer;border-radius:20px;transition:background .2s}
+.st .sti{width:32px;height:32px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:rgba(var(--rgb),.15);color:rgb(var(--rgb))}.st .sti ha-icon{--mdc-icon-size:18px}
+.st .sx{min-width:0}.st .sv{font-size:16px;font-weight:700;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.01em}.st .sv small{font-size:11px;font-weight:500;color:var(--sub);margin-left:2px;text-transform:none;letter-spacing:0}
+.st .sk{font-size:9.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.ewk{display:flex;gap:14px;font-size:12px;color:var(--sub);font-weight:600;margin-top:2px}.ewk span{display:flex;align-items:center;gap:5px}.ewk i{width:9px;height:9px;border-radius:3px;display:block}
+.card.st.hi{background:rgba(var(--rgb),.13);box-shadow:inset 0 0 0 1px rgba(var(--rgb),.35),var(--shadow)}.st.hi .sti{background:rgb(var(--rgb));color:#fff}
+@media (max-width:1000px){.stats{grid-template-columns:repeat(4,minmax(0,1fr))}}@media (max-width:600px){.stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}}
 .lbl{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--sub);font-weight:600}
 /* clock */
 .clock{display:flex;align-items:center;gap:18px;padding:16px 20px;flex:0 0 auto;cursor:pointer}
@@ -495,6 +503,7 @@ class HomePanelCard extends HTMLElement {
     const s = this.attachShadow({ mode: 'open' });
     s.innerHTML = `<style>${CSS}</style><style>${PPLCSS}</style><div class="root">
       ${this._c.title ? `<div class="ttl">${esc(this._c.title)}</div>` : ''}
+      ${this._c.stats !== false ? '<div class="stats" id="stats"></div>' : ''}
       <div class="grid">
         <div class="left">
           <div class="card clock" data-act="clk">${this._clockSvg()}<div class="date"><div class="top"><span class="d" id="dow"></span><span id="mon"></span></div><div class="num" id="dnum"></div></div></div>
@@ -572,6 +581,7 @@ class HomePanelCard extends HTMLElement {
     const lsig = JSON.stringify(this._c.lights.map(l => { const e = this._st(l.entity); return e && [e.state, e.attributes.brightness]; }))
       + JSON.stringify(this._npPick());
     if (lsig !== this._sig.lights) { this._sig.lights = lsig; this._renderLights(); }
+    if (this._c.stats !== false) { const k = this._c.energy || {}, A = this._c.alarm || {}, ssig = JSON.stringify([k.live_power, k.live_rate, k.today_electricity, k.today_electricity_cost, k.today_gas, k.today_gas_cost, A.entity, ...(A.doors || []).map(d => d.entity), ...this._c.lights.map(l => l.entity), ...this._c.heating.map(z => z.entity)].map(id => { const e = id && this._st(id); return e && [e.state, e.attributes.hvac_action, e.attributes.current_temperature]; })); if (ssig !== this._sig.stats) { this._sig.stats = ssig; this._renderStats(); } }
     if (this._c.energy) { const k = this._c.energy, esig = JSON.stringify([k.live_power, k.live_rate, k.today_electricity, k.today_electricity_cost, k.today_gas, k.today_gas_cost].map(id => { const e = id && this._st(id); return e && [e.state, e.last_updated]; })); if (esig !== this._sig.enl) { this._sig.enl = esig; if ((k.today_electricity || k.today_gas) && this._en && Date.now() - this._en.at > 300000) this._fetchEnergy(); else { this._renderEnergy(); if (this._enOpen) this._renderEnergyPop(); } } }
     const hsig = JSON.stringify(this._c.heating.map(z => { const e = this._st(z.entity); return e && [e.state, e.attributes.current_temperature, e.attributes.temperature, e.attributes.hvac_action, e.attributes.current_humidity]; })) + JSON.stringify(this._pend || {});
     if (hsig !== this._sig.heat) { this._sig.heat = hsig; this._renderHeat(); }
@@ -911,6 +921,29 @@ class HomePanelCard extends HTMLElement {
       <div class="vacts">${acts}</div>`;
   }
   /* ---------- alarm ---------- */
+  _renderStats() {
+    const el = this._$ && this._$('stats'); if (!el) return;
+    const c = this._c, L = c.energy ? this._enLive() : null, RG = { green: '34,160,107', blue: '59,130,246', orange: '240,106,60', teal: '14,165,164', amber: '217,119,6', grey: '138,143,152', purple: '168,85,247', red: '229,72,77' };
+    const on = (c.lights || []).filter(l => (this._st(l.entity) || {}).state === 'on').length;
+    const al = c.alarm ? this._alInfo() : null;
+    const hz = (c.heating || []).map(z => this._st(z.entity)).filter(Boolean), heating = hz.filter(e => e.attributes.hvac_action === 'heating').length;
+    const tv = hz.map(e => parseFloat(e.attributes.current_temperature)).filter(v => isFinite(v)), tin = tv.length ? tv.reduce((a, b) => a + b, 0) / tv.length : null;
+    const kw = L && L.p != null ? L.p / 1000 : null, r1 = v => (Math.round(v * 10) / 10).toFixed(1);
+    const tile = (icon, col, v, k, act, hi) => `<div class="card st${hi ? ' hi' : ''}" style="--rgb:${RG[col]}" ${act}><span class="sti"><ha-icon icon="${icon}"></ha-icon></span><div class="sx"><div class="sv">${v}</div><div class="sk">${k}</div></div></div>`;
+    const out = [];
+    if (L) out.push(
+      tile('mdi:transmission-tower-import', kw == null ? 'grey' : kw >= 3 ? 'red' : kw >= 1 ? 'amber' : 'green', kw != null ? (kw < 1 ? Math.round(kw * 1000) + '<small>W</small>' : kw.toFixed(2) + '<small>kW</small>') : '—', 'Using now', 'data-act="en"', kw != null && kw >= 3),
+      tile('mdi:lightning-bolt', 'blue', L.e != null ? r1(L.e) + '<small>kWh</small>' : '—', 'Electric today', 'data-act="en"'),
+      tile('mdi:fire', 'orange', L.g != null ? r1(L.g) + '<small>kWh</small>' : '—', 'Gas today', 'data-act="en"'),
+      tile('mdi:currency-gbp', 'teal', L.cost != null ? '£' + L.cost.toFixed(2) : '—', L.phs ? 'Spent · ' + L.phs : 'Spent today', 'data-act="en"'));
+    if ((c.lights || []).length) out.push(tile('mdi:lightbulb-group', on ? 'amber' : 'grey', on ? on + ' on' : 'All off', 'Lights', 'data-act="golights"', on > 0));
+    if (al) out.push(
+      tile(al.open.length ? 'mdi:door-open' : 'mdi:door-closed-lock', al.open.length ? 'orange' : 'green', al.open.length ? al.open.length + ' open' : 'All closed', 'Doors', 'data-act="alarm"', al.open.length > 0),
+      tile(al.icon, al.cls === 'trig' ? 'red' : al.cls === 'away' ? 'red' : al.cls === 'home' || al.cls === 'wait' ? 'amber' : 'green', esc(al.label.replace('Armed · ', '')), 'Alarm', 'data-act="alarm"', al.cls === 'trig'));
+    if (hz.length) out.push(tile(heating ? 'mdi:fire' : 'mdi:thermometer', heating ? 'orange' : 'purple', heating ? heating + ' heating' : tin != null ? r1(tin) + '°' : '—', heating ? (tin != null ? r1(tin) + '° inside' : 'Heating') : 'Inside avg', `data-act="more" data-id="${esc(c.heating[0].entity)}"`, heating > 0));
+    el.innerHTML = out.join('');
+    el.style.gridTemplateColumns = out.length && out.length !== 8 && matchMedia('(min-width:1001px)').matches ? `repeat(${out.length},minmax(0,1fr))` : '';
+  }
   _alInfo() {
     const A = this._c.alarm, e = this._st(A.entity); if (!e) return null;
     const a = e.attributes, s = e.state;
@@ -1052,6 +1085,13 @@ class HomePanelCard extends HTMLElement {
   _renderEnergy() {
     const el = this._$ && this._$('en'); if (!el) return;
     const k = this._c.energy, CE = k.electricity_color || '#3b82f6', CG = k.gas_color || '#f0a43a', L = this._enLive();
+    if (L && this._c.stats !== false && this._en && this._en.days.length) {
+      const wk = this._enSum('ec') + this._enSum('gc'), wkh = this._enSum('e') + this._enSum('g');
+      el.innerHTML = `<div class="head"><div class="lbl">Energy · This week${wk ? ' £' + wk.toFixed(2) : ''}</div>${this._enLogo('elogo')}</div>
+        <div class="ewk"><span><i style="background:${CE}"></i>Electricity ${Math.round(this._enSum('e'))} kWh</span>${k.gas || k.today_gas ? `<span><i style="background:${CG}"></i>Gas ${Math.round(this._enSum('g'))} kWh</span>` : ''}</div>
+        ${this._enBars(false)}`;
+      return;
+    }
     if (L) {
       const td = (lbl, c, kwh, cost) => `<div><div class="k"><i style="background:${c}"></i>${lbl}</div><div class="v">${kwh != null ? kwh.toFixed(1) : '—'}<small>kWh</small></div><div class="c">${cost != null ? '£' + cost.toFixed(2) : ''}</div></div>`;
       el.innerHTML = `<div class="head"><div class="lbl">Energy · Today${L.cost != null ? ' £' + L.cost.toFixed(2) : ''}</div>${this._enLogo('elogo')}</div>
@@ -1733,6 +1773,7 @@ class HomePanelCard extends HTMLElement {
     else if (act === 'pinok') this._pinGo();
     else if (act === 'pinx') this._pinClose();
     else if (act === 'alarm') { this._alOpen = true; this._renderAlarmPop(); this._$('alov').classList.add('open'); }
+    else if (act === 'golights') { const p = this._c.lights_path || location.pathname.split('/').filter(Boolean)[0] + '/lights'; history.pushState(null, '', p.startsWith('/') ? p : '/' + p); window.dispatchEvent(new CustomEvent('location-changed')); }
     else if (act === 'en') { this._enOpen = true; this._renderEnergyPop(); this._$('enov').classList.add('open'); this._fetchEnergy(); }
     else if (act === 'tflretry') { this._tflAllErr = false; this._renderTflPop(); this._fetchTflAll(); }
     else if (act === 'np') this._npOpenUp();
