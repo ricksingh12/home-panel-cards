@@ -397,6 +397,28 @@ window.__hpcFit = (host, root, baseW, baseH) => {
   if (!host.__hpcFitOn) { host.__hpcFitOn = true; window.addEventListener('resize', () => requestAnimationFrame(apply)); setTimeout(apply, 400); setTimeout(apply, 1500); }
   apply();
 };
+/* Swipe left/right anywhere on a page to move to the next/previous view of the dashboard (cards with swipe: true). */
+window.__hpcSwipe = (host) => {
+  if (!host || !host._c || !host._c.swipe) return;
+  window.__hpcSwipeHosts = window.__hpcSwipeHosts || new Set(); window.__hpcSwipeHosts.add(host);
+  if (window.__hpcSwipeOn) return; window.__hpcSwipeOn = true;
+  let st = null;
+  const views = () => {
+    try { const main = document.querySelector('home-assistant').shadowRoot.querySelector('home-assistant-main'), pl = main.shadowRoot.querySelector('ha-panel-lovelace'), root = pl.shadowRoot.querySelector('hui-root');
+      return ((root.lovelace || pl.lovelace).config.views || []).map((v, i) => ({ p: v.path || String(i), sub: !!v.subview })); } catch (e) { return null; }
+  };
+  const active = path => [...window.__hpcSwipeHosts].some(h => h.isConnected && path.includes(h));
+  const blocked = path => path.some(n => n instanceof Element && (n.matches('input,select,textarea,button.pm,.ov.open,[data-noswipe]') || (n.scrollWidth > n.clientWidth + 4 && /(auto|scroll)/.test(getComputedStyle(n).overflowX))));
+  window.addEventListener('touchstart', e => { const t = e.touches[0], path = e.composedPath(); st = e.touches.length === 1 && active(path) && !blocked(path) ? { x: t.clientX, y: t.clientY, t: Date.now() } : null; }, { passive: true });
+  window.addEventListener('touchend', e => {
+    if (!st) return; const t = e.changedTouches[0], dx = t.clientX - st.x, dy = t.clientY - st.y, dt = Date.now() - st.t; st = null;
+    if (Math.abs(dx) < 90 || Math.abs(dx) < Math.abs(dy) * 2 || dt > 700) return;
+    const vs = (views() || []).filter(v => !v.sub); if (vs.length < 2) return;
+    const seg = location.pathname.split('/').filter(Boolean), cur = seg[1] || vs[0].p, i = vs.findIndex(v => v.p === cur); if (i < 0) return;
+    const j = dx < 0 ? i + 1 : i - 1; if (j < 0 || j >= vs.length) return;
+    history.pushState(null, '', '/' + seg[0] + '/' + vs[j].p); window.dispatchEvent(new CustomEvent('location-changed'));
+  }, { passive: true });
+};
 window.__hpcBack = (c, cls) => c && c.back_button ? `<button class="hback${cls ? ' ' + cls : ''}" data-act="hback" title="Back"><ha-icon icon="mdi:arrow-left"></ha-icon></button>` : '';
 window.__hpcGoBack = () => { if (history.length > 1) { history.back(); return; } const base = '/' + location.pathname.split('/').filter(Boolean)[0]; history.pushState(null, '', base); window.dispatchEvent(new CustomEvent('location-changed')); };
 const PPLCSS = `.ppl{flex:0 0 auto;padding:12px 14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:10px}
@@ -481,7 +503,7 @@ class HomePanelCard extends HTMLElement {
   set hass(h) {
     const first = !this._hass;
     this._hass = h;
-    if (!this._built) { this._build(); if (this.localName === 'home-panel-card' || this.localName === 'home-music-card') window.__hpcFit(this, this.shadowRoot.querySelector('.root'), 1380, 804); }
+    if (!this._built) { this._build(); if (this.localName === 'home-panel-card' || this.localName === 'home-music-card') window.__hpcFit(this, this.shadowRoot.querySelector('.root'), 1380, 804); window.__hpcSwipe(this); }
     { const md = this._c.dark_mode || 'sun', sn = h.states[this._c.sun], td = !!(h.themes && h.themes.darkMode);
       this.classList.toggle('dark', md === 'dark' || (md === 'sun' ? (sn ? sn.state === 'below_horizon' : td) : md !== 'light' && td)); }
     if (first || this._conn !== h.connection) this._subscribe();

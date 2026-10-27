@@ -24,7 +24,7 @@ class HomeLightsCard extends HTMLElement {
   getCardSize() { return 12; }
   set hass(h) {
     this._hass = h;
-    if (!this._root) { this._build(); window.__hpcFit(this, this._root, 1280, 0); }
+    if (!this._root) { this._build(); window.__hpcFit(this, this._root, 1280, 0); window.__hpcSwipe(this); }
     this._host.hass = h;
     const md = this._c.dark_mode || 'sun', sn = h.states[this._c.sun], td = !!(h.themes && h.themes.darkMode);
     this.classList.toggle('dark', md === 'dark' || (md === 'sun' ? (sn ? sn.state === 'below_horizon' : td) : md !== 'light' && td));
