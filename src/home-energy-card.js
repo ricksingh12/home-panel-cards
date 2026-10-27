@@ -44,7 +44,7 @@ class HomeEnergyCard extends HTMLElement {
   disconnectedCallback() { clearInterval(this._t); }
   set hass(h) {
     const first = !this._hass; this._hass = h;
-    if (!this._root) this._build();
+    if (!this._root) { this._build(); window.__hpcFit(this, this._root.querySelector('.er'), 1280, 744); }
     this._host.hass = h;
     const md = this._c.dark_mode || 'sun', sn = h.states[this._c.sun], td = !!(h.themes && h.themes.darkMode);
     this.classList.toggle('dark', md === 'dark' || (md === 'sun' ? (sn ? sn.state === 'below_horizon' : td) : md !== 'light' && td));

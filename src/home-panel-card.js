@@ -383,6 +383,20 @@ const PINCSS = `.pt{font-size:20px;font-weight:700;margin-top:4px}.pdots{height:
 .pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:10px}
 .pk{height:64px;border-radius:20px;border:0;background:var(--card2);color:var(--text);font:inherit;font-size:26px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .08s}
 .pdots{margin-top:16px}.pk:active{transform:scale(.94)}.pk ha-icon{--mdc-icon-size:26px}.pk.ok{background:#22a06b;color:#fff}.pk[disabled]{opacity:.4;pointer-events:none}`;
+/* Scale a fixed tablet layout to the screen: the layout is designed at baseW x baseH and zoomed to fit wide screens (1100px+). */
+window.__hpcFit = (host, root, baseW, baseH) => {
+  if (!host || !root) return;
+  const apply = () => {
+    const vw = window.innerWidth, r = host.getBoundingClientRect(), w = r.width || vw;
+    if (vw < 1100 || (host._c && host._c.fit === false) || !w) { root.style.zoom = ''; root.style.height = ''; root.style.minHeight = ''; return; }
+    const top = Math.max(0, r.top + (window.scrollY || 0)), avail = Math.max(400, window.innerHeight - top);
+    const z = Math.round(Math.min(1.8, Math.max(0.8, baseH ? Math.min(w / baseW, avail / baseH) : w / baseW)) * 100) / 100;
+    root.style.zoom = z === 1 ? '' : z;
+    if (baseH) { root.style.height = (avail / z) + 'px'; root.style.minHeight = '0'; } else root.style.minHeight = (avail / z) + 'px';
+  };
+  if (!host.__hpcFitOn) { host.__hpcFitOn = true; window.addEventListener('resize', () => requestAnimationFrame(apply)); setTimeout(apply, 400); setTimeout(apply, 1500); }
+  apply();
+};
 window.__hpcBack = (c, cls) => c && c.back_button ? `<button class="hback${cls ? ' ' + cls : ''}" data-act="hback" title="Back"><ha-icon icon="mdi:arrow-left"></ha-icon></button>` : '';
 window.__hpcGoBack = () => { if (history.length > 1) { history.back(); return; } const base = '/' + location.pathname.split('/').filter(Boolean)[0]; history.pushState(null, '', base); window.dispatchEvent(new CustomEvent('location-changed')); };
 const PPLCSS = `.ppl{flex:0 0 auto;padding:12px 14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:10px}
@@ -467,7 +481,7 @@ class HomePanelCard extends HTMLElement {
   set hass(h) {
     const first = !this._hass;
     this._hass = h;
-    if (!this._built) this._build();
+    if (!this._built) { this._build(); if (this.localName === 'home-panel-card' || this.localName === 'home-music-card') window.__hpcFit(this, this.shadowRoot.querySelector('.root'), 1380, 804); }
     { const md = this._c.dark_mode || 'sun', sn = h.states[this._c.sun], td = !!(h.themes && h.themes.darkMode);
       this.classList.toggle('dark', md === 'dark' || (md === 'sun' ? (sn ? sn.state === 'below_horizon' : td) : md !== 'light' && td)); }
     if (first || this._conn !== h.connection) this._subscribe();
