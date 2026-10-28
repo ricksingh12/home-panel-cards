@@ -58,14 +58,14 @@ border:1px solid rgba(255,255,255,.35)}
 @media (max-width:1000px){.stats{grid-template-columns:repeat(4,minmax(0,1fr))}}@media (max-width:600px){.stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}}
 .lbl{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--sub);font-weight:600}
 /* clock */
-.clock{display:flex;align-items:center;gap:18px;padding:16px 20px;flex:0 0 auto;cursor:pointer}
-.clocksvg{width:clamp(110px,13vw,150px);height:auto;flex:0 0 auto}
+.clock{display:flex;align-items:center;gap:16px;padding:12px 18px;flex:0 0 auto;cursor:pointer}
+.clocksvg{width:clamp(92px,10vw,122px);height:auto;flex:0 0 auto}
 .face{fill:none}.ticks line{stroke:var(--sub);stroke-width:.6;stroke-linecap:round}
 .nums text{font-size:8.5px;fill:var(--text);font-weight:500}
 .hand{stroke-linecap:round}.hand.h{stroke:var(--text);stroke-width:2.6}.hand.m{stroke:var(--text);stroke-width:1.8}
 .hand.s{stroke:var(--accent);stroke-width:.9}.pin{fill:var(--accent)}
-.date .top{font-size:clamp(20px,2.3vw,28px);font-weight:600;line-height:1.1}
-.date .top .d{color:var(--accent);margin-right:.28em}.date .num{font-size:clamp(40px,5vw,62px);font-weight:600;line-height:1}
+.date .top{font-size:clamp(18px,2vw,24px);font-weight:600;line-height:1.1}
+.date .top .d{color:var(--accent);margin-right:.28em}.date .num{font-size:clamp(36px,4.2vw,52px);font-weight:600;line-height:1}
 /* weather */
 .wx{flex:1 1 162px;min-height:162px !important;padding:16px 18px;display:flex;flex-direction:column;cursor:pointer;min-height:0;overflow:hidden;position:relative}
 .wx.sunny{background:linear-gradient(165deg,#bcd9f3 0%,#e7f0f8 55%,#fbf1e6 100%)}
@@ -472,13 +472,13 @@ const PPLCSS = `.ppl{flex:0 0 auto;padding:12px 14px;display:grid;grid-template-
 .cdiv{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--sub);margin-top:8px;padding:6px 0 2px;border-top:1px solid var(--line)}
 .ht2{flex:1 1 0;min-width:0;padding:8px 8px 6px;display:flex;flex-direction:column;align-items:center;position:relative;cursor:pointer;transition:background .2s}
 .ht2.heating{background:rgba(255,234,222,.9)}:host(.dark) .ht2.heating{background:rgba(92,52,36,.75)}
-.htop{align-self:stretch;display:flex;justify-content:space-between;align-items:center;height:24px}.hl2{height:14px;width:auto;display:block;margin-left:2px}
+.htop{position:absolute;top:6px;left:6px;right:6px;display:flex;justify-content:space-between;align-items:center;height:24px;pointer-events:none}.htop>*{pointer-events:auto}.hl2{height:14px;width:auto;display:block;margin-left:2px}
 .hpw{width:24px;height:24px;border-radius:50%;border:0;padding:0;background:var(--card2);color:var(--sub);display:flex;align-items:center;justify-content:center;cursor:pointer}.hpw ha-icon{--mdc-icon-size:14px}.ht2.on .hpw{background:#f06a3c;color:#fff}
-.hn{font-size:13px;font-weight:600;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:-6px}
-.hdial{position:relative;width:84px;height:76px;margin-top:-3px}.hdial svg{position:absolute;left:0;top:0;width:84px;height:84px;overflow:visible}
+.hn{font-size:13px;font-weight:600;max-width:calc(100% - 36px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;line-height:20px}
+.hdial{position:relative;width:84px;height:76px;margin-top:2px}.hdial svg{position:absolute;left:0;top:0;width:84px;height:84px;overflow:visible}
 .hdial .trk{fill:none;stroke:var(--line);stroke-width:6;stroke-linecap:round}:host(.dark) .hdial .trk{stroke:rgba(255,255,255,.1)}.hdial .trk{stroke:rgba(0,0,0,.08)}
 .hdial .fil{fill:none;stroke-width:6;stroke-linecap:round}.hdial .fil.dim{opacity:.45}.hdial .knob{fill:#fff;stroke-width:2.5}.hdial .cdot{fill:var(--text)}
-.hc2{position:absolute;left:0;right:0;top:21px;text-align:center;line-height:1}.hc2 .htv{font-size:22px;font-weight:600}.hc2 .htv small{font-size:12px;vertical-align:top}
+.hc2{position:absolute;left:0;right:0;top:23px;text-align:center;line-height:1}.hc2 .htv{font-size:18px;font-weight:600}.hc2 .htv small{font-size:10px;vertical-align:top}
 .hc2 .hs{font-size:10.5px;font-weight:600;color:var(--sub);margin-top:3px;white-space:nowrap}.ht2.heating .hc2 .hs{color:#e0592a}.hc2 .hh{font-size:10px;color:var(--sub);margin-top:8px}
 .hb{position:absolute;bottom:8px;width:30px;height:30px;border-radius:50%;border:0;padding:0;background:var(--card2);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer}.hb ha-icon{--mdc-icon-size:18px}.hb.m{left:8px}.hb.p{right:8px}.ht2.off .hb{opacity:.35;pointer-events:none}
 .music .mc .vb2{opacity:.75}.music .mc .vb2 ha-icon{--mdc-icon-size:18px}.music .mc{gap:6px;flex-wrap:nowrap}.music .mc button{flex:0 0 auto;width:30px !important;height:30px !important}.music .mc .pp{width:38px !important;height:38px !important}.music .mc .vb2{width:28px !important;height:28px !important}.music .mc.mvs{gap:6px;align-items:center}.music .mc.mvs input{flex:1;min-width:40px;accent-color:var(--accent)}.music.art .mc.mvs input{accent-color:#fff}
@@ -798,7 +798,7 @@ class HomePanelCard extends HTMLElement {
   /* ---------- heating ---------- */
   _renderHeat() {
     const el = this._$ && this._$('heat'); if (!el) return;
-    const p = this._pend || {}, hu = this._c.heating_logo === undefined ? 'https://brands.home-assistant.io/nest/logo.png' : this._c.heating_logo;
+    const p = this._pend || {}, hu = this._c.heating_logo || '';
     const hl = hu ? `<img class="hl2" src="${esc(hu)}" alt="" onerror="this.style.display='none'">` : '<span></span>';
     const [lo, hi] = this._c.heating_range || [10, 30], R = 35, C = 42, A0 = 135, SW = 270;
     const ang = v => A0 + SW * (Math.min(hi, Math.max(lo, v)) - lo) / (hi - lo), pt = g => [C + R * Math.cos(g * Math.PI / 180), C + R * Math.sin(g * Math.PI / 180)];
