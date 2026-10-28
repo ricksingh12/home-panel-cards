@@ -485,7 +485,7 @@ const PPLCSS = `.ppl{flex:0 0 auto;padding:12px 14px;display:grid;grid-template-
 .cvid img,.cvid .cstream{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block}
 .clive{position:absolute;left:12px;top:12px;display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.5);color:#fff;font-size:11px;font-weight:700;letter-spacing:.06em;padding:4px 10px;border-radius:999px;backdrop-filter:blur(8px)}.clive i{width:7px;height:7px;border-radius:50%;background:#e5484d;display:block;animation:apulse 1.6s infinite}
 .cmo{position:absolute;right:12px;top:12px;background:rgba(0,0,0,.5);color:#fff;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;backdrop-filter:blur(8px)}.cmo:empty{display:none}.cmo.on{background:#e5484d}
-.phd{display:flex;align-items:center;gap:12px;margin-right:52px;min-height:44px}.x.xmap{right:60px;width:auto;padding:0 14px 0 11px;border-radius:999px;gap:6px;font:inherit;font-size:13px;font-weight:600}.x.xmap ha-icon{--mdc-icon-size:18px}.xmap~.phd{margin-right:150px}.phx{min-width:0}.phd .lbl{margin:0}.pti{font-size:22px;font-weight:700;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.psub{font-size:13px;color:var(--sub);margin-top:2px}.psub:empty{display:none}
+.phd{display:flex;align-items:center;gap:12px;margin-right:52px;min-height:44px}.x.xmap{right:60px;width:auto;padding:0 14px 0 11px;border-radius:999px;gap:6px;font:inherit;font-size:13px;font-weight:600}.x.xmap ha-icon{--mdc-icon-size:18px}.xmap~.phd{margin-right:150px}.tmap{margin-top:12px;height:min(68vh,640px);overflow:auto;border-radius:18px;background:#fff;-webkit-overflow-scrolling:touch}.tmap img{display:block;width:100%;height:100%;object-fit:contain;cursor:zoom-in}.tmap.z img{width:260%;height:auto;max-width:none;object-fit:initial;cursor:zoom-out}.phx{min-width:0}.phd .lbl{margin:0}.pti{font-size:22px;font-weight:700;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.psub{font-size:13px;color:var(--sub);margin-top:2px}.psub:empty{display:none}
 .plg{width:36px;height:36px;object-fit:contain;flex:0 0 auto;border-radius:8px}:host(.dark) .plg.inv{filter:invert(1)}.phd .pav{width:40px;height:40px;flex:0 0 auto}
 .pic{width:42px;height:42px;border-radius:50%;background:var(--card2);color:var(--sub);display:flex;align-items:center;justify-content:center;flex:0 0 auto}.pic ha-icon{--mdc-icon-size:22px}
 .pop .phd+.tabs{margin-top:14px}.pop .tabs+*{margin-top:12px}.pop>.cacts,.pop .vacts:last-child{margin-top:16px}.ast-trig{color:#e5484d}.ast-away{color:#e5484d}.ast-home{color:#d97706}.ast-disarmed{color:#22a06b}
@@ -1273,10 +1273,38 @@ class HomePanelCard extends HTMLElement {
     const u = this._c.tfl_logo === undefined ? 'https://brands.home-assistant.io/london_underground/icon.png' : this._c.tfl_logo;
     return u ? `<img class="${cls}" src="${esc(u)}" alt="" onerror="this.style.display='none'">` : '';
   }
+  _renderTubeMap(el, btn) {
+    // TfL's official Tube map PDF, drawn to a picture with pdf.js (cached for the page's lifetime)
+    el.innerHTML = btn + this._ph('closetfl', this._tflLogo('plg'), 'London transport', 'Tube map', 'Tap the map to zoom in or out') + '<div class="tmap" id="tmap"><div class="wxmsg">Loading map…</div></div>';
+    const url = this._c.tfl_map_url || 'https://content.tfl.gov.uk/standard-tube-map.pdf';
+    const W = window.__hpcTube = window.__hpcTube || {};
+    if (!W[url]) W[url] = (async () => {
+      if (!window.pdfjsLib) await new Promise((ok, no) => { const sc = document.createElement('script'); sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js'; sc.onload = ok; sc.onerror = no; document.head.appendChild(sc); });
+      const lib = window.pdfjsLib; lib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      const doc = await lib.getDocument({ url }).promise, pg = await doc.getPage(1), v0 = pg.getViewport({ scale: 1 });
+      const vp = pg.getViewport({ scale: Math.min(3600 / v0.width, 3600 / v0.height) * 1 }), cv = document.createElement('canvas');
+      cv.width = Math.round(vp.width); cv.height = Math.round(vp.height);
+      const ctx = cv.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, cv.width, cv.height);
+      await pg.render({ canvasContext: ctx, viewport: vp }).promise;
+      const blob = await new Promise(r => cv.toBlob(r, 'image/png')); return URL.createObjectURL(blob);
+    })();
+    W[url].then(src => {
+      const box = this._$('tmap'); if (!box || !this._tflMap) return;
+      box.innerHTML = `<img src="${src}" alt="Tube map">`;
+      const im = box.firstChild;
+      im.addEventListener('click', ev => {
+        const r = im.getBoundingClientRect(), fx = (ev.clientX - r.left) / r.width, fy = (ev.clientY - r.top) / r.height;
+        box.classList.toggle('z');
+        if (box.classList.contains('z')) requestAnimationFrame(() => { box.scrollLeft = fx * im.offsetWidth - box.clientWidth / 2; box.scrollTop = fy * im.offsetHeight - box.clientHeight / 2; });
+      });
+    }).catch(() => { delete W[url]; const box = this._$('tmap'); if (box) box.innerHTML = `<div class="wxmsg">Couldn't load the Tube map. <button class="pill" data-act="tflmap">Try again</button></div>`; });
+  }
   _renderTflPop() {
     const el = this._$('tflpop'), d = this._tflAll;
     const lines0 = d ? d.lines : [], bad0 = lines0.filter(l => this._tflInfo(l.id, l).cls !== 'ok').length;
-    const head = `<button class="x xmap" data-act="tflmap" title="Tube map"><ha-icon icon="mdi:map-outline"></ha-icon><span>Map</span></button>` + this._ph('closetfl', this._tflLogo('plg'), 'London transport', 'Line status', d ? (bad0 ? bad0 + (bad0 === 1 ? ' line with issues' : ' lines with issues') : 'Good service on all lines') + ' · ' + (this._tflAllErr ? "Couldn't update · " : 'Updated ') + hm(d.at) : '');
+    const mapBtn = this._tflMap ? `<button class="x xmap" data-act="tflstatus" title="Line status"><ha-icon icon="mdi:format-list-bulleted"></ha-icon><span>Status</span></button>` : `<button class="x xmap" data-act="tflmap" title="Tube map"><ha-icon icon="mdi:map-outline"></ha-icon><span>Map</span></button>`;
+    if (this._tflMap) { this._renderTubeMap(el, mapBtn); return; }
+    const head = mapBtn + this._ph('closetfl', this._tflLogo('plg'), 'London transport', 'Line status', d ? (bad0 ? bad0 + (bad0 === 1 ? ' line with issues' : ' lines with issues') : 'Good service on all lines') + ' · ' + (this._tflAllErr ? "Couldn't update · " : 'Updated ') + hm(d.at) : '');
     if (!d) { el.innerHTML = head + `<div class="wxmsg">${this._tflAllErr ? "Couldn't load TfL status. <button class=\"pill\" data-act=\"tflretry\">Try again</button>" : 'Loading…'}</div>`; return; }
     const lines = d.lines.slice().sort((a, b) => (this._tflInfo(a.id, a).rank - this._tflInfo(b.id, b).rank) || a.name.localeCompare(b.name));
     const bad = lines.filter(l => this._tflInfo(l.id, l).cls !== 'ok').length;
@@ -1840,7 +1868,7 @@ class HomePanelCard extends HTMLElement {
     if (act === 'closebg' && t !== path[0]) return;
     if (act === 'wxloc') { this._wxLoc = +t.dataset.i; if (t.dataset.retry && this._om) delete this._om[this._wxLoc]; this._renderWxPop(); return; }
     if (act === 'wx') { this._wxLoc = 0; this._wxOpen = true; this._sig.wxp = null; this._$('wxov').classList.add('open'); this._update(); }
-    else if (act === 'closewx' || act === 'closebg' || act === 'closecal' || act === 'closeclk' || act === 'closetfl' || act === 'closecar' || act === 'closeen' || act === 'closeal' || act === 'closeppl' || act === 'closevac' || act === 'closecam') { this._camClose(); if (this._pin && this._$('pinov').classList.contains('open')) { this._pinClose(); return; } this._alOpen = false; this._vacOpen = false; this._pplOpen = null; this._wxOpen = false; this._calOpen = false; this._clkOpen = false; this._tflOpen = false; this._carOpen = false; this._enOpen = false; ['wxov', 'calov', 'clkov', 'tflov', 'carov', 'enov', 'alov', 'pplov', 'vacov'].forEach(id => this._$(id).classList.remove('open')); }
+    else if (act === 'closewx' || act === 'closebg' || act === 'closecal' || act === 'closeclk' || act === 'closetfl' || act === 'closecar' || act === 'closeen' || act === 'closeal' || act === 'closeppl' || act === 'closevac' || act === 'closecam') { this._camClose(); if (this._pin && this._$('pinov').classList.contains('open')) { this._pinClose(); return; } this._alOpen = false; this._vacOpen = false; this._pplOpen = null; this._wxOpen = false; this._calOpen = false; this._clkOpen = false; this._tflOpen = false; this._tflMap = false; this._carOpen = false; this._enOpen = false; ['wxov', 'calov', 'clkov', 'tflov', 'carov', 'enov', 'alov', 'pplov', 'vacov'].forEach(id => this._$(id).classList.remove('open')); }
     else if (act === 'clk') { this._clkOpen = true; this._renderWorld(); this._$('clkov').classList.add('open'); }
     else if (act === 'cal') { this._calOpen = true; this._renderCalPop(); this._$('calov').classList.add('open'); this._fetchCal(); }
     else if (act === 'allcams') { history.pushState(null, '', this._c.cameras_path); window.dispatchEvent(new CustomEvent('location-changed')); }
@@ -1871,7 +1899,7 @@ class HomePanelCard extends HTMLElement {
     else if (act === 'alarm') { this._alOpen = true; this._renderAlarmPop(); this._$('alov').classList.add('open'); }
     else if (act === 'golights') { const p = this._c.lights_path || location.pathname.split('/').filter(Boolean)[0] + '/lights'; history.pushState(null, '', p.startsWith('/') ? p : '/' + p); window.dispatchEvent(new CustomEvent('location-changed')); }
     else if (act === 'en') { this._enOpen = true; this._renderEnergyPop(); this._$('enov').classList.add('open'); this._fetchEnergy(); }
-    else if (act === 'tflmap') { window.open(this._c.tfl_map_url || 'https://content.tfl.gov.uk/standard-tube-map.pdf', '_blank', 'noopener'); }
+    else if (act === 'tflmap' || act === 'tflstatus') { this._tflMap = act === 'tflmap'; this._renderTflPop(); }
     else if (act === 'tflretry') { this._tflAllErr = false; this._renderTflPop(); this._fetchTflAll(); }
     else if (act === 'np') this._npOpenUp();
     else if (act === 'closenp') { this._npOpen = false; this._$('npov').classList.remove('open'); }
