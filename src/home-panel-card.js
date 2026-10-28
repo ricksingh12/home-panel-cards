@@ -1391,7 +1391,7 @@ class HomePanelCard extends HTMLElement {
     const g = this._$('camgrid');
     g.innerHTML = this._c.cameras.slice(0, 3).map((c, i) =>
       `<div class="cam ${i === 0 && this._c.cameras.length > 1 ? 'big' : ''}" data-act="${this._c.doorbell && this._c.doorbell.camera === c.entity ? 'door' : 'cam'}" data-id="${esc(c.entity)}" data-i="${i}">
-        <img id="ci${i}" alt=""><div class="off" id="co${i}" hidden>Unavailable</div>
+        <img id="ci${i}" alt=""><div class="off" id="co${i}" hidden></div>
         <span class="ago" id="ca${i}" hidden></span><span class="nm">${esc(c.name || c.entity)}</span>
         <span class="play"><ha-icon icon="mdi:play"></ha-icon></span></div>`).join('');
     if (this._c.cameras.length < 3) g.style.gridTemplateRows = '1fr';

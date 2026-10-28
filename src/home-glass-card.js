@@ -239,7 +239,7 @@ customElements.whenDefined('home-panel-card').then(() => {
       const cams = this._c.cameras.slice(0, 3);
       g.style.gridTemplateColumns = `repeat(${Math.max(1, Math.min(cams.length, 2))},minmax(0,1fr))`;
       g.innerHTML = cams.map((c, i) => `<div class="qcam" data-act="${this._c.doorbell && this._c.doorbell.camera === c.entity ? 'door' : 'cam'}" data-i="${i}"${i > 1 ? ' style="display:none"' : ''}>
-        <img id="ci${i}" alt=""><div class="qoff" id="co${i}" hidden>Unavailable</div><span class="qago" id="ca${i}" hidden></span><span class="qnm">${E(c.name || c.entity)}</span></div>`).join('');
+        <img id="ci${i}" alt=""><div class="qoff" id="co${i}" hidden></div><span class="qago" id="ca${i}" hidden></span><span class="qnm">${E(c.name || c.entity)}</span></div>`).join('');
     }
     /* ---------- clock ---------- */
     _tick() {

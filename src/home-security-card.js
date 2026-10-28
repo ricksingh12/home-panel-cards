@@ -39,7 +39,7 @@ class HomeSecurityCard extends HTMLElement {
   _build() {
     const s = this.attachShadow({ mode: 'open' });
     const N = this._c.cameras.length, feat = this._c.featured !== undefined ? this._c.featured : N >= 3 && N % 2 === 1, cols = feat ? (N - 1) / 2 + 2 : N <= 8 ? Math.max(1, Math.ceil(N / 2)) : Math.ceil(N / 3);
-    const cams = this._c.cameras.map((c, i) => `<div class="cam${i === 0 && feat ? ' big' : ''}" data-act="cam" data-i="${i}"><img id="ci${i}" alt=""><div class="off" id="co${i}" hidden>Unavailable</div>
+    const cams = this._c.cameras.map((c, i) => `<div class="cam${i === 0 && feat ? ' big' : ''}" data-act="cam" data-i="${i}"><img id="ci${i}" alt=""><div class="off" id="co${i}" hidden></div>
       <span class="live" id="cl${i}" hidden>MOTION</span><span class="ago" id="ca${i}" hidden></span><span class="nm">${hscEsc(c.name || c.entity)}</span><span class="play"><ha-icon icon="mdi:play"></ha-icon></span></div>`).join('');
     const u = this._c.cameras_logo === undefined ? 'https://brands.home-assistant.io/unifiprotect/icon.png' : this._c.cameras_logo;
     s.innerHTML = `<style>${window.__HPC_CSS || ''}</style><style>${HSC_CSS}</style><div class="sr">
