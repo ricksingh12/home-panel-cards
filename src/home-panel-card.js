@@ -413,7 +413,8 @@ window.__hpcSwipe = (host) => {
       return ((root.lovelace || pl.lovelace).config.views || []).map((v, i) => ({ p: v.path || String(i), sub: !!v.subview })); } catch (e) { return null; }
   };
   const active = path => [...window.__hpcSwipeHosts].some(h => h.isConnected && path.includes(h));
-  const blocked = path => path.some(n => n instanceof Element && (n.matches('input,select,textarea,button.pm,.ov.open,[data-noswipe]') || (n.scrollWidth > n.clientWidth + 4 && /(auto|scroll)/.test(getComputedStyle(n).overflowX))));
+  // the Music page shows its player in an always-open overlay (.npov): that one is the page itself, not a pop-up
+  const blocked = path => { const music = path.some(n => n.localName === 'home-music-card'); return path.some(n => n instanceof Element && (n.matches('input,select,textarea,button.pm,[data-noswipe]') || (n.matches('.ov.open') && !(music && n.classList.contains('npov'))) || (n.scrollWidth > n.clientWidth + 4 && /(auto|scroll)/.test(getComputedStyle(n).overflowX)))); };
   window.addEventListener('touchstart', e => { const t = e.touches[0], path = e.composedPath(); st = e.touches.length === 1 && active(path) && !blocked(path) ? { x: t.clientX, y: t.clientY, t: Date.now() } : null; }, { passive: true });
   window.addEventListener('touchend', e => {
     if (!st) return; const t = e.changedTouches[0], dx = t.clientX - st.x, dy = t.clientY - st.y, dt = Date.now() - st.t; st = null;
