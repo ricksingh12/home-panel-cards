@@ -485,7 +485,7 @@ const PPLCSS = `.ppl{flex:0 0 auto;padding:12px 14px;display:grid;grid-template-
 .cvid img,.cvid .cstream{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block}
 .clive{position:absolute;left:12px;top:12px;display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.5);color:#fff;font-size:11px;font-weight:700;letter-spacing:.06em;padding:4px 10px;border-radius:999px;backdrop-filter:blur(8px)}.clive i{width:7px;height:7px;border-radius:50%;background:#e5484d;display:block;animation:apulse 1.6s infinite}
 .cmo{position:absolute;right:12px;top:12px;background:rgba(0,0,0,.5);color:#fff;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;backdrop-filter:blur(8px)}.cmo:empty{display:none}.cmo.on{background:#e5484d}
-.phd{display:flex;align-items:center;gap:12px;margin-right:52px;min-height:44px}.x.xmap{right:60px;width:auto;padding:0 14px 0 11px;border-radius:999px;gap:6px;font:inherit;font-size:13px;font-weight:600}.x.xmap ha-icon{--mdc-icon-size:18px}.xmap~.phd{margin-right:150px}.tmap{margin-top:12px;height:min(68vh,640px);overflow:auto;border-radius:18px;background:#fff;-webkit-overflow-scrolling:touch}.tmap img{display:block;width:100%;height:100%;object-fit:contain;cursor:zoom-in}.tmap.z img{width:260%;height:auto;max-width:none;object-fit:initial;cursor:zoom-out}.phx{min-width:0}.phd .lbl{margin:0}.pti{font-size:22px;font-weight:700;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.psub{font-size:13px;color:var(--sub);margin-top:2px}.psub:empty{display:none}
+.phd{display:flex;align-items:center;gap:12px;margin-right:52px;min-height:44px}.x.xmap{right:60px;width:auto;padding:0 14px 0 11px;border-radius:999px;gap:6px;font:inherit;font-size:13px;font-weight:600}.x.xmap ha-icon{--mdc-icon-size:18px}.xmap~.phd{margin-right:150px}.tmap{margin-top:12px;height:min(68vh,640px);overflow:auto;border-radius:18px;background:#fff;-webkit-overflow-scrolling:touch}.tmap img{display:block;width:100%;height:100%;object-fit:contain;cursor:zoom-in}.tmap.z img{width:220%;height:auto;max-width:none;object-fit:initial;cursor:zoom-out}.phx{min-width:0}.phd .lbl{margin:0}.pti{font-size:22px;font-weight:700;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.psub{font-size:13px;color:var(--sub);margin-top:2px}.psub:empty{display:none}
 .plg{width:36px;height:36px;object-fit:contain;flex:0 0 auto;border-radius:8px}:host(.dark) .plg.inv{filter:invert(1)}.phd .pav{width:40px;height:40px;flex:0 0 auto}
 .pic{width:42px;height:42px;border-radius:50%;background:var(--card2);color:var(--sub);display:flex;align-items:center;justify-content:center;flex:0 0 auto}.pic ha-icon{--mdc-icon-size:22px}
 .pop .phd+.tabs{margin-top:14px}.pop .tabs+*{margin-top:12px}.pop>.cacts,.pop .vacts:last-child{margin-top:16px}.ast-trig{color:#e5484d}.ast-away{color:#e5484d}.ast-home{color:#d97706}.ast-disarmed{color:#22a06b}
@@ -1273,31 +1273,15 @@ class HomePanelCard extends HTMLElement {
     const u = this._c.tfl_logo === undefined ? 'https://brands.home-assistant.io/london_underground/icon.png' : this._c.tfl_logo;
     return u ? `<img class="${cls}" src="${esc(u)}" alt="" onerror="this.style.display='none'">` : '';
   }
-  _tubeUrl() { return this._c.tfl_map_url || 'https://content.tfl.gov.uk/standard-tube-map.pdf'; }
   _tubeMapLoad() {
-    // TfL's official Tube map PDF drawn to a picture with pdf.js. Drawing takes a while on a tablet, so the picture
-    // is kept in the browser cache for a week and is prepared as soon as the TfL pop-up opens.
-    const url = this._tubeUrl(), W = window.__hpcTube = window.__hpcTube || {};
-    if (W[url]) return W[url];
-    const key = 'https://hpc.local/tube-map-v1?src=' + encodeURIComponent(url);
-    return W[url] = (async () => {
-      let cache = null; try { cache = await caches.open('home-panel-cards'); const hit = await cache.match(key);
-        if (hit && Date.now() - (+hit.headers.get('x-at') || 0) < 7 * 864e5) return URL.createObjectURL(await hit.blob()); } catch (e) { cache = null; }
-      const CDN = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
-      if (!window.pdfjsLib) await new Promise((ok, no) => { const sc = document.createElement('script'); sc.src = CDN + 'pdf.min.js'; sc.onload = ok; sc.onerror = no; document.head.appendChild(sc); });
-      const lib = window.pdfjsLib;
-      // a worker must be same-origin, so load pdf.js's worker through a blob URL
-      if (!window.__hpcPdfW) window.__hpcPdfW = URL.createObjectURL(new Blob([await fetch(CDN + 'pdf.worker.min.js').then(r => r.text())], { type: 'text/javascript' }));
-      lib.GlobalWorkerOptions.workerSrc = window.__hpcPdfW;
-      const doc = await lib.getDocument({ url }).promise, pg = await doc.getPage(1), v0 = pg.getViewport({ scale: 1 });
-      const vp = pg.getViewport({ scale: 2800 / Math.max(v0.width, v0.height) }), cv = document.createElement('canvas');
-      cv.width = Math.round(vp.width); cv.height = Math.round(vp.height);
-      const ctx = cv.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, cv.width, cv.height);
-      await pg.render({ canvasContext: ctx, viewport: vp }).promise; doc.destroy();
-      const blob = await new Promise(r => cv.toBlob(r, 'image/jpeg', 0.9));
-      if (cache) cache.put(key, new Response(blob, { headers: { 'content-type': 'image/jpeg', 'x-at': String(Date.now()) } })).catch(() => {});
-      return URL.createObjectURL(blob);
-    })().catch(e => { delete W[url]; throw e; });
+    // The map picture lives in Home Assistant, not in this public repo: a URL in the card config (tfl_map_image),
+    // or a picture uploaded to Media → My media (tfl_map_media, default tube-map.png in the top folder).
+    if (this._c.tfl_map_image) return Promise.resolve(this._c.tfl_map_image);
+    const id = this._c.tfl_map_media || 'media-source://media_source/local/tube-map.png', W = window.__hpcTube = window.__hpcTube || {};
+    if (W[id]) return W[id];
+    return W[id] = this._hass.callWS({ type: 'media_source/resolve_media', media_content_id: id, expires: 300 })
+      .then(r => fetch(r.url)).then(r => { if (!r.ok) throw new Error(r.status); return r.blob(); }).then(b => URL.createObjectURL(b))
+      .catch(e => { delete W[id]; throw e; });
   }
   _renderTubeMap(el, btn) {
     el.innerHTML = btn + this._ph('closetfl', this._tflLogo('plg'), 'London transport', 'Tube map', 'Tap the map to zoom in or out') + '<div class="tmap" id="tmap"><div class="wxmsg">Loading map…</div></div>';
@@ -1310,7 +1294,7 @@ class HomePanelCard extends HTMLElement {
         box.classList.toggle('z');
         if (box.classList.contains('z')) requestAnimationFrame(() => { box.scrollLeft = fx * im.offsetWidth - box.clientWidth / 2; box.scrollTop = fy * im.offsetHeight - box.clientHeight / 2; });
       });
-    }).catch(() => { const box = this._$('tmap'); if (box) box.innerHTML = `<div class="wxmsg">Couldn't load the Tube map. <button class="pill" data-act="tflmap">Try again</button></div>`; });
+    }).catch(() => { const box = this._$('tmap'); if (box) box.innerHTML = `<div class="wxmsg">Couldn't find the Tube map picture. Upload it as <b>tube-map.png</b> in Media → My media. <button class="pill" data-act="tflmap">Try again</button></div>`; });
   }
   _renderTflPop() {
     const el = this._$('tflpop'), d = this._tflAll;
@@ -1895,7 +1879,7 @@ class HomePanelCard extends HTMLElement {
     else if (act === 'dbclose') this._dbClose();
     else if (act === 'dbsay') { const d = this._c.doorbell, r = (d.replies || ['Coming now', 'Please leave it at the door', 'Sorry, we can\'t come to the door right now'])[+t.dataset.i]; if (r) this._dbSay(r); }
     else if (act === 'dbsnd') { this._dbPoke(); this._dbMuted = !this._dbMuted; if (this._dbV) this._dbV.muted = this._dbMuted; t.innerHTML = this._dbMuted ? '<ha-icon icon="mdi:volume-off"></ha-icon><span>Listen</span>' : '<ha-icon icon="mdi:volume-high"></ha-icon><span>Mute</span>'; t.classList.toggle('on', !this._dbMuted); }
-    else if (act === 'tfl') { setTimeout(() => this._tubeMapLoad().catch(() => {}), 400); this._tflOpen = true; this._renderTflPop(); this._$('tflov').classList.add('open'); this._fetchTflAll(); this._fetchTfl(); }
+    else if (act === 'tfl') { this._tflOpen = true; this._renderTflPop(); this._$('tflov').classList.add('open'); this._fetchTflAll(); this._fetchTfl(); }
     else if (act === 'car') { this._carIdx = +(t.dataset.i || 0); this._carOpen = true; this._renderCarPop(); this._$('carov').classList.add('open'); }
     else if (act === 'carclim') { const k = this._cars[this._carIdx || 0].climate, e = this._st(k); if (e) this._hass.callService('switch', e.state === 'on' ? 'turn_off' : 'turn_on', { entity_id: k }); }
     else if (act === 'carref') { this._hass.callService('button', 'press', { entity_id: this._cars[this._carIdx || 0].refresh }); t.textContent = 'Requested…'; }
