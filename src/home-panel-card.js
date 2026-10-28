@@ -1279,7 +1279,14 @@ class HomePanelCard extends HTMLElement {
     if (this._c.tfl_map_image) return Promise.resolve(this._c.tfl_map_image);
     const id = this._c.tfl_map_media || 'media-source://media_source/local/tube-map.png', W = window.__hpcTube = window.__hpcTube || {};
     if (W[id]) return W[id];
-    return W[id] = this._hass.callWS({ type: 'media_source/resolve_media', media_content_id: id, expires: 300 })
+    // find the picture: the configured/default name first, otherwise any image in My media named like "tube" or "map"
+    const find = () => this._hass.callWS({ type: 'media_source/browse_media', media_content_id: id.replace(/\/[^/]*$/, '') }).then(r => {
+      const kids = (r.children || []).filter(c => c.media_class === 'image' || /\.(png|jpe?g|webp|gif)$/i.test(c.title || ''));
+      const want = id.split('/').pop().toLowerCase();
+      const hit = kids.find(c => (c.title || '').toLowerCase() === want) || kids.find(c => /tube|map|tfl|underground/i.test(c.title || '')) || (kids.length === 1 ? kids[0] : null);
+      if (!hit) { this._tubeFiles = kids.map(c => c.title); throw new Error('not found'); }
+      return hit.media_content_id; }).catch(e => { if (e && e.message === 'not found') throw e; return id; });
+    return W[id] = find().then(mid => this._hass.callWS({ type: 'media_source/resolve_media', media_content_id: mid, expires: 300 }))
       .then(r => fetch(r.url)).then(r => { if (!r.ok) throw new Error(r.status); return r.blob(); }).then(b => URL.createObjectURL(b))
       .catch(e => { delete W[id]; throw e; });
   }
@@ -1294,7 +1301,7 @@ class HomePanelCard extends HTMLElement {
         box.classList.toggle('z');
         if (box.classList.contains('z')) requestAnimationFrame(() => { box.scrollLeft = fx * im.offsetWidth - box.clientWidth / 2; box.scrollTop = fy * im.offsetHeight - box.clientHeight / 2; });
       });
-    }).catch(() => { const box = this._$('tmap'); if (box) box.innerHTML = `<div class="wxmsg">Couldn't find the Tube map picture. Upload it as <b>tube-map.png</b> in Media → My media. <button class="pill" data-act="tflmap">Try again</button></div>`; });
+    }).catch(() => { const box = this._$('tmap'), f = this._tubeFiles; if (box) box.innerHTML = `<div class="wxmsg">Couldn't find the Tube map picture. Upload it to Media → My media with "tube" or "map" in its name.${f && f.length ? `<br><small>Pictures found there: ${f.map(esc).join(', ')}</small>` : ''} <button class="pill" data-act="tflmap">Try again</button></div>`; });
   }
   _renderTflPop() {
     const el = this._$('tflpop'), d = this._tflAll;
