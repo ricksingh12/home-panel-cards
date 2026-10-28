@@ -26,6 +26,23 @@ const HSP_CSS = `.spr{position:relative;background:var(--bg);height:calc(100vh -
 .ld{display:grid;grid-template-columns:20px 26px minmax(0,1fr) auto;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line)}.ld:last-child{border-bottom:0}
 .ld .rk{font-size:12px;font-weight:700;color:var(--sub);text-align:center}.ld img{width:24px;height:24px;object-fit:contain}.ld .nm{min-width:0}.ld .nm b{display:block;font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ld .nm span{font-size:11px;color:var(--sub)}
 .ld .v{font-size:18px;font-weight:700;min-width:28px;text-align:right}.ld:first-child .v{color:var(--accent)}
+.mt.clk{cursor:pointer;border-radius:10px;transition:background .15s}.mt.clk:hover,.mt.clk:active{background:rgba(127,127,127,.08)}
+.mpop{width:min(94%,1120px);color:var(--text)}.mpop .x ha-icon{--mdc-icon-size:20px}
+.mhd{display:flex;align-items:center;gap:12px;margin-right:52px}.mhd img{width:34px;height:34px;object-fit:contain}.mhd b{display:block;font-size:15px}.mhd span{font-size:12.5px;color:var(--sub)}
+.msc{display:grid;grid-template-columns:1fr auto 1fr;align-items:start;gap:16px;margin:18px 0 16px}.mtm{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;min-width:0}.mtm>img{width:72px;height:72px;object-fit:contain}.mtm>span{font-size:17px;font-weight:700}.mtm.me>span{color:var(--accent)}
+.mgl{display:flex;flex-direction:column;gap:2px;margin-top:2px}.msg{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12.5px;color:var(--sub);font-weight:500}.msg ha-icon{--mdc-icon-size:13px}.msg b{font-weight:700;color:var(--text)}
+.mmid{text-align:center;padding-top:12px}.mmid b{display:block;font-size:46px;font-weight:700;letter-spacing:-.03em;line-height:1}.mmid b.live{color:#e5484d}.mmid em{display:block;font-style:normal;font-size:13px;font-weight:700;margin-top:6px}.mmid span{display:inline-block;margin-top:8px;font-size:11.5px;font-weight:700;color:var(--sub);background:var(--card2);border-radius:999px;padding:3px 10px}
+.mgrid{display:grid;grid-template-columns:1fr 1fr 1.15fr;gap:12px}.card2b{background:var(--card2);border-radius:20px;padding:14px 16px;min-width:0}.card2b>.lbl{margin-bottom:10px}
+i.bk{display:inline-block;width:10px;height:13px;border-radius:2px;flex:0 0 auto}i.bk.y{background:#f5c400}i.bk.r{background:#e5484d}
+.tl{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line);font-size:13px}.tl:last-child{border-bottom:0}.tl em{font-style:normal;font-weight:700;color:var(--sub);min-width:40px;font-size:12px}.tl ha-icon{--mdc-icon-size:16px;color:var(--sub)}.tl.g ha-icon{color:var(--text)}
+.tl div{min-width:0}.tl b{font-weight:600}.tl small{display:block;color:var(--sub);font-size:11.5px}.tl.a{flex-direction:row-reverse;text-align:right}.tl.ht{justify-content:center;font-size:11px;font-weight:700;color:var(--sub);letter-spacing:.06em;text-transform:uppercase}
+.mso{margin-top:10px;display:flex;flex-direction:column;gap:6px}.mso div{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600}.mso span{flex:1}.mso i{width:12px;height:12px;border-radius:50%}.mso i.y{background:#22a06b}.mso i.n{background:#e5484d}
+.sb{margin-bottom:9px}.sbl{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px}.sbl span{color:var(--sub);font-weight:500}.sbl b{font-weight:700;min-width:36px}.sbl b:last-child{text-align:right}
+.sbb{display:flex;gap:4px;height:6px}.sbb i{display:block;border-radius:3px;background:rgba(127,127,127,.25)}.sbb i.hi{background:var(--accent)}
+.lus2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.luh{display:flex;align-items:center;gap:6px;margin-bottom:6px;min-width:0}.luh img{width:20px;height:20px;object-fit:contain}.luh b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.luh span{margin-left:auto;font-size:11px;color:var(--sub);font-weight:600}.lut.me .luh b{color:var(--accent)}
+.lp{display:flex;align-items:center;gap:6px;font-size:12px;padding:2.5px 0;min-width:0}.lp em{font-style:normal;width:18px;text-align:right;color:var(--sub);font-weight:700;font-size:11px;flex:0 0 auto}.lp span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lp ha-icon{--mdc-icon-size:13px;flex:0 0 auto}.lp .out{color:#e5484d}.lp .in{color:#22a06b}.lus{font-size:10.5px;font-weight:700;color:var(--sub);letter-spacing:.06em;text-transform:uppercase;margin:8px 0 2px}
+@media (max-width:1000px){.mgrid{grid-template-columns:1fr 1fr}.mgrid>div:last-child{grid-column:1 / -1}}
+@media (max-width:600px){.mgrid{grid-template-columns:1fr}.mmid b{font-size:36px}.mtm>img{width:54px;height:54px}.mtm>span{font-size:14px}.msc{gap:8px}}
 .semp{color:var(--sub);font-size:13px;padding:14px 0;text-align:center}
 @media (max-width:1000px){.sgrid{grid-template-columns:1fr 1fr}.scol.c3{grid-column:1 / -1;flex-direction:row}.scol.c3>.card{flex:1}.spr{height:auto}.scol>.card.grow{flex:0 0 auto}.scol>.card .lst{max-height:520px}}
 @media (max-width:600px){.spr{padding:12px;min-height:0}.sph h1{font-size:24px}.stabs{width:100%;box-sizing:border-box}.stabs button{flex:1;justify-content:center}.stabs button .f{display:none}.stabs button .s{display:inline}.scol>.card .lst{max-height:none}.scol.c3>.card .lst{max-height:none}.stabs button{padding:6px 10px 6px 7px;font-size:12.5px}.sgrid{grid-template-columns:1fr}.scol.c3{flex-direction:column}.mt{grid-template-columns:52px minmax(0,1fr) 46px minmax(0,1fr) 20px}.mt .tm{font-size:12.5px}.mt .tm img{width:20px;height:20px}}`;
@@ -53,12 +70,14 @@ class HomeSportsCard extends HTMLElement {
   }
   _build() {
     const s = this.attachShadow({ mode: 'open' });
-    s.innerHTML = `<style>${window.__HPC_CSS || ''}</style><style>${HSP_CSS}</style><div class="spr"><div class="sph">${window.__hpcBack(this._c)}<h1>${hspE(this._c.title)}</h1><div class="stabs" id="tabs"></div><span class="upd" id="upd"></span></div><div class="sgrid" id="g"></div></div>`;
+    s.innerHTML = `<style>${window.__HPC_CSS || ''}</style><style>${HSP_CSS}</style><div class="spr"><div class="sph">${window.__hpcBack(this._c)}<h1>${hspE(this._c.title)}</h1><div class="stabs" id="tabs"></div><span class="upd" id="upd"></span></div><div class="sgrid" id="g"></div><div class="ov" id="mov" data-act="closebg"><div class="pop mpop" id="mpop"></div></div></div>`;
     this._root = s; this._$ = id => s.getElementById(id);
     s.addEventListener('click', e => {
       const t = e.composedPath().find(n => n.dataset && n.dataset.act); if (!t) return;
       if (t.dataset.act === 'hback') { window.__hpcGoBack(); return; }
       if (t.dataset.act === 'tab') { this._tab = t.dataset.t; this._render(); }
+      if (t.dataset.act === 'match') this._openMatch(t.dataset.id);
+      if (t.dataset.act === 'mclose' || (t.dataset.act === 'closebg' && e.target === t)) this._$('mov').style.display = 'none';
     });
     this._render();
   }
@@ -125,7 +144,8 @@ class HomeSportsCard extends HTMLElement {
     const sc = e.state === 'pre' ? `<div class="sc pre">${w.tm}</div>` : `<div class="sc${live ? ' live' : ''}">${hspE(e.home.score ?? '')} – ${hspE(e.away.score ?? '')}<small>${live ? hspE(e.clock || 'LIVE') : /pen/i.test(e.detail) ? 'PENS' : /aet|extra/i.test(e.detail) ? 'AET' : 'FT'}</small></div>`;
     let tail = pills ? `<img class="cl" src="https://a.espncdn.com/i/leaguelogos/soccer/${this._dark ? '500-dark' : '500'}/${lg.id || 23}.png" alt="" title="${hspE(lg.name || '')}" onerror="this.style.visibility='hidden'">` : '<span></span>';
     if (pills && e.done && (e.home.id === me || e.away.id === me)) { const mine = e.home.id === me ? e.home : e.away, oth = mine === e.home ? e.away : e.home; const r = mine.win ? 'W' : oth.win ? 'L' : 'D'; tail = `<span class="res ${r}">${r}</span>`; }
-    return `<div class="mt"><div class="when"><b>${hspE(w.day)}</b>${e.state === 'pre' ? '' : hspE(w.tm)}</div>${tm(e.home, 'h')}${sc}${tm(e.away, 'a')}${tail}</div>`;
+    (this._evs = this._evs || {})[e.id] = e; const clk = e.state !== 'pre';
+    return `<div class="mt${clk ? ' clk' : ''}"${clk ? ` data-act="match" data-id="${hspE(e.id)}"` : ''}><div class="when"><b>${hspE(w.day)}</b>${e.state === 'pre' ? '' : hspE(w.tm)}</div>${tm(e.home, 'h')}${sc}${tm(e.away, 'a')}${tail}</div>`;
   }
   _tv(e) {
     // UK TV channel for the next match, from sensors the dashboard config names (tv_date, tv_channel)
@@ -136,6 +156,61 @@ class HomeSportsCard extends HTMLElement {
       const d = new Date(m[1] + ' ' + m[2] + ' ' + m[3]), k = new Date(e.t); if (isNaN(d) || d.toDateString() !== k.toDateString()) return ''; }
     const n = ch.state, col = /sky/i.test(n) ? '#e4002b' : /tnt/i.test(n) ? '#ff3a1f' : /amazon|prime/i.test(n) ? '#00a8e1' : /bbc/i.test(n) ? '#1d1d1b' : /itv/i.test(n) ? '#0ae2a2' : /hbo|max/i.test(n) ? '#5822b4' : 'var(--accent)';
     return `<div class="tv"><ha-icon icon="mdi:television-classic"></ha-icon><span>${hspE(n)}</span><i style="background:${col}"></i></div>`;
+  }
+  /* ---------- match details pop-up ---------- */
+  async _openMatch(id) {
+    const e = this._evs && this._evs[id]; if (!e) return;
+    const ov = this._$('mov'), pop = this._$('mpop'); this._mid = id; ov.style.display = 'flex';
+    const c = this._mcache = this._mcache || {}, hit = c[id], fresh = hit && (e.state === 'post' || Date.now() - hit.at < 60000);
+    pop.innerHTML = this._matchHtml(e, hit && hit.j); pop.scrollTop = 0;
+    if (fresh) return;
+    const j = await fetch(HSP_B + e.lg + '/summary?event=' + encodeURIComponent(id)).then(r => r.ok ? r.json() : null).catch(() => null);
+    if (j) c[id] = { j, at: Date.now() };
+    if (this._mid === id && ov.style.display !== 'none') pop.innerHTML = this._matchHtml(e, j, !j);
+  }
+  _matchHtml(e, j, failed) {
+    const lg = HSP_LG[e.lg] || {}, me = String(this._c.team), dk = this._dark ? '500-dark' : '500', w = this._when(e), live = e.state === 'in';
+    const im = (u, cls) => `<img${cls ? ` class="${cls}"` : ''} src="${hspE(u)}" alt="" onerror="this.style.visibility='hidden'">`;
+    const hc = j && j.header && j.header.competitions && j.header.competitions[0], comp = ha => hc && (hc.competitors || []).find(x => x.homeAway === ha);
+    const H = comp('home'), A = comp('away'), so = H && A && H.shootoutScore != null ? [H.shootoutScore, A.shootoutScore] : null;
+    const hid = e.home.id, side = tid => String(tid) === hid ? 'h' : 'a';
+    const status = live ? hspE(e.clock || 'LIVE') : /pen/i.test(e.detail) ? 'Full time · penalties' : /aet|extra/i.test(e.detail) ? 'Full time · after extra time' : 'Full time';
+    const gi = j && j.gameInfo, venue = (gi && gi.venue && gi.venue.fullName) || e.venue, att = gi && gi.attendance;
+    // goal scorers and red cards under each team
+    const dets = (hc && hc.details) || [], nm = a => a ? (a.shortName || a.displayName) : '';
+    const scor = t => dets.filter(d => (d.scoringPlay || d.redCard) && d.team && side(d.team.id) === t).map(d => {
+      const p = d.participants && d.participants[0] && d.participants[0].athlete;
+      return `<div class="msg${d.redCard ? ' rc' : ''}">${d.redCard ? '<i class="bk r"></i>' : '<ha-icon icon="mdi:soccer"></ha-icon>'}<span>${hspE(nm(p))}${d.penaltyKick ? ' (pen)' : ''}${d.ownGoal ? ' (og)' : ''}</span><b>${hspE(d.clock && d.clock.displayValue)}</b></div>`; }).join('');
+    const tm = (s, t) => `<div class="mtm${s.id === me ? ' me' : ''}">${im(this._logo(s))}<span>${hspE(s.name)}</span><div class="mgl">${scor(t)}</div></div>`;
+    let html = `<button class="x" data-act="mclose"><ha-icon icon="mdi:close"></ha-icon></button>
+      <div class="mhd">${im(`https://a.espncdn.com/i/leaguelogos/soccer/${dk}/${lg.id || 23}.png`)}<div><b>${hspE((j && j.header && j.header.league && j.header.league.name) || lg.name || '')}</b><span>${hspE(new Date(e.t).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }))} · ${hspE(w.tm)}${venue ? ' · ' + hspE(venue) : ''}${att ? ' · ' + Number(att).toLocaleString('en-GB') + ' fans' : ''}</span></div></div>
+      <div class="msc">${tm(e.home, 'h')}<div class="mmid"><b class="${live ? 'live' : ''}">${hspE(e.home.score ?? '')} – ${hspE(e.away.score ?? '')}</b>${so ? `<em>${so[0]} – ${so[1]} on penalties</em>` : ''}<span>${status}</span></div>${tm(e.away, 'a')}</div>`;
+    if (!j) return html + `<div class="semp">${failed ? "Couldn't load match details" : 'Loading match details…'}</div>`;
+    // timeline
+    const ico = { 'yellow-card': '<i class="bk y"></i>', 'red-card': '<i class="bk r"></i>', substitution: '<ha-icon icon="mdi:swap-vertical"></ha-icon>' };
+    const ke = (j.keyEvents || []).filter(k => k.type && (/^goal|own-goal|penalty---scored/.test(k.type.type) || k.scoringPlay || ico[k.type.type] || k.type.type === 'halftime'));
+    const tl = ke.map(k => {
+      const ty = k.type.type, ps = (k.participants || []).map(p => p.athlete && (p.athlete.shortName || p.athlete.displayName)), t = k.team ? side(k.team.id) : '';
+      if (ty === 'halftime') return `<div class="tl ht"><span>Half time</span></div>`;
+      const goal = k.scoringPlay, i = goal ? '<ha-icon icon="mdi:soccer"></ha-icon>' : ico[ty] || '';
+      const txt = ty === 'substitution' ? `<b>${hspE(ps[0] || '')}</b><small>on for ${hspE(ps[1] || '')}</small>` : goal ? `<b>${hspE(ps[0] || '')}</b>${ps[1] && !/own|penalty/.test(ty) ? `<small>assist ${hspE(ps[1])}</small>` : /penalty/.test(ty) ? '<small>penalty</small>' : /own/.test(ty) ? '<small>own goal</small>' : ''}` : `<b>${hspE(ps[0] || '')}</b>`;
+      return `<div class="tl ${t}${goal ? ' g' : ''}"><em>${hspE(k.clock && k.clock.displayValue)}</em>${i}<div>${txt}</div></div>`; }).join('');
+    // shoot-out
+    const sh = Array.isArray(j.shootout) ? j.shootout : null;
+    const shHtml = sh && sh.length ? `<div class="mso">${sh.map(t => `<div><span>${hspE(t.team)}</span>${(t.shots || []).map(x => `<i class="${x.didScore ? 'y' : 'n'}" title="${hspE(x.player)}"></i>`).join('')}</div>`).join('')}</div>` : '';
+    // stats bars
+    const bt = (j.boxscore && j.boxscore.teams) || [], st = (ti, n) => { const t = bt.find(x => side(x.team.id) === ti); const v = t && (t.statistics || []).find(x => x.name === n); return v ? +v.displayValue || 0 : null; };
+    const rows = [['possessionPct', 'Possession', '%'], ['totalShots', 'Shots'], ['shotsOnTarget', 'On target'], ['wonCorners', 'Corners'], ['totalPasses', 'Passes'], ['passPct', 'Pass accuracy', 'pct'], ['saves', 'Saves'], ['foulsCommitted', 'Fouls'], ['offsides', 'Offsides'], ['yellowCards', 'Yellow cards'], ['redCards', 'Red cards']];
+    const stats = rows.map(([k, l, u]) => { let a = st('h', k), b = st('a', k); if (a == null || b == null) return ''; if (k === 'redCards' && !a && !b) return '';
+      const fa = u === 'pct' ? Math.round(a * 100) + '%' : a + (u || ''), fb = u === 'pct' ? Math.round(b * 100) + '%' : b + (u || ''), tot = a + b || 1;
+      return `<div class="sb"><div class="sbl"><b>${fa}</b><span>${l}</span><b>${fb}</b></div><div class="sbb"><i class="${a >= b ? 'hi' : ''}" style="width:${a / tot * 100}%"></i><i class="${b >= a ? 'hi' : ''}" style="width:${b / tot * 100}%"></i></div></div>`; }).join('');
+    // line-ups
+    const lu = (j.rosters || []).map(r => { const pl = r.roster || [], xi = pl.filter(p => p.starter).sort((x, y) => (+x.formationPlace || 99) - (+y.formationPlace || 99)), subs = pl.filter(p => !p.starter && p.subbedIn);
+      const row = p => `<div class="lp"><em>${hspE(p.jersey)}</em><span>${hspE(p.athlete.displayName)}</span>${p.subbedOut ? '<ha-icon class="out" icon="mdi:arrow-down"></ha-icon>' : ''}${p.subbedIn ? '<ha-icon class="in" icon="mdi:arrow-up"></ha-icon>' : ''}</div>`;
+      return `<div class="lut${String(r.team.id) === me ? ' me' : ''}"><div class="luh">${im(this._logo(r.team.id === e.home.id ? e.home : r.team.id === e.away.id ? e.away : r.team))}<b>${hspE(r.team.shortDisplayName || r.team.displayName)}</b>${r.formation ? `<span>${hspE(r.formation)}</span>` : ''}</div>${xi.map(row).join('')}${subs.length ? `<div class="lus">Subs used</div>${subs.map(row).join('')}` : ''}</div>`; }).join('');
+    return html + `<div class="mgrid"><div class="card2b"><div class="lbl">Timeline</div>${tl || '<div class="semp">No events</div>'}${shHtml}</div>
+      <div class="card2b"><div class="lbl">Match stats</div>${stats || '<div class="semp">No stats</div>'}</div>
+      <div class="card2b"><div class="lbl">Line-ups</div><div class="lus2">${lu || '<div class="semp">Not available</div>'}</div></div></div>`;
   }
   _tableCard(T, me, title, logo) {
     if (!T) return `<div class="card grow"><div class="shd">${logo}<span class="lbl">${hspE(title)}</span></div><div class="semp">${this._d ? 'Table not available' : 'Loading…'}</div></div>`;
