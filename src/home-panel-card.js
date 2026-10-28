@@ -1280,7 +1280,10 @@ class HomePanelCard extends HTMLElement {
     const W = window.__hpcTube = window.__hpcTube || {};
     if (!W[url]) W[url] = (async () => {
       if (!window.pdfjsLib) await new Promise((ok, no) => { const sc = document.createElement('script'); sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js'; sc.onload = ok; sc.onerror = no; document.head.appendChild(sc); });
-      const lib = window.pdfjsLib; lib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      const lib = window.pdfjsLib;
+      // a worker must be same-origin, so load pdf.js's worker through a blob URL
+      if (!window.__hpcPdfW) window.__hpcPdfW = URL.createObjectURL(new Blob([await fetch('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js').then(r => r.text())], { type: 'text/javascript' }));
+      lib.GlobalWorkerOptions.workerSrc = window.__hpcPdfW;
       const doc = await lib.getDocument({ url }).promise, pg = await doc.getPage(1), v0 = pg.getViewport({ scale: 1 });
       const vp = pg.getViewport({ scale: Math.min(3600 / v0.width, 3600 / v0.height) * 1 }), cv = document.createElement('canvas');
       cv.width = Math.round(vp.width); cv.height = Math.round(vp.height);
