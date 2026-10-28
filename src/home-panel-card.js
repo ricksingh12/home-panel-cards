@@ -67,7 +67,7 @@ border:1px solid rgba(255,255,255,.35)}
 .date .top{font-size:clamp(20px,2.3vw,28px);font-weight:600;line-height:1.1}
 .date .top .d{color:var(--accent);margin-right:.28em}.date .num{font-size:clamp(40px,5vw,62px);font-weight:600;line-height:1}
 /* weather */
-.wx{flex:1 1 auto;padding:16px 18px;display:flex;flex-direction:column;cursor:pointer;min-height:0;overflow:hidden;position:relative}
+.wx{flex:1 1 162px;min-height:162px !important;padding:16px 18px;display:flex;flex-direction:column;cursor:pointer;min-height:0;overflow:hidden;position:relative}
 .wx.sunny{background:linear-gradient(165deg,#bcd9f3 0%,#e7f0f8 55%,#fbf1e6 100%)}
 .wx.cloud{background:linear-gradient(165deg,#c9d3df,#edf0f4)}
 .wx.rain{background:linear-gradient(165deg,#a9b9cd,#e1e7ee)}
@@ -131,7 +131,7 @@ border:1px solid rgba(255,255,255,.35)}
 .etab{width:100%;border-collapse:collapse;margin-top:18px;font-size:13px}.etab th{text-align:right;font-size:11px;color:var(--sub);font-weight:600;padding:6px 8px}.etab th:first-child,.etab td:first-child{text-align:left}
 .etab td{text-align:right;padding:7px 8px;border-top:1px solid var(--line);font-variant-numeric:tabular-nums}.etab tr.tot td{font-weight:700}
 .side{flex:0 0 clamp(260px,32%,380px);display:flex;flex-direction:column;gap:12px;min-height:0;min-width:0}
-.side .en{flex:1 1 0;min-height:140px;padding:12px 16px}.side .en .etot .v{font-size:18px}.side .en .ech{min-height:44px;margin-top:8px}
+:is(.side,.hrow) .en{flex:1 1 0;min-height:140px;padding:12px 16px}:is(.side,.hrow) .en .etot .v{font-size:18px}:is(.side,.hrow) .en .ech{min-height:44px;margin-top:8px}
 .side .music{flex:0 0 auto}
 .music.big{padding:14px 16px;gap:16px}.music.big .mart{width:112px;height:112px;border-radius:16px}.music.big .mart ha-icon{--mdc-icon-size:44px}
 .music.big .mn{font-size:18px;margin-top:4px}.music.big .ma{font-size:14px;margin-top:2px}.music.big .mc{gap:8px;margin-top:12px}
@@ -210,7 +210,7 @@ border:1px solid rgba(255,255,255,.35)}
 .cacts button{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:10px 16px;font:inherit;font-size:14px;font-weight:600;background:var(--card2);color:var(--text);cursor:pointer}
 .cacts button ha-icon{--mdc-icon-size:18px}.cacts button.on{background:var(--accent);color:#fff}
 /* alarm */
-.hrow .alarm{flex:0 0 clamp(260px,32%,380px);min-width:0}.hrow .vac{flex:0 0 clamp(260px,32%,380px);min-width:0;align-self:stretch}.side .alarm{flex:0 0 auto}
+.hrow .alarm{flex:0 0 clamp(260px,32%,380px);min-width:0}.hrow .en{flex:0 0 clamp(260px,32%,380px);min-width:0;min-height:0;align-self:stretch}.hrow .vac{flex:0 0 clamp(260px,32%,380px);min-width:0;align-self:stretch}.side .alarm{flex:0 0 auto}
 .alarm{padding:12px 14px;display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:background .2s}
 .alarm .at{display:flex;align-items:center;gap:10px;min-width:0}
 .alarm .ash{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:0 0 auto;background:var(--card2);color:var(--sub)}.alarm .ash ha-icon{--mdc-icon-size:20px}
@@ -441,7 +441,7 @@ const PPLCSS = `.ppl{flex:0 0 auto;padding:12px 14px;display:grid;grid-template-
 .bottom .lights{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));grid-auto-rows:1fr;gap:12px}
 .bottom .tile{display:flex;flex-direction:column;justify-content:space-between;gap:6px;padding:10px 12px;min-height:0;min-width:0}.bottom .tile .ic{width:30px;height:30px;flex:0 0 auto}.bottom .tile .ic ha-icon{--mdc-icon-size:17px}
 .bottom .tile .tx{min-width:0;width:100%}.bottom .tile .n{margin-top:0;font-size:13px}.bottom .tile .s{font-size:11px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pcol .ppl{padding:10px 12px;gap:8px}.pcol .pp+.pp{padding-left:8px}.pcol .pav{width:34px;height:34px}
-.side .en{min-height:104px;padding:10px 14px}.side .en .ech{min-height:30px;margin-top:6px}.side .en .etot{margin-top:2px}.side .en .etot .v{font-size:16px}.side .en .elogo{width:28px;height:28px}
+:is(.side,.hrow) .en{min-height:104px;padding:10px 14px}:is(.side,.hrow) .en .ech{min-height:30px;margin-top:6px}:is(.side,.hrow) .en .etot{margin-top:2px}:is(.side,.hrow) .en .etot .v{font-size:16px}:is(.side,.hrow) .en .elogo{width:28px;height:28px}
 .vac{flex:0 0 auto;padding:8px 10px 8px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;min-width:0}
 .vic{width:36px;height:36px;border-radius:50%;background:var(--card2);color:var(--sub);display:flex;align-items:center;justify-content:center;flex:0 0 auto}.vic ha-icon{--mdc-icon-size:20px}
 .vac.run .vic,.vhd.run .vic{background:#22a06b;color:#fff}.vac.err .vic,.vhd.err .vic{background:#e5484d;color:#fff}.vac.ret .vic,.vhd.ret .vic{background:#3b82f6;color:#fff}
@@ -451,16 +451,16 @@ const PPLCSS = `.ppl{flex:0 0 auto;padding:12px 14px;display:grid;grid-template-
 .vsec{margin-top:18px}.vchips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.vchips button{border:0;border-radius:999px;padding:9px 15px;background:var(--card2);color:var(--text);font:inherit;font-size:14px;font-weight:600;cursor:pointer}.vchips button.sel{background:var(--accent);color:#fff}
 .vacts{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:10px;margin-top:18px}.vacts button{height:54px;border:0;border-radius:16px;background:var(--card2);color:var(--text);font:inherit;font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}.vacts button.go{background:#22a06b;color:#fff}.vacts ha-icon{--mdc-icon-size:20px}
 .vlogo{width:26px;height:26px;border-radius:7px;object-fit:cover;flex:0 0 auto}.vhd .vlogo{width:40px;height:40px;border-radius:10px;margin:0 52px 0 auto;align-self:flex-start}
-.side .en{min-height:84px;padding:8px 14px}.side .en .head{margin-bottom:0}.side .en .etot .v{font-size:15px}.side .en .etot .c{font-size:10px}.side .en .ech{min-height:24px;margin-top:4px}.side .vac{flex:0 0 auto}
+:is(.side,.hrow) .en{min-height:84px;padding:8px 14px}:is(.side,.hrow) .en .head{margin-bottom:0}:is(.side,.hrow) .en .etot .v{font-size:15px}:is(.side,.hrow) .en .etot .c{font-size:10px}:is(.side,.hrow) .en .ech{min-height:24px;margin-top:4px}.side .vac{flex:1 1 0;min-height:74px}.side .vac .vic{width:40px;height:40px}.side .vac .vn{font-size:15px}
 .wx{container-type:size;container-name:wx}.wx .chart{flex:0 0 auto}
 @container wx (max-height:332px){.wdays{display:none}}
 @container wx (max-height:242px){.wx .row .temp{font-size:38px;margin-top:0}.wx .row ha-icon{--mdc-icon-size:42px !important}.hc .mm{display:none}.hc{padding:5px 0;gap:2px}.chart{padding-top:4px}.hstrip{margin-top:2px}}
 @container wx (max-height:172px){.hc .p{display:none}.wx .cond{margin-top:2px}.hc ha-icon{--mdc-icon-size:22px}}
 @container wx (max-height:142px){.wx .row .temp{font-size:32px}.wx .row ha-icon{--mdc-icon-size:34px !important}.hc .t{font-size:11px}.hc .v{font-size:14px}.hc ha-icon{--mdc-icon-size:18px}}
-@container wx (max-height:126px){.chart{display:none}}
-.en{container-type:size;container-name:en}.side .en{padding:9px 14px;min-height:74px}.side{container-type:size;container-name:side}.side .en .head{align-items:center;margin-bottom:2px}.side .en .head .lbl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.side .en .elogo{width:24px;height:24px;margin:0}
+@container wx (max-height:92px){.chart{display:none}}
+.en{container-type:size;container-name:en}:is(.side,.hrow) .en{padding:9px 14px;min-height:74px}.side{container-type:size;container-name:side}:is(.side,.hrow) .en .head{align-items:center;margin-bottom:2px}:is(.side,.hrow) .en .head .lbl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}:is(.side,.hrow) .en .elogo{width:24px;height:24px;margin:0}
 .etot.e3{grid-template-columns:1fr 1fr auto;gap:6px;align-items:end}.etc{text-align:right;padding-left:8px;border-left:1px solid var(--line)}.etc .k{justify-content:flex-end}.etc .v{color:var(--accent);font-weight:700}
-.etot .k i.lvd,.dets i.lvd{border-radius:50%;animation:lvp 1.6s infinite}@keyframes lvp{50%{opacity:.3}}.side .en .etot{margin-top:0}
+.etot .k i.lvd,.dets i.lvd{border-radius:50%;animation:lvp 1.6s infinite}@keyframes lvp{50%{opacity:.3}}:is(.side,.hrow) .en .etot{margin-top:0}
 @container en (max-height:96px){.en .ech{display:none}}
 @container en (max-height:66px){.en .etot .c{display:none}}
 @container side (max-height:340px){.music.big{padding:10px 14px;gap:12px}.music.big .mart{width:76px;height:76px;border-radius:12px}.music.art{min-height:120px}.music.big .mn{font-size:16px;margin-top:2px}.music.big .mc{margin-top:6px}.music.big .mc button{width:34px;height:34px}.music.big .mc .pp{width:40px;height:40px}}
@@ -560,8 +560,8 @@ class HomePanelCard extends HTMLElement {
         <div class="right">
           <div class="toprow"><div class="card cams"><div class="head"><span class="chd">${(u => u ? `<img src="${esc(u)}" alt="" onerror="this.style.display='none'">` : '')(this._c.cameras_logo === undefined ? 'https://brands.home-assistant.io/unifiprotect/icon.png' : this._c.cameras_logo)}<span class="lbl">Cameras</span></span>
             ${this._c.cameras_path ? '<button class="pill" data-act="allcams">All cameras ›</button>' : ''}</div>
-            <div class="camgrid" id="camgrid"></div></div>${this._c.media_players.length || this._c.energy || this._c.alarm ? `<div class="side">${this._c.alarm ? '<div class="card alarm" id="alarm" data-act="alarm"></div>' : ''}${this._c.media_players.length ? '<div class="card music big" id="music" data-act="np"></div>' : ''}${this._c.energy ? '<div class="card en" id="en" data-act="en"></div>' : ''}</div>` : ''}</div>
-          ${this._c.heating.length || this._c.vacuum ? `<div class="hrow">${this._c.heating.length ? '<div class="heat" id="heat"></div>' : ''}${this._c.vacuum ? '<div class="card vac" id="vac" data-act="vac"></div>' : ''}</div>` : ''}
+            <div class="camgrid" id="camgrid"></div></div>${this._c.media_players.length || this._c.vacuum || this._c.alarm ? `<div class="side">${this._c.alarm ? '<div class="card alarm" id="alarm" data-act="alarm"></div>' : ''}${this._c.media_players.length ? '<div class="card music big" id="music" data-act="np"></div>' : ''}${this._c.vacuum ? '<div class="card vac" id="vac" data-act="vac"></div>' : ''}</div>` : ''}</div>
+          ${this._c.heating.length || this._c.energy ? `<div class="hrow">${this._c.heating.length ? '<div class="heat" id="heat"></div>' : ''}${this._c.energy ? '<div class="card en" id="en" data-act="en"></div>' : ''}</div>` : ''}
           <div class="bottom"><div class="lights" id="lights"></div>${(this._c.people || []).length ? '<div class="pcol"><div class="card ppl" id="ppl"></div>' : ''}${this._cars.length ? `<div class="card carc${this._cars.length > 1 ? ' multi' : ''}" id="car"${this._cars.length > 1 ? '' : ' data-act="car" data-i="0"'}></div>` : ''}${(this._c.people || []).length ? '</div>' : ''}</div>
         </div>
       </div>
