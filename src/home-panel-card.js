@@ -485,7 +485,7 @@ const PPLCSS = `.ppl{flex:0 0 auto;padding:12px 14px;display:grid;grid-template-
 .cvid img,.cvid .cstream{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block}
 .clive{position:absolute;left:12px;top:12px;display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.5);color:#fff;font-size:11px;font-weight:700;letter-spacing:.06em;padding:4px 10px;border-radius:999px;backdrop-filter:blur(8px)}.clive i{width:7px;height:7px;border-radius:50%;background:#e5484d;display:block;animation:apulse 1.6s infinite}
 .cmo{position:absolute;right:12px;top:12px;background:rgba(0,0,0,.5);color:#fff;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;backdrop-filter:blur(8px)}.cmo:empty{display:none}.cmo.on{background:#e5484d}
-.phd{display:flex;align-items:center;gap:12px;margin-right:52px;min-height:44px}.phx{min-width:0}.phd .lbl{margin:0}.pti{font-size:22px;font-weight:700;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.psub{font-size:13px;color:var(--sub);margin-top:2px}.psub:empty{display:none}
+.phd{display:flex;align-items:center;gap:12px;margin-right:52px;min-height:44px}.x.xmap{right:60px;width:auto;padding:0 14px 0 11px;border-radius:999px;gap:6px;font:inherit;font-size:13px;font-weight:600}.x.xmap ha-icon{--mdc-icon-size:18px}.xmap~.phd{margin-right:150px}.phx{min-width:0}.phd .lbl{margin:0}.pti{font-size:22px;font-weight:700;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.psub{font-size:13px;color:var(--sub);margin-top:2px}.psub:empty{display:none}
 .plg{width:36px;height:36px;object-fit:contain;flex:0 0 auto;border-radius:8px}:host(.dark) .plg.inv{filter:invert(1)}.phd .pav{width:40px;height:40px;flex:0 0 auto}
 .pic{width:42px;height:42px;border-radius:50%;background:var(--card2);color:var(--sub);display:flex;align-items:center;justify-content:center;flex:0 0 auto}.pic ha-icon{--mdc-icon-size:22px}
 .pop .phd+.tabs{margin-top:14px}.pop .tabs+*{margin-top:12px}.pop>.cacts,.pop .vacts:last-child{margin-top:16px}.ast-trig{color:#e5484d}.ast-away{color:#e5484d}.ast-home{color:#d97706}.ast-disarmed{color:#22a06b}
@@ -1276,7 +1276,7 @@ class HomePanelCard extends HTMLElement {
   _renderTflPop() {
     const el = this._$('tflpop'), d = this._tflAll;
     const lines0 = d ? d.lines : [], bad0 = lines0.filter(l => this._tflInfo(l.id, l).cls !== 'ok').length;
-    const head = this._ph('closetfl', this._tflLogo('plg'), 'London transport', 'Line status', d ? (bad0 ? bad0 + (bad0 === 1 ? ' line with issues' : ' lines with issues') : 'Good service on all lines') + ' · ' + (this._tflAllErr ? "Couldn't update · " : 'Updated ') + hm(d.at) : '');
+    const head = `<button class="x xmap" data-act="tflmap" title="Tube map"><ha-icon icon="mdi:map-outline"></ha-icon><span>Map</span></button>` + this._ph('closetfl', this._tflLogo('plg'), 'London transport', 'Line status', d ? (bad0 ? bad0 + (bad0 === 1 ? ' line with issues' : ' lines with issues') : 'Good service on all lines') + ' · ' + (this._tflAllErr ? "Couldn't update · " : 'Updated ') + hm(d.at) : '');
     if (!d) { el.innerHTML = head + `<div class="wxmsg">${this._tflAllErr ? "Couldn't load TfL status. <button class=\"pill\" data-act=\"tflretry\">Try again</button>" : 'Loading…'}</div>`; return; }
     const lines = d.lines.slice().sort((a, b) => (this._tflInfo(a.id, a).rank - this._tflInfo(b.id, b).rank) || a.name.localeCompare(b.name));
     const bad = lines.filter(l => this._tflInfo(l.id, l).cls !== 'ok').length;
@@ -1871,6 +1871,7 @@ class HomePanelCard extends HTMLElement {
     else if (act === 'alarm') { this._alOpen = true; this._renderAlarmPop(); this._$('alov').classList.add('open'); }
     else if (act === 'golights') { const p = this._c.lights_path || location.pathname.split('/').filter(Boolean)[0] + '/lights'; history.pushState(null, '', p.startsWith('/') ? p : '/' + p); window.dispatchEvent(new CustomEvent('location-changed')); }
     else if (act === 'en') { this._enOpen = true; this._renderEnergyPop(); this._$('enov').classList.add('open'); this._fetchEnergy(); }
+    else if (act === 'tflmap') { window.open(this._c.tfl_map_url || 'https://content.tfl.gov.uk/standard-tube-map.pdf', '_blank', 'noopener'); }
     else if (act === 'tflretry') { this._tflAllErr = false; this._renderTflPop(); this._fetchTflAll(); }
     else if (act === 'np') this._npOpenUp();
     else if (act === 'closenp') { this._npOpen = false; this._$('npov').classList.remove('open'); }
