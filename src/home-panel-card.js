@@ -396,7 +396,8 @@ window.__hpcFit = (host, root, baseW, baseH) => {
     const top = Math.max(0, r.top + (window.scrollY || 0)), avail = Math.max(400, vh - top);
     const on = w && !(host._c && host._c.fit === false) && (vw >= 1100 || (vw >= 900 && vw > vh * 1.1));
     const key = [vw, vh, Math.round(top), Math.round(w), on].join('|'); if (key === host.__hpcFitKey) return; host.__hpcFitKey = key;
-    if (!on) { root.style.zoom = ''; if (baseH) { root.style.height = avail + 'px'; root.style.minHeight = ''; } else { root.style.height = ''; root.style.minHeight = avail + 'px'; } return; }
+    // Phones and narrow screens (1000px and under) use the stacked layout: let the page grow with its content.
+    if (!on) { root.style.zoom = ''; if (baseH && vw > 1000) { root.style.height = avail + 'px'; root.style.minHeight = ''; } else { root.style.height = ''; root.style.minHeight = avail + 'px'; } return; }
     const z = Math.round(Math.min(1.8, Math.max(0.55, baseH ? Math.min(w / baseW, avail / baseH) : w / baseW)) * 100) / 100;
     root.style.zoom = z === 1 ? '' : z;
     if (baseH) { root.style.height = (avail / z) + 'px'; root.style.minHeight = '0'; } else { root.style.height = ''; root.style.minHeight = (avail / z) + 'px'; }
