@@ -406,7 +406,32 @@ window.__hpcFit = (host, root, baseW, baseH) => {
   apply();
 };
 /* Swipe left/right anywhere on a page to move to the next/previous view of the dashboard (cards with swipe: true). */
+/* Go back to the dashboard's first page after N minutes without a touch (cards with idle_return: N); on that page, close any open pop-up. */
+window.__hpcIdle = (host) => {
+  const c = host && host._c; if (!c || !c.idle_return) return;
+  window.__hpcIdleHosts = window.__hpcIdleHosts || new Set(); window.__hpcIdleHosts.add(host);
+  window.__hpcIdleMin = +c.idle_return || 5; if (c.idle_path) window.__hpcIdlePath = c.idle_path;
+  if (window.__hpcIdleOn) return; window.__hpcIdleOn = true;
+  let last = Date.now(); const poke = () => { last = Date.now(); };
+  ['pointerdown', 'touchstart', 'keydown', 'wheel'].forEach(ev => window.addEventListener(ev, poke, { capture: true, passive: true }));
+  const home = () => {
+    if (window.__hpcIdlePath) return window.__hpcIdlePath;
+    const seg = location.pathname.split('/').filter(Boolean); if (!seg.length) return null;
+    try { const main = document.querySelector('home-assistant').shadowRoot.querySelector('home-assistant-main'), pl = main.shadowRoot.querySelector('ha-panel-lovelace'), root = pl.shadowRoot.querySelector('hui-root');
+      const v = ((root.lovelace || pl.lovelace).config.views || [])[0]; return '/' + seg[0] + '/' + (v && v.path ? v.path : '0'); } catch (e) { return '/' + seg[0]; }
+  };
+  setInterval(() => {
+    const hosts = [...window.__hpcIdleHosts].filter(h => h.isConnected); if (!hosts.length || Date.now() - last < window.__hpcIdleMin * 60000) return;
+    last = Date.now();
+    const to = home(); if (!to) return;
+    if (location.pathname.replace(/\/$/, '') !== to.replace(/\/$/, '')) { history.pushState(null, '', to); window.dispatchEvent(new CustomEvent('location-changed')); return; }
+    hosts.forEach(h => { try { const fake = a => ({ composedPath: () => [{ dataset: { act: a } }], target: null });
+      if (h._npOpen && h.localName === 'home-panel-card') h._click(fake('closenp'));
+      if (h.shadowRoot && h.shadowRoot.querySelector('.ov.open:not(.npov)')) h._click(fake('closebg')); } catch (e) {} });
+  }, 15000);
+};
 window.__hpcSwipe = (host) => {
+  window.__hpcIdle(host);
   if (!host || !host._c || !host._c.swipe) return;
   window.__hpcSwipeHosts = window.__hpcSwipeHosts || new Set(); window.__hpcSwipeHosts.add(host);
   if (window.__hpcSwipeOn) return; window.__hpcSwipeOn = true;
