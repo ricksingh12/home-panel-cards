@@ -1611,10 +1611,7 @@ class HomePanelCard extends HTMLElement {
     const head = `<div class="nphead">${stack.length > 1 ? '<button class="bk" data-act="libback"><ha-icon icon="mdi:chevron-left"></ha-icon></button>' : ''}<span>${esc(L && L.title ? L.title : 'Spotify')}</span></div>`;
     if (!L || this._libBusy) { body.innerHTML = head + `<div class="nphint">${this._libErr ? `Couldn't load your music. <button class="pill" data-act="libretry">Try again</button>` : 'Loading…'}</div>`; return; }
     const kids = L.children || [], so = L.sortable ? (this._libSort || 'def') : 'def', cmp = (a, b) => String(a || '').localeCompare(String(b || ''), undefined, { sensitivity: 'base' });
-    let view = kids.map((c, i) => [c, i]);
-    if (so === 'added') view.sort((a, b) => (b[0].added || 0) - (a[0].added || 0) || a[1] - b[1]);
-    else if (so === 'title') view.sort((a, b) => cmp(a[0].title, b[0].title));
-    else if (so === 'artist') view.sort((a, b) => cmp(a[0].sub, b[0].sub) || cmp(a[0].title, b[0].title));
+    const view = this._libView(L, so);
     const sorts = L.sortable ? `<div class="sorts"><ha-icon icon="mdi:sort"></ha-icon>${[['def', L.playall ? 'Playlist order' : 'Default'], ['added', 'Recently added'], ['title', 'Title'], ['artist', 'Artist']].map(([k, t]) => `<button class="${so === k ? 'sel' : ''}" data-act="lsort" data-s="${k}">${t}</button>`).join('')}</div>` : '';
     body.innerHTML = head + `<div class="nplist">${L.playall ? `<button class="pall" data-act="libplayall"><ha-icon icon="mdi:play"></ha-icon>Play all · ${kids.length} songs</button>` : ''}${sorts}${view.map(([c, i]) => {
       const th = c.thumbnail, sub = c.sub || (c.media_class ? c.media_class.charAt(0).toUpperCase() + c.media_class.slice(1) : '');
@@ -1623,6 +1620,15 @@ class HomePanelCard extends HTMLElement {
         <div class="lx"><div class="t">${esc(c.title)}</div>${sub ? `<div class="s">${esc(sub)}</div>` : ''}</div>
         ${c.can_play ? `<button class="pl" data-act="libplay" data-i="${i}"><ha-icon icon="mdi:play"></ha-icon></button>` : c.can_expand ? '<ha-icon class="cv" icon="mdi:chevron-right"></ha-icon>' : ''}</div>`; }).join('') || '<div class="nphint">Nothing here</div>'}</div>`;
     body.querySelectorAll('img[data-sign]').forEach(im => this._signed(im.dataset.sign).then(u => { if (u) im.src = u; }));
+  }
+  _libView(L, so) {
+    // the list as shown: [item, original index] in the chosen sort order
+    const cmp = (a, b) => String(a || '').localeCompare(String(b || ''), undefined, { sensitivity: 'base' });
+    const view = ((L && L.children) || []).map((c, i) => [c, i]);
+    if (so === 'added') view.sort((a, b) => (b[0].added || 0) - (a[0].added || 0) || a[1] - b[1]);
+    else if (so === 'title') view.sort((a, b) => cmp(a[0].title, b[0].title));
+    else if (so === 'artist') view.sort((a, b) => cmp(a[0].sub, b[0].sub) || cmp(a[0].title, b[0].title));
+    return view;
   }
   _search(q) {
     q = (q || '').trim(); this._sq = q;
@@ -1713,7 +1719,10 @@ class HomePanelCard extends HTMLElement {
   }
   async _playItem(it, at) {
     const outs = this._outs || [], lead = outs[0]; if (!lead || !it) return;
+    this._qTok = (this._qTok || 0) + 1;
     const L = this._lib, le0 = this._st(lead), tap = at != null ? it : null;
+    const so = L && L.sortable ? (this._libSort || 'def') : 'def';
+    if (so !== 'def' && L && (it === L.playall || (tap && (tap.media_class === 'track' || tap.media_content_type === 'music')))) return this._playShown(L, so, it === L.playall ? null : at);
     // Tapping one song inside a playlist/album: queue the whole list, then jump to that song (Sonos queue).
     // Playing a playlist/album itself (or anything outside a song list) just starts it.
     const jump = !!(tap && (tap.media_content_type === 'music' || tap.media_class === 'track' || /track/.test(tap.media_content_id || '')) && L && L.playall && le0 && 'queue_size' in le0.attributes && (L.children || []).length === L.total);
@@ -1736,6 +1745,29 @@ class HomePanelCard extends HTMLElement {
         if (!ok) await h.callService('media_player', 'play_media', { entity_id: lead, media_content_id: tap.media_content_id, media_content_type: 'music' });
       }
     } catch (err) { this._toast("Couldn't play that on " + nm); }
+  }
+  async _playShown(L, so, at) {
+    // A sorted playlist view: start the chosen song (or the top one) straight away, then queue the songs below it
+    // in the order they are shown, so "next" always goes down the list as you see it.
+    const outs = this._outs || [], lead = outs[0], h = this._hass; if (!lead) return;
+    const view = this._libView(L, so).map(v => v[0]).filter(c => c.can_play);
+    let i = at == null ? 0 : view.findIndex(c => c === (L.children || [])[at]); if (i < 0) i = 0;
+    const list = view.slice(i, i + 150).map(c => { const m = String(c.media_content_id || '').match(/(?:track[:/])(\w+)/); return m ? 'https://open.spotify.com/track/' + m[1] : c.media_content_id; }).filter(Boolean);
+    if (!list.length) return;
+    const le = this._st(lead), cur = (le && le.attributes.group_members) || [lead], nm = (le && le.attributes.friendly_name) || 'the speaker';
+    const tok = this._qTok = (this._qTok || 0) + 1;
+    this._toast('Starting on ' + nm + (outs.length > 1 ? ' +' + (outs.length - 1) : '') + '…');
+    this._npEntity = lead; this._npPref = lead; this._npKey = null;
+    try {
+      const drop = cur.filter(m => m !== lead && !outs.includes(m)), add = outs.slice(1).filter(m => !cur.includes(m));
+      await Promise.all(drop.map(m => h.callService('media_player', 'unjoin', { entity_id: m })));
+      if (add.length) await h.callService('media_player', 'join', { entity_id: lead, group_members: add });
+      await h.callService('media_player', 'play_media', { entity_id: lead, media_content_id: list[0], media_content_type: 'music', enqueue: 'replace' });
+    } catch (e) { this._toast("Couldn't play that on " + nm); return; }
+    for (const u of list.slice(1)) {
+      if (tok !== this._qTok) return; // something else was played: stop adding
+      try { await h.callService('media_player', 'play_media', { entity_id: lead, media_content_id: u, media_content_type: 'music', enqueue: 'add' }); } catch (e) { /* skip songs Sonos can't add */ }
+    }
   }
   _chg(v) {
     if (!v || !v.dataset) return;
