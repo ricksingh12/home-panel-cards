@@ -430,8 +430,28 @@ window.__hpcIdle = (host) => {
       if (h.shadowRoot && h.shadowRoot.querySelector('.ov.open:not(.npov)')) h._click(fake('closebg')); } catch (e) {} });
   }, 15000);
 };
+/* Soft click when a tile, button or card is tapped (cards with tap_sound: true or a volume 0–1). Generated with Web Audio, no file. */
+window.__hpcTap = (host) => {
+  const c = host && host._c; if (!c || !c.tap_sound || host.__hpcTapOn) return; host.__hpcTapOn = true;
+  const vol = typeof c.tap_sound === 'number' ? Math.max(0, Math.min(1, c.tap_sound)) : 0.35;
+  host.addEventListener('pointerdown', e => {
+    const path = e.composedPath(), hit = path.find(n => n instanceof Element && (n.dataset.act || n.dataset.light || n.dataset.t || n.tagName === 'BUTTON' || n.tagName === 'SELECT'));
+    if (!hit || hit.dataset.act === 'closebg' && hit !== path[0]) return;
+    if (path.some(n => n instanceof Element && n.tagName === 'INPUT')) return; // sliders stay quiet
+    const now = performance.now(); if (now - (window.__hpcTapAt || 0) < 60) return; window.__hpcTapAt = now;
+    try {
+      const ctx = window.__hpcAudio = window.__hpcAudio || new (window.AudioContext || window.webkitAudioContext)();
+      if (ctx.state === 'suspended') ctx.resume();
+      const t = ctx.currentTime, o = ctx.createOscillator(), g = ctx.createGain(), f = ctx.createBiquadFilter();
+      o.type = 'triangle'; o.frequency.setValueAtTime(1500, t); o.frequency.exponentialRampToValueAtTime(600, t + 0.03);
+      f.type = 'lowpass'; f.frequency.value = 3200;
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.002); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.045);
+      o.connect(f); f.connect(g); g.connect(ctx.destination); o.start(t); o.stop(t + 0.05);
+    } catch (err) {}
+  }, { passive: true });
+};
 window.__hpcSwipe = (host) => {
-  window.__hpcIdle(host);
+  window.__hpcIdle(host); window.__hpcTap(host);
   if (!host || !host._c || !host._c.swipe) return;
   window.__hpcSwipeHosts = window.__hpcSwipeHosts || new Set(); window.__hpcSwipeHosts.add(host);
   if (window.__hpcSwipeOn) return; window.__hpcSwipeOn = true;
