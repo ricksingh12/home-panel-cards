@@ -521,6 +521,7 @@ const PPLCSS = `.ppl{flex:0 0 auto;padding:12px 14px;display:grid;grid-template-
 .cdiv{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--sub);margin-top:8px;padding:6px 0 2px;border-top:1px solid var(--line)}
 .ht2{flex:1 1 0;min-width:0;padding:8px 8px 6px;display:flex;flex-direction:column;align-items:center;position:relative;cursor:pointer;transition:background .2s}
 .ht2.heating{background:rgba(255,234,222,.9)}:host(.dark) .ht2.heating{background:rgba(92,52,36,.75)}
+.ht2.tb{align-items:stretch;padding:10px 10px 10px 11px;gap:0}.tbh{display:flex;align-items:center;gap:4px;min-width:0;margin-right:-2px}.tbh .hl2{margin-left:0;flex:0 0 auto}.tbn{flex:1;min-width:0;font-size:12.5px;letter-spacing:-.01em;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ht2.tb .hpw{flex:0 0 auto;width:22px;height:22px}.ht2.tb:not(.on) .hpw{background:var(--card2);color:var(--sub)}.tbv{font-size:32px;font-weight:600;letter-spacing:-.03em;line-height:1;margin-top:8px;font-variant-numeric:tabular-nums}.tbv small{font-size:16px;vertical-align:top;margin-left:1px;color:var(--sub)}.tbs{font-size:11px;font-weight:600;color:var(--sub);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ht2.tb.heating .tbs,.ht2.tb.heating .tbv small{color:#e0592a}.tbc{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:8px;gap:6px}.tbb{width:32px;height:32px;border-radius:50%;border:0;padding:0;background:var(--card2);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer}.tbb ha-icon{--mdc-icon-size:18px}.ht2.tb.heating .tbb{background:rgba(240,106,60,.16);color:#c2410c}:host(.dark) .ht2.tb.heating .tbb{color:#fdba74}.tbt{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}.ht2.tb.heating .tbt{color:#e0592a}.ht2.tb.off .tbb{opacity:.35;pointer-events:none}.ht2.tb.off .tbt{color:var(--sub)}
 .htop{position:absolute;top:6px;left:6px;right:6px;display:flex;justify-content:space-between;align-items:center;height:24px;pointer-events:none}.htop>*{pointer-events:auto}.hl2{height:16px;width:16px;object-fit:contain;display:block;margin-left:3px}
 .hpw{width:24px;height:24px;border-radius:50%;border:0;padding:0;background:var(--card2);color:var(--sub);display:flex;align-items:center;justify-content:center;cursor:pointer}.hpw ha-icon{--mdc-icon-size:14px}.ht2.on .hpw{background:#f06a3c;color:#fff}
 .hn{font-size:13px;font-weight:600;max-width:calc(100% - 36px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;line-height:20px}
@@ -869,12 +870,12 @@ class HomePanelCard extends HTMLElement {
       let svg = `<path d="${arc(A0, A0 + SW)}" class="trk"/>`;
       if (tgt != null) { const g = ang(tgt), [mx, my] = pt(g); svg += `<path d="${arc(A0, Math.max(A0 + 0.5, g))}" style="stroke:${col}" class="fil${heating ? '' : ' dim'}"/><circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="5" class="knob" style="stroke:${col}"/>`; }
       if (cur != null) { const [cx, cy] = pt(ang(cur)); svg += `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="2" class="cdot"/>`; }
-      const st = e.state === 'unavailable' ? 'Unavailable' : !on ? 'Off' : tgt == null ? 'On' : heating ? '→ ' + tgt + '°' : 'Set ' + tgt + '°';
-      return `<div class="card ht2 ${on ? 'on' : 'off'}${heating ? ' heating' : ''}" data-act="more" data-id="${esc(z.entity)}">
-        <div class="htop">${hl}<button class="hpw" data-act="hpw" data-id="${esc(z.entity)}" title="${on ? 'Turn off' : 'Turn on'}"><ha-icon icon="mdi:power"></ha-icon></button></div>
-        <div class="hn">${nm}</div>
-        <div class="hdial"><svg viewBox="0 0 84 84">${svg}</svg><div class="hc2"><div class="htv">${cur != null ? cur.toFixed(1) : '—'}<small>°</small></div><div class="hs">${st}</div>${a.current_humidity != null ? `<div class="hh">${r0(a.current_humidity)}%</div>` : ''}</div></div>
-        <button class="hb m" data-act="hdn" data-id="${esc(z.entity)}"><ha-icon icon="mdi:minus"></ha-icon></button><button class="hb p" data-act="hup" data-id="${esc(z.entity)}"><ha-icon icon="mdi:plus"></ha-icon></button></div>`;
+      const st = e.state === 'unavailable' ? 'Unavailable' : !on ? 'Off' : heating ? 'Heating' : 'Idle';
+      return `<div class="card ht2 tb ${on ? 'on' : 'off'}${heating ? ' heating' : ''}" data-act="more" data-id="${esc(z.entity)}">
+        <div class="tbh">${hl}<span class="tbn">${nm}</span><button class="hpw" data-act="hpw" data-id="${esc(z.entity)}" title="${on ? 'Turn off' : 'Turn on'}"><ha-icon icon="${heating ? 'mdi:fire' : 'mdi:power'}"></ha-icon></button></div>
+        <div class="tbv">${cur != null ? cur.toFixed(1) : '—'}<small>°</small></div>
+        <div class="tbs">${st}${a.current_humidity != null ? ' · ' + r0(a.current_humidity) + '%' : ''}</div>
+        <div class="tbc"><button class="tbb" data-act="hdn" data-id="${esc(z.entity)}" title="Lower"><ha-icon icon="mdi:minus"></ha-icon></button><span class="tbt">${tgt != null ? tgt + '°' : on ? 'On' : 'Off'}</span><button class="tbb" data-act="hup" data-id="${esc(z.entity)}" title="Raise"><ha-icon icon="mdi:plus"></ha-icon></button></div></div>`;
     }).join('');
   }
   _heatStep(id, dir) {
