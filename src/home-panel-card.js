@@ -498,7 +498,22 @@ const PPLCSS = `.ppl{flex:0 0 auto;padding:12px 14px;display:grid;grid-template-
 .vb{display:flex;gap:6px;flex:0 0 auto}.vb button{width:34px;height:34px;border-radius:50%;border:0;background:var(--card2);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}.vb button ha-icon{--mdc-icon-size:18px}.vb button.go{background:#22a06b;color:#fff}
 .vhd{display:flex;align-items:center;gap:12px}.vhd .vic{width:52px;height:52px}.vhd .vic ha-icon{--mdc-icon-size:28px}
 .vsec{margin-top:18px}.vchips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.vchips button{border:0;border-radius:999px;padding:9px 15px;background:var(--card2);color:var(--text);font:inherit;font-size:14px;font-weight:600;cursor:pointer}.vchips button.sel{background:var(--accent);color:#fff}
-.vacts{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:10px;margin-top:18px}.vacts button{height:54px;border:0;border-radius:16px;background:var(--card2);color:var(--text);font:inherit;font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}.vacts button.go{background:#22a06b;color:#fff}.vacts ha-icon{--mdc-icon-size:20px}
+.vacts{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:10px;margin-top:18px}.vacts button{height:54px;border:0;border-radius:16px;background:var(--card2);color:var(--text);font:inherit;font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}.vacts button.go{background:#22a06b;color:#fff}
+.vacts button.stop{background:#e5484d;color:#fff}
+.vacts button.warn{background:rgba(229,72,77,.12);color:#e5484d}
+.ngrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px}
+.ngrid>div{background:var(--card2);border-radius:16px;padding:12px 14px;min-width:0}
+.ngrid span{display:flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--sub)}
+.ngrid span ha-icon{--mdc-icon-size:13px}
+.ngrid .dn span ha-icon{color:#22a06b}
+.ngrid .up span ha-icon{color:#3b82f6}
+.ngrid b{display:block;margin-top:4px;font-size:22px;font-weight:700;letter-spacing:-.01em;white-space:nowrap;font-variant-numeric:tabular-nums}
+.ngrid b small{font-size:12px;color:var(--sub);font-weight:600;margin-left:2px}
+.nspark{height:74px;margin-top:12px;background:var(--card2);border-radius:16px;padding:10px 12px}
+.nspark svg{width:100%;height:100%;display:block}
+.nspark .sd{fill:none;stroke:#22a06b;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.nspark .su{fill:none;stroke:#3b82f6;stroke-width:1.4;stroke-linejoin:round;stroke-linecap:round;opacity:.75;vector-effect:non-scaling-stroke}
+.nnote{margin-top:10px;font-size:12.5px;color:var(--sub);text-align:center}.vacts ha-icon{--mdc-icon-size:20px}
 .vlogo{width:26px;height:26px;border-radius:7px;object-fit:cover;flex:0 0 auto}.vhd .vlogo{width:40px;height:40px;border-radius:10px;margin:0 52px 0 auto;align-self:flex-start}
 :is(.side,.hrow) .en{min-height:84px;padding:8px 14px}:is(.side,.hrow) .en .head{margin-bottom:0}:is(.side,.hrow) .en .etot .v{font-size:15px}:is(.side,.hrow) .en .etot .c{font-size:10px}:is(.side,.hrow) .en .ech{min-height:24px;margin-top:4px}.side .vac{flex:0 0 auto}
 .wx{container-type:size;container-name:wx}.wx2t{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex:0 0 auto}.wx2m{min-width:0}.wx2r{display:flex;align-items:center;gap:12px;margin-top:2px}.wx2 .temp{font-size:clamp(40px,4.4vw,54px);font-weight:600;letter-spacing:-.03em;line-height:1;margin:0}.wx2 .temp sup{font-size:.45em;vertical-align:top;margin-left:1px;font-weight:600}.wx2c{display:flex;flex-direction:column;min-width:0;line-height:1.25}.wx2c b{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wx2c span{font-size:12.5px;color:var(--sub);font-weight:600;white-space:nowrap}.wx.night .wx2c span{color:rgba(255,255,255,.7)}.wx2 .cond{margin-top:6px;font-size:12.5px;font-weight:600;gap:0 12px;color:var(--sub);flex-wrap:wrap;height:18px;line-height:18px;overflow:hidden;flex:0 0 auto}.wx2 .cond ha-icon{color:var(--sub)}.wx.night.wx2 .cond ha-icon{color:rgba(255,255,255,.65)}.wx2 .cond .wx2rain{color:#2563eb}.wx2 .cond .wx2rain ha-icon{color:#2563eb}.wx.night.wx2 .cond .wx2rain,.wx.night.wx2 .cond .wx2rain ha-icon,:host(.dark) .wx2 .cond .wx2rain,:host(.dark) .wx2 .cond .wx2rain ha-icon{color:#8ec5ff}.wx2s{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin-top:auto;padding-top:6px;flex:0 0 auto}.wx2h{display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 0 4px;border-radius:12px;min-width:0}.wx2h.now{background:var(--card2)}.wx.night .wx2h.now{background:rgba(255,255,255,.12)}.wx2h .t{font-size:11.5px;color:var(--sub);font-weight:700}.wx.night .wx2h .t{color:rgba(255,255,255,.7)}.wx2h ha-icon{--mdc-icon-size:21px}.wx2h .v{font-size:15px;font-weight:700}.wx2h .p{font-size:10.5px;font-weight:700;color:#3b82f6;min-height:13px}.wx.night .wx2h .p{color:#8ec5ff}@container wx (max-height:200px){.wx2 .temp{font-size:38px}.wx2h ha-icon{--mdc-icon-size:20px}.wx2h{padding:4px 0 3px;gap:2px}.wx2 .cond{margin-top:4px}}@container wx (max-height:125px){.wx2s{display:none}}.wx .chart{flex:0 0 auto}
@@ -610,7 +625,7 @@ class HomePanelCard extends HTMLElement {
         <div class="right">
           <div class="toprow"><div class="tcol"><div class="card cams"><div class="head"><span class="chd">${(u => u ? `<img src="${esc(u)}" alt="" onerror="this.style.display='none'">` : '')(this._c.cameras_logo === undefined ? 'https://brands.home-assistant.io/unifiprotect/icon.png' : this._c.cameras_logo)}<span class="lbl">Cameras</span></span>
             ${this._c.cameras_path ? '<button class="pill" data-act="allcams">All cameras ›</button>' : ''}</div>
-            <div class="camgrid" id="camgrid"></div></div>${this._c.heating.length ? '<div class="hrow"><div class="heat" id="heat"></div></div>' : ''}</div>${this._c.media_players.length || this._c.energy || this._c.alarm || this._c.vacuum || this._c.internet ? `<div class="side">${this._c.internet ? `<div class="card net" id="net" data-act="more" data-id="${esc(this._c.internet.download || '')}"></div>` : ''}${this._c.energy ? '<div class="card en" id="en" data-act="en"></div>' : ''}${this._c.alarm ? '<div class="card alarm" id="alarm" data-act="alarm"></div>' : ''}${this._c.media_players.length ? '<div class="card music big" id="music" data-act="np"></div>' : ''}${this._c.vacuum ? '<div class="card vac" id="vac" data-act="vac"></div>' : ''}</div>` : ''}</div>
+            <div class="camgrid" id="camgrid"></div></div>${this._c.heating.length ? '<div class="hrow"><div class="heat" id="heat"></div></div>' : ''}</div>${this._c.media_players.length || this._c.energy || this._c.alarm || this._c.vacuum || this._c.internet ? `<div class="side">${this._c.internet ? `<div class="card net" id="net" data-act="net"></div>` : ''}${this._c.energy ? '<div class="card en" id="en" data-act="en"></div>' : ''}${this._c.alarm ? '<div class="card alarm" id="alarm" data-act="alarm"></div>' : ''}${this._c.media_players.length ? '<div class="card music big" id="music" data-act="np"></div>' : ''}${this._c.vacuum ? '<div class="card vac" id="vac" data-act="vac"></div>' : ''}</div>` : ''}</div>
           <div class="bottom"><div class="lights" id="lights"></div>${(this._c.people || []).length ? '<div class="pcol"><div class="card ppl" id="ppl"></div>' : ''}${this._cars.length ? `<div class="card carc${this._cars.length > 1 ? ' multi' : ''}" id="car"${this._cars.length > 1 ? '' : ' data-act="car" data-i="0"'}></div>` : ''}${(this._c.people || []).length ? '</div>' : ''}</div>
         </div>
       </div>
@@ -622,7 +637,7 @@ class HomePanelCard extends HTMLElement {
       <div class="ov" id="carov" data-act="closebg"><div class="pop" id="carpop"></div></div>
       <div class="ov" id="enov" data-act="closebg"><div class="pop" id="enpop"></div></div>
       <div class="ov" id="alov" data-act="closebg"><div class="pop apop" id="alpop"></div></div>
-      <div class="ov" id="vacov" data-act="closebg"><div class="pop" id="vacpop" style="width:min(92%,560px)"></div></div>
+      <div class="ov" id="vacov" data-act="closebg"><div class="pop" id="vacpop" style="width:min(92%,560px)"></div></div>${this._c.internet ? '<div class="ov" id="netov" data-act="closebg"><div class="pop" id="netpop" style="width:min(92%,560px)"></div></div>' : ''}
       <div class="ov camov" id="camov" data-act="closebg"><div class="pop" id="campop"></div></div>
       <div class="ov" id="pplov" data-act="closebg"><div class="pop" id="pplpop" style="width:min(92%,720px)"></div></div>
       <div class="ov" id="pinov" data-act="closebg"><div class="pop" id="pinpop" style="width:min(92%,360px)"></div></div>
@@ -695,8 +710,8 @@ class HomePanelCard extends HTMLElement {
       if (psig !== this._sig.ppl) { this._sig.ppl = psig; this._renderPeople(); if (this._pplOpen != null) this._renderPeoplePop(); } }
     if (this._c.vacuum) { const V = this._c.vacuum, vsg = JSON.stringify([V.entity, V.mode, V.state, V.error].map(id => { const e = id && this._st(id); return e && [e.state, e.attributes.fan_speed]; }));
       if (vsg !== this._sig.vac) { this._sig.vac = vsg; this._renderVac(); if (this._vacOpen) this._renderVacPop(); } }
-    if (this._c.internet) { const N = this._c.internet, nsg = JSON.stringify([N.download, N.upload, N.latency].map(id => { const e = id && this._st(id); return e && [e.state, e.last_updated]; }));
-      if (nsg !== this._sig.net) { this._sig.net = nsg; this._netSample(); this._renderNet(); } }
+    if (this._c.internet) { const N = this._c.internet, nsg = JSON.stringify([N.download, N.upload, N.latency, N.block, N.clients, N.uptime].map(id => { const e = id && this._st(id); return e && [e.state, e.last_updated]; }));
+      if (nsg !== this._sig.net) { this._sig.net = nsg; this._netSample(); this._renderNet(); if (this._netOpen) this._renderNetPop(); } }
     if (this._c.alarm) { const A = this._c.alarm, ids = [A.entity, ...(A.doors || []).map(x => x.entity), ...(A.motion || []).map(x => x.entity), ...(A.batteries || [])];
       const asig = JSON.stringify(ids.map(id => { const e = this._st(id); return e && [e.state, e.last_changed, id === A.entity ? e.attributes : 0]; })) + (this._alConf || '') + Math.floor(Date.now() / 60000);
       if (asig !== this._sig.alarm) { this._sig.alarm = asig; this._renderAlarm(); if (this._alOpen) this._renderAlarmPop(); } }
@@ -1039,13 +1054,39 @@ class HomePanelCard extends HTMLElement {
   _renderNet() {
     const el = this._$ && this._$('net'); if (!el) return;
     const N = this._c.internet, d = this._netVal(N.download), u = this._netVal(N.upload), le = N.latency && this._st(N.latency), lat = le ? parseFloat(le.state) : NaN;
-    const off = d == null && u == null;
+    const bl = this._netBlocked() === true, off = bl || (d == null && u == null);
     const h = this._netH || [], mx = Math.max(1, ...h.map(p => Math.max(p.d || 0, p.u || 0)));
     const line = k => h.length > 1 ? h.map((p, i) => `${(i / (h.length - 1) * 100).toFixed(1)},${(28 - (p[k] || 0) / mx * 26).toFixed(1)}`).join(' ') : '';
     const spark = h.length > 1 ? `<svg viewBox="0 0 100 30" preserveAspectRatio="none"><polyline class="su" points="${line('u')}"/><polyline class="sd" points="${line('d')}"/></svg>` : '<svg viewBox="0 0 100 30"></svg>';
     el.className = 'card net' + (off ? ' off' : '');
-    el.innerHTML = `<div class="nic"><ha-icon icon="${off ? 'mdi:web-off' : 'mdi:web'}"></ha-icon></div><div class="nx"><div class="nn">${esc(N.name || 'Internet')}</div><div class="ns">${off ? 'Offline' : !isNaN(lat) ? Math.round(lat) + ' ms ping' : 'Online'}</div></div>${spark}
+    el.innerHTML = `<div class="nic"><ha-icon icon="${off ? 'mdi:web-off' : 'mdi:web'}"></ha-icon></div><div class="nx"><div class="nn">${esc(N.name || 'Internet')}</div><div class="ns">${bl ? 'Paused' : off ? 'Offline' : !isNaN(lat) ? Math.round(lat) + ' ms ping' : 'Online'}</div></div>${spark}
       <div class="nv"><div class="dn"><span><ha-icon icon="mdi:arrow-down"></ha-icon>Down</span><b>${this._netFmt(d)}</b></div><div class="up"><span><ha-icon icon="mdi:arrow-up"></ha-icon>Up</span><b>${this._netFmt(u)}</b></div></div>`;
+  }
+  _netBlocked() { const b = this._c.internet && this._c.internet.block, e = b && this._st(b); return e ? e.state === 'on' : null; }
+  _renderNetPop() {
+    const el = this._$ && this._$('netpop'); if (!el) return;
+    const N = this._c.internet, d = this._netVal(N.download), u = this._netVal(N.upload), le = N.latency && this._st(N.latency), lat = le ? parseFloat(le.state) : NaN;
+    const bl = this._netBlocked(), off = d == null && u == null;
+    const sub = bl ? 'Internet is paused for the whole house' : off ? 'Offline' : !isNaN(lat) ? Math.round(lat) + ' ms ping' : 'Online';
+    const h = this._netH || [], mx = Math.max(1, ...h.map(p => Math.max(p.d || 0, p.u || 0)));
+    const line = k => h.map((p, i) => `${(i / (h.length - 1) * 100).toFixed(1)},${(38 - (p[k] || 0) / mx * 35).toFixed(1)}`).join(' ');
+    const spark = h.length > 1 ? `<div class="nspark"><svg viewBox="0 0 100 40" preserveAspectRatio="none"><polyline class="su" points="${line('u')}"/><polyline class="sd" points="${line('d')}"/></svg></div>` : '';
+    const st = id => { const e = id && this._st(id); return e && !/unknown|unavailable/.test(e.state) ? e : null; };
+    const cl = st(N.clients), up = st(N.uptime);
+    const upTxt = up ? (() => { const s = (Date.now() - Date.parse(up.state)) / 1000; if (!isFinite(s) || s < 0) return null; const dd = Math.floor(s / 86400), hh = Math.floor(s % 86400 / 3600); return dd ? dd + '<small>d</small> ' + hh + '<small>h</small>' : hh + '<small>h</small> ' + Math.floor(s % 3600 / 60) + '<small>m</small>'; })() : null;
+    const tile = (k, v, cls) => `<div class="${cls || ''}"><span>${k}</span><b>${v}</b></div>`;
+    const tiles = [tile('<ha-icon icon="mdi:arrow-down"></ha-icon>Download', this._netFmt(d), 'dn'), tile('<ha-icon icon="mdi:arrow-up"></ha-icon>Upload', this._netFmt(u), 'up'), tile('Ping', !isNaN(lat) ? Math.round(lat) + '<small>ms</small>' : '—')];
+    if (cl) tiles.push(tile('Devices online', esc(cl.state)));
+    if (upTxt) tiles.push(tile('Router up', upTxt));
+    let btn = '';
+    if (N.block) btn = bl
+      ? `<div class="vacts"><button class="go" data-act="netgo"><ha-icon icon="mdi:web"></ha-icon>Turn internet back on</button></div><div class="nnote">Wi-Fi and the home network still work. Only the internet is blocked.</div>`
+      : this._netArm
+        ? `<div class="vacts"><button class="stop" data-act="netstop"><ha-icon icon="mdi:alert-outline"></ha-icon>Tap again to stop all internet</button></div><div class="nnote">Every device in the house will lose internet until you turn it back on here.</div>`
+        : `<div class="vacts"><button class="warn" data-act="netstop"><ha-icon icon="mdi:web-off"></ha-icon>Stop all internet</button></div>`;
+    el.innerHTML = this._ph('closenet', this._pic(bl ? 'mdi:web-off' : 'mdi:web'), 'Network', esc(N.name || 'Internet'), sub)
+      + (bl ? '<div class="verr"><ha-icon icon="mdi:web-off"></ha-icon>Internet is switched off</div>' : '')
+      + `<div class="ngrid">${tiles.join('')}</div>${spark}${btn}`;
   }
   _renderVacPop() {
     const el = this._$('vacpop'), v = this._vInfo(), V = this._c.vacuum; if (!el) return;
@@ -2042,7 +2083,7 @@ class HomePanelCard extends HTMLElement {
     if (act === 'closebg' && t !== path[0]) return;
     if (act === 'wxloc') { this._wxLoc = +t.dataset.i; if (t.dataset.retry && this._om) delete this._om[this._wxLoc]; this._renderWxPop(); return; }
     if (act === 'wx') { this._wxLoc = 0; this._wxOpen = true; this._sig.wxp = null; this._$('wxov').classList.add('open'); this._update(); }
-    else if (act === 'closewx' || act === 'closebg' || act === 'closecal' || act === 'closeclk' || act === 'closetfl' || act === 'closecar' || act === 'closeen' || act === 'closeal' || act === 'closeppl' || act === 'closevac' || act === 'closecam') { this._camClose(); if (this._pin && this._$('pinov').classList.contains('open')) { this._pinClose(); return; } this._alOpen = false; this._vacOpen = false; this._pplOpen = null; this._wxOpen = false; this._calOpen = false; this._clkOpen = false; this._tflOpen = false; this._tflMap = false; this._carOpen = false; this._enOpen = false; ['wxov', 'calov', 'clkov', 'tflov', 'carov', 'enov', 'alov', 'pplov', 'vacov'].forEach(id => this._$(id).classList.remove('open')); }
+    else if (act === 'closewx' || act === 'closebg' || act === 'closecal' || act === 'closeclk' || act === 'closetfl' || act === 'closecar' || act === 'closeen' || act === 'closeal' || act === 'closeppl' || act === 'closevac' || act === 'closenet' || act === 'closecam') { this._camClose(); this._netOpen = false; this._netArm = false; { const no = this._$('netov'); if (no) no.classList.remove('open'); } if (this._pin && this._$('pinov').classList.contains('open')) { this._pinClose(); return; } this._alOpen = false; this._vacOpen = false; this._pplOpen = null; this._wxOpen = false; this._calOpen = false; this._clkOpen = false; this._tflOpen = false; this._tflMap = false; this._carOpen = false; this._enOpen = false; ['wxov', 'calov', 'clkov', 'tflov', 'carov', 'enov', 'alov', 'pplov', 'vacov'].forEach(id => this._$(id).classList.remove('open')); }
     else if (act === 'clk') { this._clkOpen = true; this._renderWorld(); this._$('clkov').classList.add('open'); }
     else if (act === 'calday') { const t0 = new Date(); t0.setHours(0, 0, 0, 0); this._calDay = +t.dataset.i; this._calDayAt = Date.now(); this._calDayOf = t0.getTime(); this._renderCal(); }
     else if (act === 'cal') { this._calOpen = true; this._renderCalPop(); this._$('calov').classList.add('open'); this._fetchCal(); }
@@ -2062,6 +2103,11 @@ class HomePanelCard extends HTMLElement {
     else if (act === 'carclim') { const k = this._cars[this._carIdx || 0].climate, e = this._st(k); if (e) this._hass.callService('switch', e.state === 'on' ? 'turn_off' : 'turn_on', { entity_id: k }); }
     else if (act === 'carref') { this._hass.callService('button', 'press', { entity_id: this._cars[this._carIdx || 0].refresh }); t.textContent = 'Requested…'; }
     else if (act === 'arm') this._alArm(t.dataset.m);
+    else if (act === 'net') { this._netOpen = true; this._netArm = false; this._renderNetPop(); this._$('netov').classList.add('open'); }
+    else if (act === 'netstop') { const N = this._c.internet; if (!N || !N.block) return; clearTimeout(this._netArmT);
+      if (!this._netArm) { this._netArm = true; this._netArmT = setTimeout(() => { this._netArm = false; if (this._netOpen) this._renderNetPop(); }, 5000); this._renderNetPop(); }
+      else { this._netArm = false; this._hass.callService('switch', 'turn_on', { entity_id: N.block }); t.innerHTML = '<ha-icon icon="mdi:timer-sand"></ha-icon>Stopping…'; } }
+    else if (act === 'netgo') { const N = this._c.internet; if (N && N.block) { this._hass.callService('switch', 'turn_off', { entity_id: N.block }); t.innerHTML = '<ha-icon icon="mdi:timer-sand"></ha-icon>Turning back on…'; } }
     else if (act === 'vac') { this._vacOpen = true; this._renderVacPop(); this._$('vacov').classList.add('open'); }
     else if (act === 'vcmd') this._hass.callService('vacuum', t.dataset.svc, { entity_id: this._c.vacuum.entity });
     else if (act === 'vmode') this._hass.callService('select', 'select_option', { entity_id: this._c.vacuum.mode, option: t.dataset.m });
