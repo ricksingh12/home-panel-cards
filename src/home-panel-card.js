@@ -357,7 +357,7 @@ border:1px solid rgba(255,255,255,.35)}
 .sorts button{flex:0 0 auto;border:0;border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;font-weight:600;background:rgba(255,255,255,.1);color:rgba(255,255,255,.8);cursor:pointer;white-space:nowrap}.sorts button.sel{background:rgba(255,255,255,.92);color:#111}
 .sec2{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;opacity:.55;padding:12px 8px 4px}
 .ov.dbov{background:#000;z-index:9;backdrop-filter:none;flex-direction:column}
-.dbvid{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000}.dbvid img,.dbvid .dbstream{width:100%;height:100%;object-fit:contain;display:block}
+.dbvid{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000}.dbvid img,.dbvid .dbstream{width:100%;height:100%;object-fit:cover;display:block}.dbvid .dbstream{position:absolute;inset:0;--video-max-height:100%}.dbvid.fit img{object-fit:contain}
 .dbvid .dbstream{--video-max-height:100vh}
 .dbtop{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:flex-start;padding:18px 22px 40px;background:linear-gradient(rgba(0,0,0,.65),transparent);color:#fff;z-index:2}
 .dbt{font-size:24px;font-weight:700}.dbs{font-size:14px;opacity:.85;margin-top:2px}
@@ -1911,7 +1911,8 @@ class HomePanelCard extends HTMLElement {
     this._dbT = setTimeout(() => { if (!this._dbRec) this._dbClose(); else this._dbPoke(); }, secs * 1000);
   }
   async _dbStream() {
-    const d = this._c.doorbell, box = this._$('dbvid'), img = this._$('dbimg'), cam = this._st(d.camera);
+    const d = this._c.doorbell, box = this._$('dbvid'), img = this._$('dbimg'), cam = this._st(d.camera), fit = d.fit === 'contain' ? 'contain' : 'cover';
+    if (box) box.classList.toggle('fit', fit === 'contain');
     const snap = () => { const c = this._st(d.camera); if (!c || !c.attributes.entity_picture || !this._$('dbimg')) return;
       const u = c.attributes.entity_picture + '&_=' + Date.now(), im = new Image(); im.onload = () => { const t = this._$('dbimg'); if (t) t.src = u; }; im.src = u; };
     snap(); clearInterval(this._dbSnapT); this._dbSnapT = setInterval(snap, 1500);
@@ -1923,7 +1924,12 @@ class HomePanelCard extends HTMLElement {
       if (!customElements.get('ha-camera-stream') || !this._dbOpenNow || !cam) return;
       const v = document.createElement('ha-camera-stream');
       v.hass = this._hass; v.stateObj = this._st(d.camera); v.muted = true; v.controls = false; v.allowExoPlayer = true; v.className = 'dbstream';
+      v.fitMode = fit; v.setAttribute('fit-mode', fit);
       box.appendChild(v); this._dbV = v;
+      // Older HA builds ignore fit-mode: reach into the player's shadow DOM and size the <video> ourselves.
+      const fill = (n, k) => { if (!n || k > 6) return; const r = n.shadowRoot || n; r.querySelectorAll && r.querySelectorAll('video,img').forEach(x => { x.style.objectFit = fit; x.style.width = '100%'; x.style.height = '100%'; x.style.maxHeight = 'none'; });
+        r.querySelectorAll && r.querySelectorAll('*').forEach(c => { if (c.shadowRoot) { c.style.height = '100%'; c.style.display = 'block'; fill(c, k + 1); } }); };
+      [400, 1200, 2500, 5000].forEach(t => setTimeout(() => { if (this._dbV === v) fill(v, 0); }, t));
       setTimeout(() => { if (this._dbV === v) { clearInterval(this._dbSnapT); if (img) img.style.display = 'none'; } }, 2500);
     } catch (e) { /* keep snapshots */ }
   }
