@@ -501,7 +501,7 @@ const PPLCSS = `.ppl{flex:0 0 auto;padding:12px 14px;display:grid;grid-template-
 .vacts{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:10px;margin-top:18px}.vacts button{height:54px;border:0;border-radius:16px;background:var(--card2);color:var(--text);font:inherit;font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}.vacts button.go{background:#22a06b;color:#fff}.vacts ha-icon{--mdc-icon-size:20px}
 .vlogo{width:26px;height:26px;border-radius:7px;object-fit:cover;flex:0 0 auto}.vhd .vlogo{width:40px;height:40px;border-radius:10px;margin:0 52px 0 auto;align-self:flex-start}
 :is(.side,.hrow) .en{min-height:84px;padding:8px 14px}:is(.side,.hrow) .en .head{margin-bottom:0}:is(.side,.hrow) .en .etot .v{font-size:15px}:is(.side,.hrow) .en .etot .c{font-size:10px}:is(.side,.hrow) .en .ech{min-height:24px;margin-top:4px}.side .vac{flex:0 0 auto}
-.wx{container-type:size;container-name:wx}.wx .chart{flex:0 0 auto}
+.wx{container-type:size;container-name:wx}.wx2t{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex:0 0 auto}.wx2m{min-width:0}.wx2r{display:flex;align-items:center;gap:12px;margin-top:2px}.wx2 .temp{font-size:clamp(40px,4.4vw,54px);font-weight:600;letter-spacing:-.03em;line-height:1;margin:0}.wx2 .temp sup{font-size:.45em;vertical-align:top;margin-left:1px;font-weight:600}.wx2c{display:flex;flex-direction:column;min-width:0;line-height:1.25}.wx2c b{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wx2c span{font-size:12.5px;color:var(--sub);font-weight:600;white-space:nowrap}.wx.night .wx2c span{color:rgba(255,255,255,.7)}.wx2 .cond{margin-top:6px;font-size:12.5px;font-weight:600;gap:0 12px;color:var(--sub);flex-wrap:wrap;height:18px;line-height:18px;overflow:hidden;flex:0 0 auto}.wx2 .cond ha-icon{color:var(--sub)}.wx.night.wx2 .cond ha-icon{color:rgba(255,255,255,.65)}.wx2 .cond .wx2rain{color:#2563eb}.wx2 .cond .wx2rain ha-icon{color:#2563eb}.wx.night.wx2 .cond .wx2rain,.wx.night.wx2 .cond .wx2rain ha-icon,:host(.dark) .wx2 .cond .wx2rain,:host(.dark) .wx2 .cond .wx2rain ha-icon{color:#8ec5ff}.wx2s{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin-top:auto;padding-top:6px;flex:0 0 auto}.wx2h{display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 0 4px;border-radius:12px;min-width:0}.wx2h.now{background:var(--card2)}.wx.night .wx2h.now{background:rgba(255,255,255,.12)}.wx2h .t{font-size:11.5px;color:var(--sub);font-weight:700}.wx.night .wx2h .t{color:rgba(255,255,255,.7)}.wx2h ha-icon{--mdc-icon-size:21px}.wx2h .v{font-size:15px;font-weight:700}.wx2h .p{font-size:10.5px;font-weight:700;color:#3b82f6;min-height:13px}.wx.night .wx2h .p{color:#8ec5ff}@container wx (max-height:200px){.wx2 .temp{font-size:38px}.wx2h ha-icon{--mdc-icon-size:20px}.wx2h{padding:4px 0 3px;gap:2px}.wx2 .cond{margin-top:4px}}@container wx (max-height:125px){.wx2s{display:none}}.wx .chart{flex:0 0 auto}
 @container wx (max-height:332px){.wdays{display:none}}
 @container wx (max-height:242px){.wx .row .temp{font-size:38px;margin-top:0}.wx .row ha-icon{--mdc-icon-size:42px !important}.hc .mm{display:none}.hc{padding:5px 0;gap:2px}.chart{padding-top:4px}.hstrip{margin-top:2px}}
 @container wx (max-height:172px){.hc .p{display:none}.wx .cond{margin-top:2px}.hc ha-icon{--mdc-icon-size:22px}}
@@ -716,12 +716,30 @@ class HomePanelCard extends HTMLElement {
     const w = this._st(this._c.weather), sun = this._st(this._c.sun), el = this._$('wx');
     if (!w) { el.innerHTML = '<div class="lbl">Weather unavailable</div>'; return; }
     const a = w.attributes, u = a.temperature_unit || '°C';
-    el.className = 'card wx ' + this._wxClass(w, sun);
-    el.innerHTML = `<div class="row"><div><div class="lbl">${esc(this._c.location)}</div>
-        <div class="temp">${r0(a.temperature)}<sup>${esc(u)}</sup></div></div>${this._icon(w.state, 56)}</div>
-      <div class="cond"><span>${esc(LABEL[w.state] || w.state)} · ${r0(a.humidity)}%</span>${sun ? `<span><ha-icon icon="mdi:weather-sunset-up"></ha-icon>${hm(sun.attributes.next_rising)}</span><span><ha-icon icon="mdi:weather-sunset-down"></ha-icon>${hm(sun.attributes.next_setting)}</span>` : ''}</div>
-      <div class="chart">${this._strip(this._hourly || [])}</div>
-      ${(this._daily || []).length > 1 ? `<div class="wdays">${this._daily.slice(1, 5).map(x => `<div class="wd"><span class="n">${DOW[new Date(x.datetime).getDay()]}</span>${this._icon(x.condition)}<span class="t">${r0(x.temperature)}°<small>${r0(x.templow)}°</small></span></div>`).join('')}</div>` : ''}`;
+    el.className = 'card wx wx2 ' + this._wxClass(w, sun);
+    const now = new Date(), dly = this._daily || [], td = dly.find(x => new Date(x.datetime).toDateString() === now.toDateString()) || dly[0];
+    const hrs = (this._hourly || []).filter(x => typeof x.temperature === 'number' && new Date(x.datetime) > new Date(now.getTime() - 3600000));
+    const hi = td && td.temperature != null ? td.temperature : hrs.length ? Math.max(...hrs.slice(0, 18).map(x => x.temperature)) : null;
+    const lo = td && td.templow != null ? td.templow : hrs.length ? Math.min(...hrs.slice(0, 18).map(x => x.temperature)) : null;
+    const feels = a.apparent_temperature, ws = a.wind_speed, wu = a.wind_speed_unit || 'km/h';
+    // next sun event only
+    let sunEv = '';
+    if (sun) { const nr = new Date(sun.attributes.next_rising), ns = new Date(sun.attributes.next_setting), up = sun.state === 'above_horizon';
+      sunEv = `<span><ha-icon icon="${up ? 'mdi:weather-sunset-down' : 'mdi:weather-sunset-up'}"></ha-icon>${hm(up ? ns : nr)}</span>`; }
+    // first wet hour in the next 12
+    const wet = hrs.slice(0, 12).find(x => (Number(x.precipitation) || 0) > 0.05 || (this._popAt(x) ?? 0) >= 50 || /rain|pour|snow|hail|lightning/.test(x.condition || ''));
+    const rainNow = /rain|pour|snow|hail|lightning/.test(w.state);
+    const rain = rainNow ? 'Rain now' : wet ? 'Rain from ' + hs(new Date(wet.datetime).getHours()) : '';
+    // next 12 hours, every 2 hours
+    const pts = hrs.filter((x, i) => i % 2 === 0).slice(0, 6);
+    const prs = pts.map(x => this._popAt(x)), anyP = prs.some(p => p != null && p >= 20);
+    const strip = pts.length ? `<div class="wx2s">${pts.map((x, i) => { const pr = prs[i];
+      return `<div class="wx2h${i === 0 ? ' now' : ''}"><span class="t">${i === 0 ? 'Now' : hs(new Date(x.datetime).getHours())}</span>${this._icon(x.condition)}<span class="v">${r0(x.temperature)}°</span>${anyP ? `<span class="p">${pr != null && pr >= 20 ? pr + '%' : ''}</span>` : ''}</div>`; }).join('')}</div>` : '<div class="empty2">Loading forecast…</div>';
+    el.innerHTML = `<div class="wx2t"><div class="wx2m"><div class="lbl">${esc(this._c.location)}</div>
+        <div class="wx2r"><span class="temp">${r0(a.temperature)}<sup>°</sup></span><span class="wx2c"><b>${esc(LABEL[w.state] || w.state)}</b><span>${hi != null ? 'H ' + r0(hi) + '° · L ' + r0(lo) + '°' : ''}</span></span></div></div>
+        ${this._icon(w.state, 46)}</div>
+      <div class="cond">${feels != null ? `<span><ha-icon icon="mdi:thermometer"></ha-icon>Feels ${r0(feels)}°</span>` : ''}${ws != null ? `<span><ha-icon icon="mdi:weather-windy"></ha-icon>${r0(ws)} ${esc(wu)}</span>` : ''}${rain ? `<span class="wx2rain"><ha-icon icon="mdi:umbrella"></ha-icon>${rain}</span>` : sunEv}<span class="wx2hu"><ha-icon icon="mdi:water-percent"></ha-icon>${r0(a.humidity)}%</span></div>
+      ${strip}`;
   }
   _fetchPop() {
     const c = this._hass && this._hass.config; if (!c || c.latitude == null || this._popBusy) return;
