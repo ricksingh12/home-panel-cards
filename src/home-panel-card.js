@@ -494,6 +494,7 @@ const PPLCSS = `.ppl{flex:0 0 auto;padding:12px 14px;display:grid;grid-template-
 .vic{width:36px;height:36px;border-radius:50%;background:var(--card2);color:var(--sub);display:flex;align-items:center;justify-content:center;flex:0 0 auto}.vic ha-icon{--mdc-icon-size:20px}
 .vac.run .vic,.vhd.run .vic{background:#22a06b;color:#fff}.vac.err .vic,.vhd.err .vic{background:#e5484d;color:#fff}.vac.ret .vic,.vhd.ret .vic{background:#3b82f6;color:#fff}
 .vac .vic{width:32px;height:32px}.vac .vb button{width:32px;height:32px}.vac .vx{flex:1;min-width:0}.vac .vn{font-size:14px;font-weight:600}.vac .vs{font-size:12px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}.vac.err .vs{color:#e5484d;font-weight:600}
+.net{flex:0 0 auto;padding:8px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;min-width:0}.net .nic{width:32px;height:32px;border-radius:50%;background:rgba(59,130,246,.14);color:#3b82f6;display:flex;align-items:center;justify-content:center;flex:0 0 auto}.net .nic ha-icon{--mdc-icon-size:18px}.net.off .nic{background:rgba(229,72,77,.14);color:#e5484d}.net .nx{flex:0 0 auto;min-width:0}.net .nn{font-size:14px;font-weight:600}.net .ns{font-size:12px;color:var(--sub);white-space:nowrap;margin-top:1px}.net.off .ns{color:#e5484d;font-weight:600}.net .nv{display:flex;gap:10px;margin-left:auto;flex:0 0 auto;text-align:right}.net .nv b{display:block;font-size:15px;font-weight:700;letter-spacing:-.01em;white-space:nowrap;font-variant-numeric:tabular-nums}.net .nv b small{font-size:10px;color:var(--sub);font-weight:600;margin-left:1px}.net .nv span{display:flex;align-items:center;justify-content:flex-end;gap:2px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--sub)}.net .nv span ha-icon{--mdc-icon-size:12px}.net .nv .dn span ha-icon{color:#22a06b}.net .nv .up span ha-icon{color:#3b82f6}.net svg{flex:1 1 auto;min-width:30px;height:30px}.net svg .sd{fill:none;stroke:#22a06b;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}.net svg .su{fill:none;stroke:#3b82f6;stroke-width:1.4;stroke-linejoin:round;stroke-linecap:round;opacity:.75}
 .vb{display:flex;gap:6px;flex:0 0 auto}.vb button{width:34px;height:34px;border-radius:50%;border:0;background:var(--card2);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}.vb button ha-icon{--mdc-icon-size:18px}.vb button.go{background:#22a06b;color:#fff}
 .vhd{display:flex;align-items:center;gap:12px}.vhd .vic{width:52px;height:52px}.vhd .vic ha-icon{--mdc-icon-size:28px}
 .vsec{margin-top:18px}.vchips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.vchips button{border:0;border-radius:999px;padding:9px 15px;background:var(--card2);color:var(--text);font:inherit;font-size:14px;font-weight:600;cursor:pointer}.vchips button.sel{background:var(--accent);color:#fff}
@@ -608,7 +609,7 @@ class HomePanelCard extends HTMLElement {
         <div class="right">
           <div class="toprow"><div class="tcol"><div class="card cams"><div class="head"><span class="chd">${(u => u ? `<img src="${esc(u)}" alt="" onerror="this.style.display='none'">` : '')(this._c.cameras_logo === undefined ? 'https://brands.home-assistant.io/unifiprotect/icon.png' : this._c.cameras_logo)}<span class="lbl">Cameras</span></span>
             ${this._c.cameras_path ? '<button class="pill" data-act="allcams">All cameras ›</button>' : ''}</div>
-            <div class="camgrid" id="camgrid"></div></div>${this._c.heating.length ? '<div class="hrow"><div class="heat" id="heat"></div></div>' : ''}</div>${this._c.media_players.length || this._c.energy || this._c.alarm || this._c.vacuum ? `<div class="side">${this._c.alarm ? '<div class="card alarm" id="alarm" data-act="alarm"></div>' : ''}${this._c.media_players.length ? '<div class="card music big" id="music" data-act="np"></div>' : ''}${this._c.energy ? '<div class="card en" id="en" data-act="en"></div>' : ''}${this._c.vacuum ? '<div class="card vac" id="vac" data-act="vac"></div>' : ''}</div>` : ''}</div>
+            <div class="camgrid" id="camgrid"></div></div>${this._c.heating.length ? '<div class="hrow"><div class="heat" id="heat"></div></div>' : ''}</div>${this._c.media_players.length || this._c.energy || this._c.alarm || this._c.vacuum || this._c.internet ? `<div class="side">${this._c.alarm ? '<div class="card alarm" id="alarm" data-act="alarm"></div>' : ''}${this._c.media_players.length ? '<div class="card music big" id="music" data-act="np"></div>' : ''}${this._c.energy ? '<div class="card en" id="en" data-act="en"></div>' : ''}${this._c.internet ? `<div class="card net" id="net" data-act="more" data-id="${esc(this._c.internet.download || '')}"></div>` : ''}${this._c.vacuum ? '<div class="card vac" id="vac" data-act="vac"></div>' : ''}</div>` : ''}</div>
           <div class="bottom"><div class="lights" id="lights"></div>${(this._c.people || []).length ? '<div class="pcol"><div class="card ppl" id="ppl"></div>' : ''}${this._cars.length ? `<div class="card carc${this._cars.length > 1 ? ' multi' : ''}" id="car"${this._cars.length > 1 ? '' : ' data-act="car" data-i="0"'}></div>` : ''}${(this._c.people || []).length ? '</div>' : ''}</div>
         </div>
       </div>
@@ -692,6 +693,8 @@ class HomePanelCard extends HTMLElement {
       if (psig !== this._sig.ppl) { this._sig.ppl = psig; this._renderPeople(); if (this._pplOpen != null) this._renderPeoplePop(); } }
     if (this._c.vacuum) { const V = this._c.vacuum, vsg = JSON.stringify([V.entity, V.mode, V.state, V.error].map(id => { const e = id && this._st(id); return e && [e.state, e.attributes.fan_speed]; }));
       if (vsg !== this._sig.vac) { this._sig.vac = vsg; this._renderVac(); if (this._vacOpen) this._renderVacPop(); } }
+    if (this._c.internet) { const N = this._c.internet, nsg = JSON.stringify([N.download, N.upload, N.latency].map(id => { const e = id && this._st(id); return e && [e.state, e.last_updated]; }));
+      if (nsg !== this._sig.net) { this._sig.net = nsg; this._netSample(); this._renderNet(); } }
     if (this._c.alarm) { const A = this._c.alarm, ids = [A.entity, ...(A.doors || []).map(x => x.entity), ...(A.motion || []).map(x => x.entity), ...(A.batteries || [])];
       const asig = JSON.stringify(ids.map(id => { const e = this._st(id); return e && [e.state, e.last_changed, id === A.entity ? e.attributes : 0]; })) + (this._alConf || '') + Math.floor(Date.now() / 60000);
       if (asig !== this._sig.alarm) { this._sig.alarm = asig; this._renderAlarm(); if (this._alOpen) this._renderAlarmPop(); } }
@@ -1006,6 +1009,23 @@ class HomePanelCard extends HTMLElement {
       : v.s === 'paused' ? b('start', 'mdi:play', 1) + b('return_to_base', 'mdi:home-import-outline')
       : v.s === 'returning' ? b('pause', 'mdi:pause') : b('start', 'mdi:play', 1);
     el.innerHTML = `<div class="vic"><ha-icon icon="${v.icon}"></ha-icon></div><div class="vx"><div class="vn">${esc(v.name)}</div><div class="vs">${esc(v.label)}${v.mode && !v.err ? ' · ' + esc(v.mode) : ''}</div></div><div class="vb">${btns}</div>${this._vLogo()}`;
+  }
+  _netVal(id) { const e = id && this._st(id); if (!e) return null; const v = parseFloat(e.state); if (isNaN(v)) return null;
+    const u = (e.attributes.unit_of_measurement || 'Mbit/s').toLowerCase(); return u.startsWith('kbit') ? v / 1000 : u.startsWith('gbit') ? v * 1000 : u.startsWith('bit') ? v / 1e6 : v; }
+  _netSample() { const N = this._c.internet, d = this._netVal(N.download), u = this._netVal(N.upload); if (d == null && u == null) return;
+    const h = this._netH || (this._netH = []), now = Date.now(); if (h.length && now - h[h.length - 1].t < 4000) h[h.length - 1] = { t: now, d, u }; else h.push({ t: now, d, u });
+    while (h.length > 60) h.shift(); }
+  _netFmt(v) { if (v == null) return '—'; return v >= 1000 ? (v / 1000).toFixed(2) + '<small>Gbps</small>' : v >= 100 ? Math.round(v) + '<small>Mbps</small>' : v >= 10 ? v.toFixed(1) + '<small>Mbps</small>' : v >= 1 ? v.toFixed(2) + '<small>Mbps</small>' : Math.round(v * 1000) + '<small>kbps</small>'; }
+  _renderNet() {
+    const el = this._$ && this._$('net'); if (!el) return;
+    const N = this._c.internet, d = this._netVal(N.download), u = this._netVal(N.upload), le = N.latency && this._st(N.latency), lat = le ? parseFloat(le.state) : NaN;
+    const off = d == null && u == null;
+    const h = this._netH || [], mx = Math.max(1, ...h.map(p => Math.max(p.d || 0, p.u || 0)));
+    const line = k => h.length > 1 ? h.map((p, i) => `${(i / (h.length - 1) * 100).toFixed(1)},${(28 - (p[k] || 0) / mx * 26).toFixed(1)}`).join(' ') : '';
+    const spark = h.length > 1 ? `<svg viewBox="0 0 100 30" preserveAspectRatio="none"><polyline class="su" points="${line('u')}"/><polyline class="sd" points="${line('d')}"/></svg>` : '<svg viewBox="0 0 100 30"></svg>';
+    el.className = 'card net' + (off ? ' off' : '');
+    el.innerHTML = `<div class="nic"><ha-icon icon="${off ? 'mdi:web-off' : 'mdi:web'}"></ha-icon></div><div class="nx"><div class="nn">${esc(N.name || 'Internet')}</div><div class="ns">${off ? 'Offline' : !isNaN(lat) ? Math.round(lat) + ' ms ping' : 'Online'}</div></div>${spark}
+      <div class="nv"><div class="dn"><span><ha-icon icon="mdi:arrow-down"></ha-icon>Down</span><b>${this._netFmt(d)}</b></div><div class="up"><span><ha-icon icon="mdi:arrow-up"></ha-icon>Up</span><b>${this._netFmt(u)}</b></div></div>`;
   }
   _renderVacPop() {
     const el = this._$('vacpop'), v = this._vInfo(), V = this._c.vacuum; if (!el) return;
