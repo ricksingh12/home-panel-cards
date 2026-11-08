@@ -791,7 +791,7 @@ class HomePanelCard extends HTMLElement {
     const tabs = `<div class="tabs">${names.map((n, i) => (i === 0 || this._c.world_clocks[i - 1].lat != null)
       ? `<button class="${i === li ? 'sel' : ''}" data-act="wxloc" data-i="${i}">${esc(n)}</button>` : '').join('')}</div>`;
     let m;
-    const hd = mm => this._ph('closewx', mm ? `<span class="pic wx">${this._icon(mm.cond, 26)}</span>` : this._pic('mdi:weather-partly-cloudy'), 'Weather', esc(names[li]), mm ? esc(mm.time + ' · ' + (LABEL[mm.cond] || mm.cond)) : '') + (cities.length ? tabs : '');
+    const hd = mm => this._ph('closewx', mm ? `<span class="pic wxi">${this._icon(mm.cond, 26)}</span>` : this._pic('mdi:weather-partly-cloudy'), 'Weather', esc(names[li]), mm ? esc(mm.time + ' · ' + (LABEL[mm.cond] || mm.cond)) : '') + (cities.length ? tabs : '');
     let head = hd(null);
     if (li === 0) m = this._homeModel();
     else { const c = (this._om || {})[li];
