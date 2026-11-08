@@ -513,7 +513,7 @@ const PPLCSS = `.ppl{flex:0 0 auto;padding:12px 14px;display:grid;grid-template-
 @container en (max-height:96px){.en .ech{display:none}}
 @container en (max-height:66px){.en .etot .c{display:none}}
 @container side (max-height:340px){.music.big{padding:10px 14px;gap:12px}.music.big .mart{width:76px;height:76px;border-radius:12px}.music.art{min-height:120px}.music.big .mn{font-size:16px;margin-top:2px}.music.big .mc{margin-top:6px}.music.big .mc button{width:34px;height:34px}.music.big .mc .pp{width:40px;height:40px}}
-.cal{padding:12px 16px}.cal .head{margin-bottom:4px}.cal .empty{padding:4px 0;font-size:13px}
+.cal{padding:12px 16px}.cal .head{margin-bottom:4px}.cal .empty{padding:4px 0;font-size:13px}.cwk7{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin:2px 0 6px}.cwd{border:0;background:transparent;font:inherit;color:var(--text);border-radius:12px;padding:5px 0 6px;display:flex;flex-direction:column;align-items:center;gap:1px;cursor:pointer;min-width:0}.cwd .cwn{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--sub)}.cwd b{font-size:17px;font-weight:700;line-height:1.15;font-variant-numeric:tabular-nums}.cwd.td b{color:var(--accent)}.cwd.sel{background:var(--card2)}.cwd.sel.td{background:var(--accent);color:#fff}.cwd.sel.td b,.cwd.sel.td .cwn{color:#fff}.cwp{display:flex;gap:2px;height:6px;margin-top:2px}.cwp i{width:6px;height:6px;border-radius:50%;display:block}.cwd.sel.td .cwp i{box-shadow:0 0 0 1.5px #fff}.cwl{border-top:1px solid var(--line);padding-top:2px}.cwe{display:grid;grid-template-columns:52px 3px minmax(0,1fr);align-items:center;gap:9px;padding:5px 0;border-bottom:1px solid var(--line);min-width:0}.cwe:last-child{border:0}.cwe .tm{font-size:12px;color:var(--sub);font-weight:600;white-space:nowrap;text-align:right}.cwe.live .tm{color:#22a06b}.cwe i{width:3px;height:22px;border-radius:2px;display:block}.cwx{min-width:0;display:flex;flex-direction:column}.cwx .t{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cwx .s{font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cwm{font-size:11px;color:var(--sub);font-weight:600;padding:4px 0 0 61px}
 .ev2{display:grid;grid-template-columns:auto 3px minmax(0,1fr);align-items:center;gap:9px;padding:6px 0;border-bottom:1px solid var(--line);min-width:0}.ev2:last-child{border:0}
 .ev2 .tm{font-size:12px;color:var(--sub);font-weight:600;width:116px;white-space:nowrap;overflow:hidden}.ev2 .tm b{color:var(--text);font-weight:700;margin-right:4px}
 .ev2 i{width:3px;height:18px;border-radius:2px;display:block}.ev2 .t{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1427,12 +1427,26 @@ class HomePanelCard extends HTMLElement {
   }
   _renderCal() {
     const el = this._$ && this._$('cal'); if (!el) return;
-    if (!this._events) { el.innerHTML = '<div class="head"><span class="lbl">Upcoming</span></div><div class="empty">Loading…</div>'; return; }
-    const now = new Date(), eod = new Date(now); eod.setHours(24, 0, 0, 0);
-    const live = this._events.filter(e => e.f > now);
-    const cap = this._c.calendar_items || 4, todayN = live.filter(e => e.s < eod).length, next = live.slice(0, cap);
-    el.innerHTML = `<div class="head"><span class="lbl">Upcoming</span><span class="cnt">${todayN ? todayN + ' today' : 'Nothing else today'}</span></div>` +
-      (next.length ? next.map(e => this._evRow(e, true)).join('') : '<div class="empty">Nothing coming up in the next two weeks</div>');
+    if (!this._events) { el.innerHTML = '<div class="head"><span class="lbl">This week</span></div><div class="empty">Loading…</div>'; return; }
+    const now = new Date(), t0 = new Date(now); t0.setHours(0, 0, 0, 0);
+    // a tapped day falls back to today after 2 minutes, or when the day it was picked on has passed
+    if (this._calDay && (Date.now() - (this._calDayAt || 0) > 120000 || this._calDayOf !== t0.getTime())) this._calDay = 0;
+    const sel = this._calDay || 0, cap = Math.max(2, (this._c.calendar_items || 4) - 1);
+    const days = [...Array(7)].map((_, i) => { const ds = new Date(t0); ds.setDate(ds.getDate() + i); const de = new Date(ds); de.setDate(de.getDate() + 1);
+      return { ds, de, evs: this._events.filter(e => e.s < de && e.f > ds && (i || e.f > now)) }; });
+    const strip = days.map((d, i) => { const cis = [...new Set(d.evs.map(e => e.ci))].slice(0, 4);
+      return `<button class="cwd${i === sel ? ' sel' : ''}${i === 0 ? ' td' : ''}" data-act="calday" data-i="${i}"><span class="cwn">${DOW[d.ds.getDay()]}</span><b>${d.ds.getDate()}</b><span class="cwp">${cis.map(ci => `<i style="background:${this._calColor(ci)}"></i>`).join('')}</span></button>`; }).join('');
+    const d = days[sel], timed = d.evs.filter(e => !e.allDay).sort((a, b) => a.s - b.s), allDay = d.evs.filter(e => e.allDay);
+    const bdays = allDay.filter(e => /birthday/i.test(e.title)), rest = allDay.filter(e => !/birthday/i.test(e.title));
+    const ts = x => { const h = x.getHours(), m = x.getMinutes(); return (h % 12 || 12) + (m ? ':' + pad(m) : '') + (h < 12 ? 'am' : 'pm'); };
+    const row = (tm, ci, title, sub, live) => `<div class="cwe${live ? ' live' : ''}"><span class="tm">${tm}</span><i style="background:${this._calColor(ci)}"></i><span class="cwx"><span class="t">${esc(title)}</span>${sub ? `<span class="s">${esc(sub)}</span>` : ''}</span></div>`;
+    const rows = [...timed.map(e => { const lv = e.s <= now && e.f > now; return row(lv ? 'Now' : ts(e.s), e.ci, e.title, e.loc ? e.loc.split(',')[0] : '', lv); }),
+      ...rest.map(e => row('All day', e.ci, e.title)),
+      ...(bdays.length > 1 ? [row('All day', bdays[0].ci, bdays.map(e => e.title.replace(/'s\s+birthday|\s+birthday/i, '').trim()).join(', ') + ' · birthdays')] : bdays.map(e => row('All day', e.ci, e.title)))];
+    const shown = rows.slice(0, cap), more = rows.length - shown.length;
+    const label = sel === 0 ? 'Today' : sel === 1 ? 'Tomorrow' : DOW[d.ds.getDay()] + ' ' + d.ds.getDate() + ' ' + MON[d.ds.getMonth()];
+    el.innerHTML = `<div class="head"><span class="lbl">This week</span><span class="cnt">${label}${rows.length ? ' · ' + rows.length + (rows.length === 1 ? ' event' : ' events') : ''}</span></div><div class="cwk7">${strip}</div>` +
+      `<div class="cwl">${shown.length ? shown.join('') + (more > 0 ? `<div class="cwm">+${more} more</div>` : '') : `<div class="empty">${sel === 0 ? 'Nothing else today' : 'Nothing planned'}</div>`}</div>`;
     if (this._calOpen) this._renderCalPop();
   }
   _renderCalPop() {
@@ -2010,6 +2024,7 @@ class HomePanelCard extends HTMLElement {
     if (act === 'wx') { this._wxLoc = 0; this._wxOpen = true; this._sig.wxp = null; this._$('wxov').classList.add('open'); this._update(); }
     else if (act === 'closewx' || act === 'closebg' || act === 'closecal' || act === 'closeclk' || act === 'closetfl' || act === 'closecar' || act === 'closeen' || act === 'closeal' || act === 'closeppl' || act === 'closevac' || act === 'closecam') { this._camClose(); if (this._pin && this._$('pinov').classList.contains('open')) { this._pinClose(); return; } this._alOpen = false; this._vacOpen = false; this._pplOpen = null; this._wxOpen = false; this._calOpen = false; this._clkOpen = false; this._tflOpen = false; this._tflMap = false; this._carOpen = false; this._enOpen = false; ['wxov', 'calov', 'clkov', 'tflov', 'carov', 'enov', 'alov', 'pplov', 'vacov'].forEach(id => this._$(id).classList.remove('open')); }
     else if (act === 'clk') { this._clkOpen = true; this._renderWorld(); this._$('clkov').classList.add('open'); }
+    else if (act === 'calday') { const t0 = new Date(); t0.setHours(0, 0, 0, 0); this._calDay = +t.dataset.i; this._calDayAt = Date.now(); this._calDayOf = t0.getTime(); this._renderCal(); }
     else if (act === 'cal') { this._calOpen = true; this._renderCalPop(); this._$('calov').classList.add('open'); this._fetchCal(); }
     else if (act === 'allcams') { history.pushState(null, '', this._c.cameras_path); window.dispatchEvent(new CustomEvent('location-changed')); }
     else if (act === 'hup' || act === 'hdn') this._heatStep(t.dataset.id, act === 'hup' ? 1 : -1);
