@@ -536,6 +536,7 @@ const PPLCSS = `.ppl{flex:0 0 auto;padding:12px 14px;display:grid;grid-template-
 .nrk{font-size:12px;font-weight:700;color:var(--sub);text-align:center}
 .nrn{display:flex;align-items:baseline;gap:6px;min-width:0}
 .nrn span{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nsh2{display:block;font-size:11px;font-weight:600;color:var(--sub);white-space:nowrap;margin-top:1px}
 .nsh{font-style:normal;font-size:11px;font-weight:600;color:var(--sub);white-space:nowrap}
 .nin{display:flex;gap:10px;align-items:flex-start;padding:6px 0;font-size:13px;line-height:1.35}
 .nin ha-icon{--mdc-icon-size:18px;color:var(--sub);flex:0 0 auto;margin-top:1px}
@@ -1104,7 +1105,9 @@ class HomePanelCard extends HTMLElement {
     Object.values(ents).forEach(e => { const m = e.entity_id.match(/^sensor\.(?:.*_)?(rx|tx)(?:_\d+)?$/);
       if (!m || e.platform !== 'unifi' || skip.has(e.entity_id) || !e.device_id || e.device_id === wanDev || e.hidden || e.disabled_by) return;
       (by[e.device_id] = by[e.device_id] || {})[m[1]] = e.entity_id; });
-    this._netCl = Object.entries(by).map(([d, x]) => { const dv = devs[d] || {}; return { dev: d, rx: x.rx, tx: x.tx, name: names[x.rx] || names[x.tx] || names[d] || dv.name_by_user || dv.name || x.rx || x.tx }; })
+    this._netCl = Object.entries(by).map(([d, x]) => { const dv = devs[d] || {}; const mac = ((dv.connections || []).find(c => c[0] === 'mac') || [])[1] || '', mf = String(dv.manufacturer || '').replace(/\b(Technologies|Technology|Electronics|Interactive Entertainment|Inc\.?|Ltd\.?|Co\.?|Corporation|Corp\.?|LLC|GmbH|,)\b/gi, '').replace(/[,.]/g, ' ').replace(/\s+/g, ' ').trim();
+      const nm = names[x.rx] || names[x.tx] || names[d] || names[mac] || dv.name_by_user || dv.name || ((mf ? mf + ' device' : 'Unknown device') + (mac ? ' (' + mac.slice(-5) + ')' : ''));
+      return { dev: d, rx: x.rx, tx: x.tx, name: nm }; })
       .filter(c => !ex.includes(String(c.name).toLowerCase()) && !ex.includes(c.rx) && !ex.includes(c.tx));
     this._netClAt = ents; return this._netCl;
   }
@@ -1145,13 +1148,13 @@ class HomePanelCard extends HTMLElement {
       tile('<ha-icon icon="mdi:arrow-down"></ha-icon>Download', this._netFmt(d), 'right now', 'dn'),
       tile('<ha-icon icon="mdi:arrow-up"></ha-icon>Upload', this._netFmt(u), 'right now', 'up'),
       tile('Ping', !isNaN(lat) ? Math.round(lat) + '<small>ms</small>' : '—', q ? `<i class="q${q[1]}">${q[0]}</i>` : ''),
-      tile('Used today', F && !F.err && (F.dl || F.ul) ? this._netMB(F.dl + F.ul) : '—', F && !F.err && (F.dl || F.ul) ? '↓ ' + this._netMB(F.dl).replace(/<[^>]+>/g, ' ') + ' · ↑ ' + this._netMB(F.ul).replace(/<[^>]+>/g, ' ') : '')];
+      tile('Internet today', F && !F.err && (F.dl || F.ul) ? this._netMB(F.dl + F.ul) : '—', F && !F.err && (F.dl || F.ul) ? '↓ ' + this._netMB(F.dl).replace(/<[^>]+>/g, ' ').trim() + ' · ↑ ' + this._netMB(F.ul).replace(/<[^>]+>/g, ' ').trim() : '')];
     // 24h chart
     const hs = F && F.hours || [], hmax = Math.max(1, ...hs.map(h => Math.max(h.d, h.u)));
     const pk = hs.reduce((m, h) => h.dm > (m ? m.dm : -1) ? h : m, null), hh = t => String(new Date(t).getHours()).padStart(2, '0') + ':00';
     const bw = 100 / Math.max(24, hs.length);
     const bars = hs.map((h, i) => { const x = i * bw, hd = h.d / hmax * 52, hu = h.u / hmax * 52; return `<rect class="bd" x="${(x + bw * .12).toFixed(2)}" y="${(56 - hd).toFixed(2)}" width="${(bw * .76).toFixed(2)}" height="${Math.max(hd, .6).toFixed(2)}" rx=".8"/><rect class="bu" x="${(x + bw * .3).toFixed(2)}" y="${(56 - hu).toFixed(2)}" width="${(bw * .4).toFixed(2)}" height="${Math.max(hu, .4).toFixed(2)}" rx=".6"/>`; }).join('');
-    const chart = `<div class="nbox"><div class="nbh"><b>Last 24 hours</b><span>${pk && pk.dm > 0 ? 'Peak ' + this._netFmt(pk.dm).replace(/<[^>]+>/g, ' ') + ' at ' + hh(pk.t) : F ? (F.err ? "Couldn't load history" : 'No history yet') : 'Loading…'}</span></div>
+    const chart = `<div class="nbox"><div class="nbh"><b>Last 24 hours</b><span>${pk && pk.dm > 0 ? 'Peak ' + this._netFmt(pk.dm).replace(/<[^>]+>/g, ' ').trim() + ' at ' + hh(pk.t) : F ? (F.err ? "Couldn't load history" : 'No history yet') : 'Loading…'}</span></div>
       ${hs.length ? `<svg class="nch" viewBox="0 0 100 60" preserveAspectRatio="none">${bars}</svg><div class="nax"><span>${hh(hs[0].t)}</span><span>${hh(hs[Math.floor(hs.length / 2)].t)}</span><span>Now</span></div><div class="nlg"><i class="ld"></i>Download <i class="lu"></i>Upload</div>` : '<div class="nempty"></div>'}</div>`;
     const chips = [cl && ['mdi:devices', esc(cl.state) + ' devices online'], upTxt && ['mdi:router-network', 'Router up ' + upTxt], cpu && ['mdi:cpu-64-bit', 'CPU ' + Math.round(+cpu.state) + '%'], mem && ['mdi:memory', 'Memory ' + Math.round(+mem.state) + '%']].filter(Boolean);
     const health = chips.length ? `<div class="nchips">${chips.map(c => `<span><ha-icon icon="${c[0]}"></ha-icon>${c[1]}</span>`).join('')}</div>` : '';
@@ -1161,15 +1164,15 @@ class HomePanelCard extends HTMLElement {
     if (tab === 'now') { const L = live.filter(c => c.now >= 0.01).sort((a, b) => b.now - a.now).slice(0, 8), mx = Math.max(.01, ...L.map(c => c.now));
       rows = L.map((c, i) => this._netRow(i, c.name, this._netFmt(c.now), c.now / mx, '')); note = L.length ? live.filter(c => c.now >= 0.1).length + ' devices active right now' : 'Nothing is using much data right now'; }
     else { const L = (F && F.dev || []).slice(0, 8), mx = Math.max(.01, ...L.map(c => c.mb)), tot = (F && F.dev || []).reduce((t, c) => t + c.mb, 0);
-      rows = L.map((c, i) => this._netRow(i, c.name, this._netMB(c.mb), c.mb / mx, (liveBy[c.dev] || 0) >= 0.5 ? `<i class="nlive">${this._netFmt(liveBy[c.dev]).replace(/<[^>]+>/g, ' ')} now</i>` : tot ? `<i class="nsh">${Math.round(c.mb / tot * 100)}% of today</i>` : ''));
-      note = !F ? 'Working out today\'s usage…' : F.err ? "Couldn't load usage history" : L.length ? 'Since midnight · updates every 5 minutes' : 'No usage recorded yet today'; }
+      rows = L.map((c, i) => this._netRow(i, c.name, this._netMB(c.mb), c.mb / mx, (liveBy[c.dev] || 0) >= 0.5 ? `<i class="nlive">${this._netFmt(liveBy[c.dev]).replace(/<[^>]+>/g, ' ').trim()} now</i>` : tot ? `<i class="nsh">${Math.round(c.mb / tot * 100)}%</i>` : ''));
+      note = !F ? 'Working out today\'s usage…' : F.err ? "Couldn't load usage history" : L.length ? 'Since midnight · includes traffic inside the house (casting, Sonos, streaming between devices), so it can add up to more than Internet today' : 'No usage recorded yet today'; }
     const ins = [], hsT = hs.filter(h => h.t >= new Date().setHours(0, 0, 0, 0)), act = live.filter(c => c.now >= 0.1).length;
-    if (F && F.dev && F.dev.length) { const tot = F.dev.reduce((t, c) => t + c.mb, 0), top = F.dev[0]; ins.push(['mdi:crown-outline', `<b>${esc(top.name)}</b> has used the most today – ${Math.round(top.mb / tot * 100)}% of all data`]); }
-    if (hsT.length > 1) { const bz = hsT.reduce((m, h) => h.d > m.d ? h : m, hsT[0]), avg = hsT.reduce((t, h) => t + h.d, 0) / hsT.length; ins.push(['mdi:chart-timeline-variant', `Busiest hour today was <b>${hh(bz.t)}</b> · average download ${this._netFmt(avg).replace(/<[^>]+>/g, ' ')}`]); }
+    if (F && F.dev && F.dev.length) { const tot = F.dev.reduce((t, c) => t + c.mb, 0), top = F.dev[0]; ins.push(['mdi:crown-outline', `<b>${esc(top.name)}</b> has moved the most data today – ${this._netMB(top.mb).replace(/<[^>]+>/g, ' ').trim()}, ${Math.round(top.mb / tot * 100)}% of all device traffic`]); }
+    if (hsT.length > 1) { const bz = hsT.reduce((m, h) => h.d > m.d ? h : m, hsT[0]), avg = hsT.reduce((t, h) => t + h.d, 0) / hsT.length; ins.push(['mdi:chart-timeline-variant', `Busiest hour today was <b>${hh(bz.t)}</b> · average download ${this._netFmt(avg).replace(/<[^>]+>/g, ' ').trim()}`]); }
     ins.push(['mdi:access-point-network', act ? `<b>${act}</b> device${act === 1 ? ' is' : 's are'} using the internet right now` : 'Nothing is using much internet right now']);
     if (q && q[1] !== 'g') ins.push(['mdi:alert-outline', `Ping is ${Math.round(lat)} ms – video calls and gaming may lag`]);
     const glance = `<div class="nbox"><div class="nbh"><b>At a glance</b></div>${ins.map(x => `<div class="nin"><ha-icon icon="${x[0]}"></ha-icon><span>${x[1]}</span></div>`).join('')}</div>`;
-    const devs = `<div class="nbox ndev"><div class="nbh"><b>Top devices</b><div class="ntabs"><button class="${tab === 'today' ? 'sel' : ''}" data-act="nettab" data-t="today">Today</button><button class="${tab === 'now' ? 'sel' : ''}" data-act="nettab" data-t="now">Right now</button></div></div>${rows.join('') || '<div class="nempty"></div>'}<div class="nnote">${note}</div></div>`;
+    const devs = `<div class="nbox ndev"><div class="nbh"><div><b>Top devices</b><span class="nsh2">Wi-Fi &amp; network traffic</span></div><div class="ntabs"><button class="${tab === 'today' ? 'sel' : ''}" data-act="nettab" data-t="today">Today</button><button class="${tab === 'now' ? 'sel' : ''}" data-act="nettab" data-t="now">Right now</button></div></div>${rows.join('') || '<div class="nempty"></div>'}<div class="nnote">${note}</div></div>`;
     let btn = '';
     if (N.block) btn = bl
       ? `<div class="vacts"><button class="go" data-act="netgo"><ha-icon icon="mdi:web"></ha-icon>Turn internet back on</button></div><div class="nnote">Wi-Fi and the home network still work. Only the internet is blocked.</div>`
