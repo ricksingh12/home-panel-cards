@@ -112,6 +112,7 @@ class HomeSecurityCard extends HTMLElement {
     if (needCode) { this._conf = null; this._sig = null; this._update(); this._host.open('pin', m); return; }
     if (m === 'disarm' && this._conf !== 'disarm') { this._conf = 'disarm'; clearTimeout(this._confT); this._confT = setTimeout(() => { this._conf = null; this._sig = null; this._update(); }, 4000); this._sig = null; this._update(); return; }
     this._conf = null; clearTimeout(this._confT); this._sig = null;
+    if (m !== 'disarm' && this._host && this._host._alBypassCheck && this._host._alBypassCheck(m)) { this._update(); return; }
     this._hass.callService('alarm_control_panel', m === 'disarm' ? 'alarm_disarm' : m === 'home' ? 'alarm_arm_home' : 'alarm_arm_away', { entity_id: this._c.alarm.entity });
     this._update();
   }
