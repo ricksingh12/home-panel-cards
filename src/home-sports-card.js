@@ -27,7 +27,7 @@ const HSP_CSS = `.spr{position:relative;background:var(--bg);height:calc(100vh -
 .ld .rk{font-size:12px;font-weight:700;color:var(--sub);text-align:center}.ld img{width:24px;height:24px;object-fit:contain}.ld .nm{min-width:0}.ld .nm b{display:block;font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ld .nm span{font-size:11px;color:var(--sub)}
 .ld .v{font-size:18px;font-weight:700;min-width:28px;text-align:right}.ld:first-child .v{color:var(--accent)}
 .mt.clk{cursor:pointer;border-radius:10px;transition:background .15s}.mt.clk:hover,.mt.clk:active{background:rgba(127,127,127,.08)}
-.mpop{width:min(94%,1120px);color:var(--text)}.mpop .x ha-icon{--mdc-icon-size:20px}
+.mpop{width:min(94%,1120px);color:var(--text)}.mpop .x ha-icon{--mdc-icon-size:28px}
 .mhd{display:flex;align-items:center;gap:12px;margin-right:52px}.mhd img{width:34px;height:34px;object-fit:contain}.mhd b{display:block;font-size:15px}.mhd span{font-size:12.5px;color:var(--sub)}
 .msc{display:grid;grid-template-columns:1fr auto 1fr;align-items:start;gap:16px;margin:18px 0 16px}.mtm{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;min-width:0}.mtm>img{width:72px;height:72px;object-fit:contain}.mtm>span{font-size:17px;font-weight:700}.mtm.me>span{color:var(--accent)}
 .mgl{display:flex;flex-direction:column;gap:2px;margin-top:2px}.msg{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12.5px;color:var(--sub);font-weight:500}.msg ha-icon{--mdc-icon-size:13px}.msg b{font-weight:700;color:var(--text)}
