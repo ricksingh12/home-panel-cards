@@ -42,7 +42,7 @@ font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter","Segoe UI"
 *{box-sizing:border-box}
 .root{background:var(--bg);height:calc(100vh - var(--header-height,56px));min-height:620px;padding:18px;position:relative;overflow:hidden;display:flex;flex-direction:column}
 .ttl{flex:0 0 auto;font-size:28px;font-weight:700;letter-spacing:-.02em;line-height:1.1;margin:0 4px 14px}
-.grid{display:grid;grid-template-columns:minmax(260px,30%) 1fr;gap:16px;flex:1 1 auto;min-height:0}
+.grid{display:grid;grid-template-columns:minmax(260px,var(--lw,30%)) 1fr;gap:16px;flex:1 1 auto;min-height:0}
 .left,.right{display:flex;flex-direction:column;gap:16px;min-height:0}
 .card{background:var(--card);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-radius:26px;box-shadow:var(--shadow);
 border:1px solid rgba(255,255,255,.35)}
@@ -645,7 +645,7 @@ class HomePanelCard extends HTMLElement {
   _build() {
     this._built = true;
     const s = this.attachShadow({ mode: 'open' });
-    s.innerHTML = `<style>${CSS}</style><style>${PPLCSS}</style><div class="root">
+    s.innerHTML = `<style>${CSS}</style><style>${PPLCSS}</style><div class="root"${/^\d+(\.\d+)?%$/.test(String(this._c.left_width || '')) ? ` style="--lw:${this._c.left_width}"` : ''}>
       ${this._c.title ? `<div class="ttl">${esc(this._c.title)}</div>` : ''}
       ${this._c.stats !== false ? '<div class="stats" id="stats"></div>' : ''}
       <div class="grid">
