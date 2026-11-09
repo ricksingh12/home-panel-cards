@@ -132,7 +132,7 @@ border:1px solid rgba(255,255,255,.35)}
 .ech.big{height:260px;flex:0 0 auto;margin-top:18px}.ech.big .ebd b{max-width:30px}.ech.big .exl span{font-size:12px}
 .etab{width:100%;border-collapse:collapse;margin-top:18px;font-size:13px}.etab th{text-align:right;font-size:11px;color:var(--sub);font-weight:600;padding:6px 8px}.etab th:first-child,.etab td:first-child{text-align:left}
 .etab td{text-align:right;padding:7px 8px;border-top:1px solid var(--line);font-variant-numeric:tabular-nums}.etab tr.tot td{font-weight:700}
-.side{flex:0 0 clamp(260px,32%,380px);display:flex;flex-direction:column;gap:12px;min-height:0;min-width:0}
+.side{flex:0 0 var(--sw,clamp(260px,32%,380px));display:flex;flex-direction:column;gap:12px;min-height:0;min-width:0}
 :is(.side,.hrow) .en{flex:1 1 0;min-height:140px;padding:12px 16px}:is(.side,.hrow) .en .etot .v{font-size:18px}:is(.side,.hrow) .en .ech{min-height:44px;margin-top:8px}
 .side .music{flex:0 0 auto}
 .music.big{padding:14px 16px;gap:16px}.music.big .mart{width:112px;height:112px;border-radius:16px}.music.big .mart ha-icon{--mdc-icon-size:44px}
@@ -645,7 +645,7 @@ class HomePanelCard extends HTMLElement {
   _build() {
     this._built = true;
     const s = this.attachShadow({ mode: 'open' });
-    s.innerHTML = `<style>${CSS}</style><style>${PPLCSS}</style><div class="root"${/^\d+(\.\d+)?%$/.test(String(this._c.left_width || '')) ? ` style="--lw:${this._c.left_width}"` : ''}>
+    s.innerHTML = `<style>${CSS}</style><style>${PPLCSS}</style><div class="root"${this._rootStyle()}>
       ${this._c.title ? `<div class="ttl">${esc(this._c.title)}</div>` : ''}
       ${this._c.stats !== false ? '<div class="stats" id="stats"></div>' : ''}
       <div class="grid">
@@ -1096,6 +1096,15 @@ class HomePanelCard extends HTMLElement {
     el.innerHTML = `<div class="nic"><ha-icon icon="${off ? 'mdi:web-off' : 'mdi:web'}"></ha-icon></div><div class="nx"><div class="nn">${esc(N.name || 'Internet')}</div><div class="ns">${bl ? 'Paused' : off ? 'Offline' : !isNaN(lat) ? Math.round(lat) + ' ms ping' : 'Online'}</div></div>${spark}
       <div class="nv"><div class="dn"><span><ha-icon icon="mdi:arrow-down"></ha-icon>Down</span><b>${this._netFmt(d)}</b></div><div class="up"><span><ha-icon icon="mdi:arrow-up"></ha-icon>Up</span><b>${this._netFmt(u)}</b></div></div>`;
   }
+  _rootStyle() {
+    // left_width / side_width: percentages of the full panel width
+    const pc = v => { const m = /^(\d+(?:\.\d+)?)%$/.exec(String(v || '')); return m ? +m[1] : null; };
+    const lw = pc(this._c.left_width), sw = pc(this._c.side_width), out = [];
+    if (lw != null) out.push(`--lw:${lw}%`);
+    if (sw != null) out.push(`--sw:${(sw / (100 - (lw != null ? lw : 30)) * 100).toFixed(2)}%`);
+    return out.length ? ` style="${out.join(';')}"` : '';
+  }
+
   _netBlocked() { const b = this._c.internet && this._c.internet.block, e = b && this._st(b); return e ? e.state === 'on' : null; }
   _netClients() {
     const N = this._c.internet, H = this._hass, ents = H.entities || {}, devs = H.devices || {};
