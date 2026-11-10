@@ -1005,6 +1005,9 @@ class HomePanelCard extends HTMLElement {
     const i = this._carIdx || 0, el = this._$('carpop'), c = this._carInfo(i), s = this._carStatus(c), k = this._cars[i];
     const det = (t, v, u) => `<div class="blk det" style="padding:10px 12px"><div class="lbl" style="text-transform:none;letter-spacing:0">${t}</div><div class="v">${v}${u ? ` <small>${u}</small>` : ''}</div></div>`;
     const clim = c.climate && c.climate.state === 'on', locked = c.locked, climCtl = k.climate && k.climate.startsWith('switch.');
+    const lt = k.location && this._st(k.location), lla = lt && lt.attributes.latitude, llo = lt && lt.attributes.longitude, lhas = lla != null && llo != null, lq = lhas ? `${lla},${llo}` : '';
+    const lzone = !lt ? null : lt.state === 'home' ? 'Home' : lt.state === 'not_home' ? 'Away' : /unknown|unavailable/.test(lt.state) ? 'Unknown' : lt.state.replace(/_/g, ' ').replace(/^./, x => x.toUpperCase());
+    const lmap = this._carMap && lhas;
     const ctabs = this._cars.length > 1 ? `<div class="tabs">${this._cars.map((x, j) => `<button class="${j === i ? 'sel' : ''}" data-act="car" data-i="${j}">${esc(x.name || 'Car')}</button>`).join('')}</div>` : '';
     el.innerHTML = this._ph('closecar', this._plg(c.crest, c.inv), 'Car', esc(c.name), esc(s.txt)) + ctabs + `
       <div class="carhero">${c.img ? (k.image_crop && k.image_size ? (() => { const [x0, y0, x1, y1] = String(k.image_crop).split(/[\s,]+/).map(Number), [W, H] = String(k.image_size).split(/[\s,]+/).map(Number), cw = x1 - x0, ch = y1 - y0;
@@ -1016,9 +1019,13 @@ class HomePanelCard extends HTMLElement {
       <div class="dets" style="margin-top:16px">${[k.target && det('Charge limit', c.target != null ? Math.round(c.target) : '—', '%'), k.power && det('Charging power', c.pw != null ? Math.round(c.pw * 10) / 10 : '—', 'kW'),
         k.ends && det('Full by', c.endT ? hm(c.endT) : '—'), k.lock && det('Doors', c.lock ? (locked ? 'Locked' : 'Unlocked') : '—'),
         k.mileage && det('Mileage', c.mileage != null ? Math.round(c.mileage).toLocaleString('en-GB') : '—', c.unit), k.climate && det('Climate', c.climate ? (clim ? 'On' : 'Off') : '—'),
-        det('Last update', c.upd ? hm(c.upd) : '—'), det('Updated', c.upd ? ago(c.upd) : '—')].filter(Boolean).join('')}</div>
+        k.location && det('Parked', lzone ? esc(lzone) : '—'), det('Last update', c.upd ? hm(c.upd) : '—'), det('Updated', c.upd ? ago(c.upd) : '—')].filter(Boolean).join('')}</div>
       <div class="cacts">${climCtl ? `<button class="${clim ? 'on' : ''}" data-act="carclim"><ha-icon icon="mdi:fan"></ha-icon>${clim ? 'Stop climate' : 'Start climate'}</button>` : ''}
-        ${k.refresh ? '<button data-act="carref"><ha-icon icon="mdi:refresh"></ha-icon>Update from car</button>' : ''}</div>`;
+        ${lhas ? `<button class="${lmap ? 'on' : ''}" data-act="carloc"><ha-icon icon="mdi:map-marker"></ha-icon>${lmap ? 'Hide map' : 'Where is it?'}</button>` : ''}
+        ${k.refresh ? '<button data-act="carref"><ha-icon icon="mdi:refresh"></ha-icon>Update from car</button>' : ''}</div>
+      ${lmap ? `<iframe class="pmap" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=${lq}&z=16&output=embed"></iframe>
+        <div class="pinfo"><span>Parked <b>${esc(lzone)}</b></span><span>Location from <b>${esc(lt.last_updated ? ago(lt.last_updated) : '—')}</b></span></div>
+        <div class="cacts"><a class="pgo" href="https://www.google.com/maps/search/?api=1&query=${lq}" target="_blank" rel="noopener"><ha-icon icon="mdi:google-maps"></ha-icon>Open in Google Maps</a></div>` : ''}`;
   }
   /* ---------- people ---------- */
   _pInfo(i) {
@@ -2254,7 +2261,8 @@ class HomePanelCard extends HTMLElement {
     else if (act === 'dbsay') { const d = this._c.doorbell, r = (d.replies || ['Coming now', 'Please leave it at the door', 'Sorry, we can\'t come to the door right now'])[+t.dataset.i]; if (r) this._dbSay(r); }
     else if (act === 'dbsnd') { this._dbPoke(); this._dbMuted = !this._dbMuted; if (this._dbV) this._dbV.muted = this._dbMuted; t.innerHTML = this._dbMuted ? '<ha-icon icon="mdi:volume-off"></ha-icon><span>Listen</span>' : '<ha-icon icon="mdi:volume-high"></ha-icon><span>Mute</span>'; t.classList.toggle('on', !this._dbMuted); }
     else if (act === 'tfl') { this._tflOpen = true; this._renderTflPop(); this._$('tflov').classList.add('open'); this._fetchTflAll(); this._fetchTfl(); }
-    else if (act === 'car') { this._carIdx = +(t.dataset.i || 0); this._carOpen = true; this._renderCarPop(); this._$('carov').classList.add('open'); }
+    else if (act === 'carloc') { this._carMap = !this._carMap; this._renderCarPop(); }
+    else if (act === 'car') { if (+(t.dataset.i || 0) !== (this._carIdx || 0) || !this._carOpen) this._carMap = false; this._carIdx = +(t.dataset.i || 0); this._carOpen = true; this._renderCarPop(); this._$('carov').classList.add('open'); }
     else if (act === 'carclim') { const k = this._cars[this._carIdx || 0].climate, e = this._st(k); if (e) this._hass.callService('switch', e.state === 'on' ? 'turn_off' : 'turn_on', { entity_id: k }); }
     else if (act === 'carref') { this._hass.callService('button', 'press', { entity_id: this._cars[this._carIdx || 0].refresh }); t.textContent = 'Requested…'; }
     else if (act === 'arm') this._alArm(t.dataset.m);
