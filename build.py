@@ -18,6 +18,9 @@ pre, css2, post = cut(main, 'const PPLCSS = `', '`;\n')
 main = pre + post
 main = rep(main, '<style>${CSS}</style>', "<style>${window.__HPC_CSS || ''}</style>")
 main = rep(main, '<style>${PPLCSS}</style>', "<style>${window.__HPC_CSS2 || ''}</style>")
+# weather icons are <span class="wxs"> (inline SVG), sized like the ha-icons they replaced
+css = css.replace('ha-icon', ':is(ha-icon,.wxs)')
+css2 = css2.replace('ha-icon', ':is(ha-icon,.wxs)')
 parts = [
     ('styles', "window.__HPC_CSS = `" + css + "\n`;\nwindow.__HPC_CSS2 = `" + css2 + "`;"),
     ('home-panel-card', main),

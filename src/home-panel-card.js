@@ -12,6 +12,43 @@ const LABEL = {
   snowy: 'Snow', 'snowy-rainy': 'Sleet', sunny: 'Sunny', windy: 'Windy', 'windy-variant': 'Windy',
   exceptional: 'Warning'
 };
+/* colour weather icons (original artwork, drawn as inline SVG) */
+const WXSVG = (() => {
+  const D = '<defs><linearGradient id="hwS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe066"/><stop offset="1" stop-color="#ffaa00"/></linearGradient>'
+    + '<linearGradient id="hwC" gradientUnits="userSpaceOnUse" x1="0" y1="16" x2="0" y2="50"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#cfd8e4"/></linearGradient>'
+    + '<linearGradient id="hwK" gradientUnits="userSpaceOnUse" x1="0" y1="16" x2="0" y2="50"><stop offset="0" stop-color="#b7c2d1"/><stop offset="1" stop-color="#7f8ca0"/></linearGradient>'
+    + '<linearGradient id="hwM" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff6cc"/><stop offset="1" stop-color="#f3c94f"/></linearGradient>'
+    + '<filter id="hwF" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="1.5" stdDeviation="1.4" flood-color="#2b3a55" flood-opacity=".22"/></filter></defs>';
+  const sun = (x, y, r) => { let o = ''; for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4, c = Math.cos(a), sn = Math.sin(a);
+      o += `<line x1="${(x + c * (r + 4)).toFixed(1)}" y1="${(y + sn * (r + 4)).toFixed(1)}" x2="${(x + c * (r + 9)).toFixed(1)}" y2="${(y + sn * (r + 9)).toFixed(1)}"/>`; }
+    return `<g stroke="#ffbf1f" stroke-width="3.6" stroke-linecap="round">${o}</g><circle cx="${x}" cy="${y}" r="${r}" fill="url(#hwS)"/>`; };
+  const cloud = (g, t) => `<g fill="url(#${g})" filter="url(#hwF)"${t ? ` transform="${t}"` : ''}><circle cx="22" cy="38" r="10"/><circle cx="34" cy="30" r="14"/><circle cx="45" cy="37" r="10"/><rect x="12" y="37" width="43" height="13" rx="6.5"/></g>`;
+  const up = 'translate(0,-8)';
+  const drops = (xs, len) => `<g stroke="#3d9bff" stroke-width="3.6" stroke-linecap="round">${xs.map(x => `<line x1="${x}" y1="47" x2="${x - 3}" y2="${47 + len}"/>`).join('')}</g>`;
+  const flakes = xs => `<g fill="#ffffff" stroke="#8fb0d8" stroke-width="1.4">${xs.map((x, i) => `<circle cx="${x}" cy="${i % 2 ? 57 : 50}" r="3"/>`).join('')}</g>`;
+  const bolt = '<path d="M35 40 26 54h7l-4 10 12-15h-7l4-9z" fill="#ffcc1a" stroke="#f0a500" stroke-width="1.2" stroke-linejoin="round"/>';
+  const moon = (x, y, k) => `<path transform="translate(${x},${y}) scale(${k})" d="M30 6a22 22 0 1 0 22 30 18 18 0 0 1-22-30z" fill="url(#hwM)" filter="url(#hwF)"/>`;
+  const star = (x, y, r) => `<path d="M${x} ${y - r}l${r * .3} ${r * .7} ${r * .7} ${r * .3}-${r * .7} ${r * .3}-${r * .3} ${r * .7}-${r * .3}-${r * .7}-${r * .7}-${r * .3} ${r * .7}-${r * .3}z" fill="#ffe27a"/>`;
+  const wind = '<g fill="none" stroke="#8fa3ba" stroke-width="3.8" stroke-linecap="round"><path d="M8 26h30a7 7 0 1 0-7-7"/><path d="M8 36h40a7 7 0 1 1-7 7"/><path d="M8 46h18"/></g>';
+  const A = {
+    sunny: sun(32, 32, 13),
+    'clear-night': moon(4, 6, .95) + star(48, 14, 4) + star(54, 28, 2.6),
+    partlycloudy: sun(23, 22, 10) + cloud('hwC', 'translate(5,8) scale(.9)'),
+    cloudy: cloud('hwK', 'translate(14,-8) scale(.75)') + cloud('hwC', 'translate(-2,4)'),
+    rainy: cloud('hwC', up) + drops([24, 34, 44], 9),
+    pouring: cloud('hwK', up) + drops([20, 28, 36, 44], 13),
+    lightning: cloud('hwK', up) + bolt,
+    'lightning-rainy': cloud('hwK', up) + bolt + drops([20, 48], 9),
+    snowy: cloud('hwC', up) + flakes([22, 32, 42]),
+    'snowy-rainy': cloud('hwC', up) + drops([24, 44], 9) + flakes([34]),
+    hail: cloud('hwK', up) + '<g fill="#eef5ff" stroke="#7fa6d6" stroke-width="1.4"><circle cx="22" cy="51" r="3.2"/><circle cx="33" cy="57" r="3.2"/><circle cx="44" cy="51" r="3.2"/></g>',
+    fog: cloud('hwC', up) + '<g stroke="#9aa8ba" stroke-width="3.6" stroke-linecap="round"><line x1="12" y1="49" x2="52" y2="49"/><line x1="18" y1="57" x2="46" y2="57"/></g>',
+    windy: wind,
+    'windy-variant': cloud('hwC', 'translate(18,-6) scale(.6)') + wind,
+    exceptional: '<path d="M32 8 58 54H6z" fill="#ffb020" stroke="#e08a00" stroke-width="2" stroke-linejoin="round"/><path d="M32 24v14" stroke="#fff" stroke-width="5" stroke-linecap="round"/><circle cx="32" cy="46" r="3" fill="#fff"/>'
+  };
+  return c => `<svg viewBox="3 3 58 58" width="100%" height="100%" aria-hidden="true">${D}${A[c] || A.cloudy}</svg>`;
+})();
 const ICOL = c => c === 'sunny' ? '#f59e0b' : c === 'clear-night' ? '#8a9bbd'
   : /rain|pour|hail|light/.test(c || '') ? '#5b9bf0' : c === 'partlycloudy' ? '#f0a43a' : '#9aa6b5';
 const WMO = (c, day = 1) => c === 0 ? (day ? 'sunny' : 'clear-night') : c <= 2 ? 'partlycloudy' : c === 3 ? 'cloudy' : c <= 48 ? 'fog'
@@ -589,7 +626,7 @@ const PPLCSS = `.ppl{flex:0 0 auto;padding:12px 14px;display:grid;grid-template-
 .cvid img,.cvid .cstream{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block}
 .clive{position:absolute;left:12px;top:12px;display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.5);color:#fff;font-size:11px;font-weight:700;letter-spacing:.06em;padding:4px 10px;border-radius:999px;backdrop-filter:blur(8px)}.clive i{width:7px;height:7px;border-radius:50%;background:#e5484d;display:block;animation:apulse 1.6s infinite}
 .cmo{position:absolute;right:12px;top:12px;background:rgba(0,0,0,.5);color:#fff;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;backdrop-filter:blur(8px)}.cmo:empty{display:none}.cmo.on{background:#e5484d}
-.phd{display:flex;align-items:center;gap:12px;margin-right:60px;min-height:44px}.x.xmap{right:72px;width:auto;padding:0 14px 0 11px;border-radius:999px;gap:6px;font:inherit;font-size:13px;font-weight:600}.x ha-icon{--mdc-icon-size:28px}.x.xmap ha-icon{--mdc-icon-size:18px}.xmap~.phd{margin-right:162px}.tmap{margin-top:12px;height:min(68vh,640px);overflow:auto;border-radius:18px;background:#fff;-webkit-overflow-scrolling:touch}.tmap img{display:block;width:100%;height:100%;object-fit:contain;cursor:zoom-in}.tmap.z img{width:220%;height:auto;max-width:none;object-fit:initial;cursor:zoom-out}.phx{min-width:0}.phd .lbl{margin:0}.pti{font-size:22px;font-weight:700;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.psub{font-size:13px;color:var(--sub);margin-top:2px}.psub:empty{display:none}
+.phd{display:flex;align-items:center;gap:12px;margin-right:60px;min-height:44px}.wxs{display:inline-block;width:var(--mdc-icon-size,24px);height:var(--mdc-icon-size,24px);flex:0 0 auto;vertical-align:middle;line-height:0}.wxs svg{display:block;overflow:visible}.x.xmap{right:72px;width:auto;padding:0 14px 0 11px;border-radius:999px;gap:6px;font:inherit;font-size:13px;font-weight:600}.x ha-icon{--mdc-icon-size:28px}.x.xmap ha-icon{--mdc-icon-size:18px}.xmap~.phd{margin-right:162px}.tmap{margin-top:12px;height:min(68vh,640px);overflow:auto;border-radius:18px;background:#fff;-webkit-overflow-scrolling:touch}.tmap img{display:block;width:100%;height:100%;object-fit:contain;cursor:zoom-in}.tmap.z img{width:220%;height:auto;max-width:none;object-fit:initial;cursor:zoom-out}.phx{min-width:0}.phd .lbl{margin:0}.pti{font-size:22px;font-weight:700;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.psub{font-size:13px;color:var(--sub);margin-top:2px}.psub:empty{display:none}
 .plg{width:36px;height:36px;object-fit:contain;flex:0 0 auto;border-radius:8px}:host(.dark) .plg.inv{filter:invert(1)}.phd .pav{width:40px;height:40px;flex:0 0 auto}
 .pic{width:42px;height:42px;border-radius:50%;background:var(--card2);color:var(--sub);display:flex;align-items:center;justify-content:center;flex:0 0 auto}.pic ha-icon{--mdc-icon-size:22px}
 .pop .phd+.tabs{margin-top:14px}.pop .tabs+*{margin-top:12px}.pop>.cacts,.pop .vacts:last-child{margin-top:16px}.ast-trig{color:#e5484d}.ast-away{color:#e5484d}.ast-home{color:#d97706}.ast-disarmed{color:#22a06b}
@@ -760,7 +797,7 @@ class HomePanelCard extends HTMLElement {
     if (/rain|pour|hail|light|snow/.test(c || '')) return 'rain';
     return 'cloud';
   }
-  _icon(c, size) { return `<ha-icon icon="${ICON[c] || 'mdi:weather-cloudy'}" style="color:${ICOL(c)};${size ? '--mdc-icon-size:' + size + 'px' : ''}"></ha-icon>`; }
+  _icon(c, size) { return `<span class="wxs"${size ? ` style="--mdc-icon-size:${size}px"` : ''}>${WXSVG(c)}</span>`; }
   _renderWx() {
     const w = this._st(this._c.weather), sun = this._st(this._c.sun), el = this._$('wx');
     if (!w) { el.innerHTML = '<div class="lbl">Weather unavailable</div>'; return; }
