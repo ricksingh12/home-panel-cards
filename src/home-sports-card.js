@@ -69,7 +69,7 @@ class HomeSportsCard extends HTMLElement {
     if (first) this._fetch();
   }
   _build() {
-    const s = this.attachShadow({ mode: 'open' });
+    const s = this.attachShadow({ mode: 'open' }); if (this._c && this._c.icons === 'ios' && window.__hpcIosIcons) window.__hpcIosIcons(this, s);
     s.innerHTML = `<style>${window.__HPC_CSS || ''}</style><style>${HSP_CSS}</style><div class="spr"><div class="sph">${window.__hpcBack(this._c)}<h1>${hspE(this._c.title)}</h1><div class="stabs" id="tabs"></div><span class="upd" id="upd"></span></div><div class="sgrid" id="g"></div><div class="ov" id="mov" data-act="closebg"><div class="pop mpop" id="mpop"></div></div></div>`;
     this._root = s; this._$ = id => s.getElementById(id);
     s.addEventListener('click', e => {

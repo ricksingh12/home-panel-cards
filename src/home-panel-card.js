@@ -691,7 +691,7 @@ class HomePanelCard extends HTMLElement {
   }
   _build() {
     this._built = true;
-    const s = this.attachShadow({ mode: 'open' });
+    const s = this.attachShadow({ mode: 'open' }); if (this._c && this._c.icons === 'ios' && window.__hpcIosIcons) window.__hpcIosIcons(this, s);
     s.innerHTML = `<style>${CSS}</style><style>${PPLCSS}</style><div class="root"${this._rootStyle()}>
       ${this._c.title ? `<div class="ttl">${esc(this._c.title)}</div>` : ''}
       ${this._c.stats !== false ? '<div class="stats" id="stats"></div>' : ''}
