@@ -23,6 +23,7 @@ css = css.replace('ha-icon', ':is(ha-icon,.wxs)')
 css2 = css2.replace('ha-icon', ':is(ha-icon,.wxs)')
 parts = [
     ('styles', "window.__HPC_CSS = `" + css + "\n`;\nwindow.__HPC_CSS2 = `" + css2 + "`;"),
+    ('ios-icons', src('hpc-ios-icons.js')),
     ('home-panel-card', main),
     ('pop-ups', src('hpc-pops.js')),
     ('home-lights-card', src('home-lights-card.js')),

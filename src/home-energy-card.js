@@ -55,7 +55,7 @@ class HomeEnergyCard extends HTMLElement {
   }
   _st(id) { return id && this._hass && this._hass.states[id]; }
   _build() {
-    const s = this.attachShadow({ mode: 'open' });
+    const s = this.attachShadow({ mode: 'open' }); if (this._c && this._c.icons === 'ios' && window.__hpcIosIcons) window.__hpcIosIcons(this, s);
     s.innerHTML = `<style>${window.__HPC_CSS || ''}</style><style>${window.__HPC_CSS2 || ''}</style><style>${HEC_CSS}</style><div class="er${this._c.heating_first ? ' hfirst' : ''}"><div class="eh">${window.__hpcBack(this._c)}<h1>${hecEsc(this._c.title)}</h1><span class="c" id="sum"></span></div>
       <div class="eg"><div class="card euse" id="use" data-act="enpop" style="cursor:pointer"></div><div class="card erate" id="rate"></div>${this._c.appliances.length ? `<div class="hrow2">${this._c.heating.length ? '<div class="heat" id="heat"></div>' : ''}<div class="card lnd" id="lnd"></div></div>` : this._c.heating.length ? '<div class="heat" id="heat"></div>' : ''}${this._c.cars.length ? `<div class="ecars">${this._c.cars.map((_, i) => `<div class="card ecar" id="car${i}" data-act="carpop" data-i="${i}" style="cursor:pointer"></div>`).join('')}</div>` : ''}</div><home-popup-host id="host"></home-popup-host></div>`;
     this._root = s; this._$ = id => s.getElementById(id);

@@ -42,7 +42,7 @@ customElements.whenDefined('home-panel-card').then(() => {
     _dbWatch() {}
     _build() {
       this._built = true;
-      const s = this.attachShadow({ mode: 'open' });
+      const s = this.attachShadow({ mode: 'open' }); if (this._c && this._c.icons === 'ios' && window.__hpcIosIcons) window.__hpcIosIcons(this, s);
       s.innerHTML = `<style>${window.__HPC_CSS || ''}</style><style>${window.__HPC_CSS2 || ''}</style><style>${HMC_CSS}</style><div class="root mroot">${window.__hpcBack(this._c, 'float')}<div class="ov npov" id="npov"></div></div>`;
       this._$ = id => s.getElementById(id);
       s.addEventListener('click', e => this._click(e));

@@ -33,7 +33,7 @@ class HomeLightsCard extends HTMLElement {
   }
   _all() { return this._c.rooms.flatMap(r => (r.lights || []).map(l => l.entity)); }
   _build() {
-    const s = this.attachShadow({ mode: 'open' });
+    const s = this.attachShadow({ mode: 'open' }); if (this._c && this._c.icons === 'ios' && window.__hpcIosIcons) window.__hpcIosIcons(this, s);
     s.innerHTML = `<style>${window.__HPC_CSS || ''}</style><style>${HLC_CSS}</style><div class="lr" id="lr"></div><home-popup-host id="host" style="position:fixed;inset:0;z-index:9"></home-popup-host>`;
     this._root = s.getElementById('lr'); this._host = s.getElementById('host'); this._host.setConfig({ sun: this._c.sun, dark_mode: this._c.dark_mode });
     s.addEventListener('click', e => this._click(e));

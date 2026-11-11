@@ -83,7 +83,7 @@ customElements.whenDefined('home-panel-card').then(() => {
     getCardSize() { return 20; }
     _build() {
       this._built = true;
-      const c = this._c, s = this.attachShadow({ mode: 'open' }), r = c.room || {};
+      const c = this._c, s = this.attachShadow({ mode: 'open' }), r = c.room || {}; if (this._c && this._c.icons === 'ios' && window.__hpcIosIcons) window.__hpcIosIcons(this, s);
       const body = this._mode === 'home' ? `
         <div class="hh"><div class="hhx"><div class="hwel" id="hwel"></div><div class="hdt" id="hdt"></div></div><div class="havs" id="havs"></div></div>
         <div class="hbar"><div class="hnav" id="nav"></div><div class="htmp" id="htmp"></div></div>
