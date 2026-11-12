@@ -1083,7 +1083,7 @@ class HomePanelCard extends HTMLElement {
         k.mileage && det('Mileage', c.mileage != null ? Math.round(c.mileage).toLocaleString('en-GB') : '—', c.unit), k.climate && det('Climate', c.climate ? (clim ? 'On' : 'Off') : '—'),
         k.location && det('Parked', lzone ? esc(lzone) : '—'), det('Last update', c.upd ? hm(c.upd) : '—'), det('Updated', c.upd ? ago(c.upd) : '—')].filter(Boolean).join('')}</div>
       ${c.hv ? (() => { const v = c.hv, h = v.h, now = v.acts.find(o => !/schedule/i.test(o));
-        return `<div class="lbl" style="margin:18px 0 8px;display:flex;align-items:center;gap:6px"><ha-icon icon="mdi:ev-station" style="--mdc-icon-size:16px"></ha-icon>${esc(v.name)} charger</div>
+        return `<div class="lbl" style="margin:18px 0 8px;display:flex;align-items:center;gap:6px">${h.logo ? `<img src="${esc(h.logo)}" alt="" style="width:18px;height:18px;border-radius:5px;object-fit:contain" onerror="this.style.display='none'">` : '<ha-icon icon="mdi:ev-station" style="--mdc-icon-size:16px"></ha-icon>'}${esc(v.name)} charger</div>
         <div class="dets">${[det('Charger power', v.kw != null ? Math.round(v.kw * 10) / 10 : '—', 'kW'), h.session && det('This session', v.kwh != null ? v.kwh.toFixed(1) : '—', 'kWh'),
           h.activation && det(v.sched ? 'Scheduled' : 'Mode', v.sched ? (v.start ? 'from ' + hm(v.start) : 'Yes') : 'Charge now'), h.lock && det('Charger', v.locked == null ? '—' : v.locked ? 'Locked' : 'Unlocked')].filter(Boolean).join('')}</div>
         ${h.mode && v.modes.length ? `<div class="aseg" style="margin-top:12px">${v.modes.map(m => `<button class="${m === v.mode ? 'sel' : ''}" data-act="hvmode" data-m="${esc(m)}">${esc(m)}</button>`).join('')}</div>` : ''}
