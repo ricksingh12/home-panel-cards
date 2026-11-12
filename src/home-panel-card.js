@@ -75,6 +75,19 @@ const hm = d => { d = new Date(d); return isNaN(d) ? '—' : t12(d.getHours(), d
 const ago = t => { const s = (Date.now() - new Date(t)) / 1000; if (!isFinite(s)) return ''; if (s < 60) return 'now';
   if (s < 3600) return Math.floor(s / 60) + 'm ago'; if (s < 86400) return Math.floor(s / 3600) + 'h ago'; return Math.floor(s / 86400) + 'd ago'; };
 const mmss = s => { s = Math.max(0, Math.floor(s || 0)); return Math.floor(s / 60) + ':' + pad(s % 60); };
+// Home EV charger (config `charger:`), shown on whichever car reports being plugged in while at home. Shared with the energy card.
+window.__HPC_HV = (card, k, raw) => {
+  const h = card._c && card._c.charger; if (!h || !k || k.charger === false) return null;
+  const st = id => id && card._st(id), pl = st(h.plugged);
+  if (!pl || pl.state !== 'on' || !raw || /^(not_plugged|unplugged|off|disconnected|unknown|unavailable)$/.test(raw)) return null;
+  const lt = st(k.location); if (lt && lt.state !== 'home') return null;
+  const val = (id, kilo) => { const e = st(id), v = e ? parseFloat(e.state) : NaN; if (!isFinite(v)) return null; return new RegExp('^k' + kilo + '$', 'i').test(e.attributes.unit_of_measurement || '') ? v : v / 1000; };
+  const md = st(h.mode), ac = st(h.activation), lk = st(h.lock), sa = st(h.start);
+  let start = null; if (sa && /^\d\d:\d\d/.test(sa.state)) { start = new Date(); start.setHours(+sa.state.slice(0, 2), +sa.state.slice(3, 5), 0, 0); }
+  return { name: h.name || 'Charger', kw: val(h.power, 'W'), kwh: val(h.session, 'Wh'), mode: md && !/unknown|unavailable/.test(md.state) ? md.state : null, modes: (md && md.attributes.options) || [],
+    sched: !!(ac && /schedule/i.test(ac.state)), acts: (ac && ac.attributes.options) || [], start, locked: lk ? lk.state === 'on' : null, h };
+};
+window.__HPC_HVSIG = card => { const h = card._c && card._c.charger; return h ? Object.values(h).map(id => { const e = typeof id === 'string' && card._st(id); return e && e.state; }) : null; };
 const r0 = v => (v === undefined || v === null || v === '') ? '—' : Math.round(Number(v));
 const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -796,7 +809,7 @@ class HomePanelCard extends HTMLElement {
     if (this._c.alarm) { const A = this._c.alarm, ids = [A.entity, ...(A.doors || []).map(x => x.entity), ...(A.motion || []).map(x => x.entity), ...(A.batteries || [])];
       const asig = JSON.stringify(ids.map(id => { const e = this._st(id); return e && [e.state, e.last_changed, id === A.entity ? e.attributes : 0]; })) + (this._alConf || '') + Math.floor(Date.now() / 60000);
       if (asig !== this._sig.alarm) { this._sig.alarm = asig; this._renderAlarm(); if (this._alOpen) this._renderAlarmPop(); } }
-    if (this._cars.length) { const vsig = JSON.stringify(this._cars.map(k => Object.keys(k).map(x => { const e = typeof k[x] === 'string' && this._st(k[x]); return e && [e.state, e.last_updated, e.attributes.entity_picture]; })));
+    if (this._cars.length) { const vsig = JSON.stringify([window.__HPC_HVSIG(this), this._cars.map(k => Object.keys(k).map(x => { const e = typeof k[x] === 'string' && this._st(k[x]); return e && [e.state, e.last_updated, e.attributes.entity_picture]; }))]);
       if (vsig !== this._sig.car) { this._sig.car = vsig; this._renderCar(); if (this._carOpen) this._renderCarPop(); } }
   }
   /* ---------- weather ---------- */
@@ -1011,24 +1024,26 @@ class HomePanelCard extends HTMLElement {
     const k = this._cars[i || 0], st = id => id && this._st(id), num = id => { const e = st(id); return e && !isNaN(parseFloat(e.state)) ? parseFloat(e.state) : null; };
     const mi = (k.range_unit || 'mi') === 'mi';
     const dist = id => { const e = st(id), v = num(id); if (v == null) return null; const u = e.attributes.unit_of_measurement; return mi && u === 'km' ? v * 0.621371 : !mi && u === 'mi' ? v / 0.621371 : v; };
-    const soc = num(k.battery), cs = st(k.charging), raw = cs ? cs.state : '', pw = num(k.power), ends = st(k.ends);
+    const soc = num(k.battery), cs = st(k.charging), raw = cs ? cs.state : '', ends = st(k.ends), hv = window.__HPC_HV(this, k, raw);
+    let pw = num(k.power); if (hv && hv.kw > 0.05 && !(pw > 0)) pw = hv.kw;
     const L = { charging: 'Charging', instant_charging: 'Charging', initialising: 'Starting charge', charging_completed: 'Fully charged', completed: 'Fully charged',
       charging_error: 'Charging error', error: 'Charging error', not_charging: 'Not charging', off: 'Not plugged in', not_plugged: 'Not plugged in',
       plugged_locked: 'Plugged in', plugged_unlocked: 'Plugged in', plugged_in: 'Plugged in', unplugged: 'Not plugged in', standby: 'Plugged in · waiting' };
     const charging = /charging$/.test(raw) && raw !== 'not_charging' && raw !== 'charging_error' || raw === 'initialising' || (pw || 0) > 0;
-    const label = L[raw] || (raw && raw !== 'unknown' && raw !== 'unavailable' ? raw.replace(/_/g, ' ').replace(/^./, c => c.toUpperCase()) : '—');
+    let label = L[raw] || (raw && raw !== 'unknown' && raw !== 'unavailable' ? raw.replace(/_/g, ' ').replace(/^./, c => c.toUpperCase()) : '—');
+    if (hv && !charging && !/complet|error/.test(raw)) label = hv.sched && hv.start ? 'Plugged in · charges ' + hm(hv.start) : 'Plugged in';
     const endT = ends && ends.state && !/unknown|unavailable/.test(ends.state) ? new Date(ends.state) : null;
     const be = st(k.battery), img = st(k.image), ue = st(k.updated), lk = st(k.lock);
     const locked = lk ? (lk.entity_id.startsWith('binary_sensor.') ? lk.state === 'off' : lk.state === 'locked') : null;
     const upd = ue && !/unknown|unavailable/.test(ue.state) ? ue.state : be ? be.last_updated : null;
     return { soc, range: dist(k.range), unit: mi ? 'mi' : 'km', label, charging, err: /error/.test(raw), pw, endT: endT && !isNaN(endT) ? endT : null,
       target: num(k.target), mileage: dist(k.mileage), lock: lk, locked, climate: st(k.climate), img: (img && img.attributes.entity_picture) || k.image_url || null,
-      upd, name: k.name || 'Car', inv: !!k.invert_logo,
+      upd, name: k.name || 'Car', inv: !!k.invert_logo, hv,
       crest: k.logo === undefined ? 'https://brands.home-assistant.io/porscheconnect/icon.png' : k.logo, wordmark: k.wordmark === undefined ? 'https://brands.home-assistant.io/porscheconnect/logo.png' : k.wordmark };
   }
   _socCol(v) { return v == null ? 'var(--sub)' : v < 20 ? '#e5484d' : v < 50 ? '#f0a43a' : '#22a06b'; }
   _carStatus(c) {
-    if (c.charging) return { cls: 'chg', icon: 'mdi:battery-charging', txt: ['Charging', c.pw ? Math.round(c.pw * 10) / 10 + ' kW' : '', c.endT ? 'full by ' + hm(c.endT) : ''].filter(Boolean).join(' · ') };
+    if (c.charging) return { cls: 'chg', icon: 'mdi:battery-charging', txt: ['Charging', c.pw ? Math.round(c.pw * 10) / 10 + ' kW' : '', c.hv && c.hv.kwh > 0.05 ? '+' + c.hv.kwh.toFixed(1) + ' kWh' : '', c.endT ? 'full by ' + hm(c.endT) : ''].filter(Boolean).join(' · ') };
     return { cls: c.err ? 'err' : '', icon: c.err ? 'mdi:alert-circle-outline' : /plug/i.test(c.label) && !/not/i.test(c.label) ? 'mdi:power-plug' : 'mdi:power-plug-off-outline', txt: c.label };
   }
   _renderCar() {
@@ -1067,6 +1082,13 @@ class HomePanelCard extends HTMLElement {
         k.ends && det('Full by', c.endT ? hm(c.endT) : '—'), k.lock && det('Doors', c.lock ? (locked ? 'Locked' : 'Unlocked') : '—'),
         k.mileage && det('Mileage', c.mileage != null ? Math.round(c.mileage).toLocaleString('en-GB') : '—', c.unit), k.climate && det('Climate', c.climate ? (clim ? 'On' : 'Off') : '—'),
         k.location && det('Parked', lzone ? esc(lzone) : '—'), det('Last update', c.upd ? hm(c.upd) : '—'), det('Updated', c.upd ? ago(c.upd) : '—')].filter(Boolean).join('')}</div>
+      ${c.hv ? (() => { const v = c.hv, h = v.h, now = v.acts.find(o => !/schedule/i.test(o));
+        return `<div class="lbl" style="margin:18px 0 8px;display:flex;align-items:center;gap:6px"><ha-icon icon="mdi:ev-station" style="--mdc-icon-size:16px"></ha-icon>${esc(v.name)} charger</div>
+        <div class="dets">${[det('Charger power', v.kw != null ? Math.round(v.kw * 10) / 10 : '—', 'kW'), h.session && det('This session', v.kwh != null ? v.kwh.toFixed(1) : '—', 'kWh'),
+          h.activation && det(v.sched ? 'Scheduled' : 'Mode', v.sched ? (v.start ? 'from ' + hm(v.start) : 'Yes') : 'Charge now'), h.lock && det('Charger', v.locked == null ? '—' : v.locked ? 'Locked' : 'Unlocked')].filter(Boolean).join('')}</div>
+        ${h.mode && v.modes.length ? `<div class="aseg" style="margin-top:12px">${v.modes.map(m => `<button class="${m === v.mode ? 'sel' : ''}" data-act="hvmode" data-m="${esc(m)}">${esc(m)}</button>`).join('')}</div>` : ''}
+        <div class="cacts">${h.activation && now ? `<button class="${v.sched ? '' : 'on'}" data-act="hvact"><ha-icon icon="${v.sched ? 'mdi:lightning-bolt' : 'mdi:calendar-clock'}"></ha-icon>${v.sched ? 'Charge now' : 'Back to schedule'}</button>` : ''}
+          ${h.lock ? `<button class="${v.locked ? 'on' : ''}" data-act="hvlock"><ha-icon icon="${v.locked ? 'mdi:lock' : 'mdi:lock-open-variant'}"></ha-icon>${v.locked ? 'Unlock charger' : 'Lock charger'}</button>` : ''}</div>`; })() : ''}
       <div class="cacts">${climCtl ? `<button class="${clim ? 'on' : ''}" data-act="carclim"><ha-icon icon="mdi:fan"></ha-icon>${clim ? 'Stop climate' : 'Start climate'}</button>` : ''}
         ${lhas ? `<button class="${lmap ? 'on' : ''}" data-act="carloc"><ha-icon icon="mdi:map-marker"></ha-icon>${lmap ? 'Hide map' : 'Where is it?'}</button>` : ''}
         ${k.refresh ? '<button data-act="carref"><ha-icon icon="mdi:refresh"></ha-icon>Update from car</button>' : ''}</div>
@@ -2346,6 +2368,10 @@ class HomePanelCard extends HTMLElement {
     else if (act === 'carloc') { this._carMap = !this._carMap; this._renderCarPop(); }
     else if (act === 'car') { if (+(t.dataset.i || 0) !== (this._carIdx || 0) || !this._carOpen) this._carMap = false; this._carIdx = +(t.dataset.i || 0); this._carOpen = true; this._renderCarPop(); this._$('carov').classList.add('open'); }
     else if (act === 'carclim') { const k = this._cars[this._carIdx || 0].climate, e = this._st(k); if (e) this._hass.callService('switch', e.state === 'on' ? 'turn_off' : 'turn_on', { entity_id: k }); }
+    else if (act === 'hvmode' || act === 'hvact' || act === 'hvlock') { const h = this._c.charger || {};
+      if (act === 'hvmode') this._hass.callService('select', 'select_option', { entity_id: h.mode, option: t.dataset.m });
+      else if (act === 'hvact') { const e = this._st(h.activation), o = e && (e.attributes.options || []), sch = e && /schedule/i.test(e.state), nx = o && o.find(x => sch ? !/schedule/i.test(x) : /schedule/i.test(x)); if (nx) this._hass.callService('select', 'select_option', { entity_id: h.activation, option: nx }); }
+      else { const e = this._st(h.lock); if (e) this._hass.callService('switch', e.state === 'on' ? 'turn_off' : 'turn_on', { entity_id: h.lock }); } }
     else if (act === 'carref') { this._hass.callService('button', 'press', { entity_id: this._cars[this._carIdx || 0].refresh }); t.textContent = 'Requested…'; }
     else if (act === 'arm') this._alArm(t.dataset.m);
     else if (act === 'net') { this._netOpen = true; this._netArm = false; this._netTab = 'today'; this._renderNetPop(); this._$('netov').classList.add('open'); this._netFetch();

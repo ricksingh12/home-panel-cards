@@ -229,7 +229,7 @@ customElements.whenDefined('home-panel-card').then(() => {
     _update() {
       if (!this._built || !this._hass) return;
       if (this._camOn) this._camMotion();
-      if (this._carOpen) { const k = this._cars[this._carIdx || 0] || {}, sg = JSON.stringify(Object.keys(k).map(x => { const e = typeof k[x] === 'string' && this._st(k[x]); return e && [e.state, e.last_updated]; }));
+      if (this._carOpen) { const k = this._cars[this._carIdx || 0] || {}, sg = JSON.stringify([window.__HPC_HVSIG(this), Object.keys(k).map(x => { const e = typeof k[x] === 'string' && this._st(k[x]); return e && [e.state, e.last_updated]; })]);
         if (sg !== this._carSg) { this._carSg = sg; this._renderCarPop(); } }
     }
     open(kind, i) {

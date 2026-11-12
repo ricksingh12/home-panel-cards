@@ -59,7 +59,7 @@ class HomeEnergyCard extends HTMLElement {
     s.innerHTML = `<style>${window.__HPC_CSS || ''}</style><style>${window.__HPC_CSS2 || ''}</style><style>${HEC_CSS}</style><div class="er${this._c.heating_first ? ' hfirst' : ''}"><div class="eh">${window.__hpcBack(this._c)}<h1>${hecEsc(this._c.title)}</h1><span class="c" id="sum"></span></div>
       <div class="eg"><div class="card euse" id="use" data-act="enpop" style="cursor:pointer"></div><div class="card erate" id="rate"></div>${this._c.appliances.length ? `<div class="hrow2">${this._c.heating.length ? '<div class="heat" id="heat"></div>' : ''}<div class="card lnd" id="lnd"></div></div>` : this._c.heating.length ? '<div class="heat" id="heat"></div>' : ''}${this._c.cars.length ? `<div class="ecars">${this._c.cars.map((_, i) => `<div class="card ecar" id="car${i}" data-act="carpop" data-i="${i}" style="cursor:pointer"></div>`).join('')}</div>` : ''}</div><home-popup-host id="host"></home-popup-host></div>`;
     this._root = s; this._$ = id => s.getElementById(id);
-    const H = this._$('host'); H.setConfig({ cars: this._c.cars, energy: this._c.energy, sun: this._c.sun, dark_mode: this._c.dark_mode, heating_logo: this._c.heating_logo, heating_range: this._c.heating_range }); this._host = H;
+    const H = this._$('host'); H.setConfig({ cars: this._c.cars, charger: this._c.charger, energy: this._c.energy, sun: this._c.sun, dark_mode: this._c.dark_mode, heating_logo: this._c.heating_logo, heating_range: this._c.heating_range }); this._host = H;
     s.addEventListener('click', e => this._click(e));
   }
   /* ---------- energy ---------- */
@@ -214,29 +214,31 @@ class HomeEnergyCard extends HTMLElement {
     const k = this._c.cars[i], st = id => this._st(id), num = id => { const e = st(id); return e && !isNaN(parseFloat(e.state)) ? parseFloat(e.state) : null; };
     const mi = (k.range_unit || 'mi') === 'mi';
     const dist = id => { const e = st(id), v = num(id); if (v == null) return null; const u = e.attributes.unit_of_measurement; return mi && u === 'km' ? v * 0.621371 : !mi && u === 'mi' ? v / 0.621371 : v; };
-    const soc = num(k.battery), cs = st(k.charging), raw = cs ? cs.state : '', pw = num(k.power), ends = st(k.ends);
+    const soc = num(k.battery), cs = st(k.charging), raw = cs ? cs.state : '', ends = st(k.ends), hv = window.__HPC_HV && window.__HPC_HV(this, k, raw);
+    let pw = num(k.power); if (hv && hv.kw > 0.05 && !(pw > 0)) pw = hv.kw;
     const L = { charging: 'Charging', instant_charging: 'Charging', initialising: 'Starting charge', charging_completed: 'Fully charged', completed: 'Fully charged', charging_error: 'Charging error', error: 'Charging error',
       not_charging: 'Not charging', off: 'Not plugged in', not_plugged: 'Not plugged in', plugged_locked: 'Plugged in', plugged_unlocked: 'Plugged in', plugged_in: 'Plugged in', unplugged: 'Not plugged in', standby: 'Plugged in · waiting' };
     const charging = /charging$/.test(raw) && raw !== 'not_charging' && raw !== 'charging_error' || raw === 'initialising' || (pw || 0) > 0;
-    const label = L[raw] || (raw && raw !== 'unknown' && raw !== 'unavailable' ? raw.replace(/_/g, ' ').replace(/^./, c => c.toUpperCase()) : '—');
+    let label = L[raw] || (raw && raw !== 'unknown' && raw !== 'unavailable' ? raw.replace(/_/g, ' ').replace(/^./, c => c.toUpperCase()) : '—');
+    if (hv && !charging && !/complet|error/.test(raw)) label = hv.sched && hv.start ? 'Plugged in · charges ' + hecHm(hv.start) : 'Plugged in';
     const endT = ends && ends.state && !/unknown|unavailable/.test(ends.state) ? new Date(ends.state) : null;
     const be = st(k.battery), img = st(k.image), ue = st(k.updated), lk = st(k.lock);
     const locked = lk ? (lk.entity_id.startsWith('binary_sensor.') ? lk.state === 'off' : lk.state === 'locked') : null;
     const upd = ue && !/unknown|unavailable/.test(ue.state) ? ue.state : be ? be.last_updated : null;
-    return { k, soc, range: dist(k.range), unit: mi ? 'mi' : 'km', label, charging, err: /error/.test(raw), pw, endT: endT && !isNaN(endT) ? endT : null, target: num(k.target), mileage: dist(k.mileage),
+    return { k, hv, soc, range: dist(k.range), unit: mi ? 'mi' : 'km', label, charging, err: /error/.test(raw), pw, endT: endT && !isNaN(endT) ? endT : null, target: num(k.target), mileage: dist(k.mileage),
       lock: lk, locked, climate: st(k.climate), img: (img && img.attributes.entity_picture) || k.image_url || null, upd, name: k.name || 'Car', inv: !!k.invert_logo,
       crest: k.logo === undefined ? 'https://brands.home-assistant.io/porscheconnect/icon.png' : k.logo, wordmark: k.wordmark === undefined ? 'https://brands.home-assistant.io/porscheconnect/logo.png' : k.wordmark };
   }
   _renderCar(i) {
     const el = this._$('car' + i); if (!el) return;
     const c = this._carInfo(i), k = c.k, col = c.soc == null ? 'var(--sub)' : c.soc < 20 ? '#e5484d' : c.soc < 50 ? '#f0a43a' : '#22a06b';
-    const s = c.charging ? { cls: 'chg', icon: 'mdi:battery-charging', txt: ['Charging', c.pw ? Math.round(c.pw * 10) / 10 + ' kW' : '', c.endT ? 'full by ' + hecHm(c.endT) : ''].filter(Boolean).join(' · ') }
+    const s = c.charging ? { cls: 'chg', icon: 'mdi:battery-charging', txt: ['Charging', c.pw ? Math.round(c.pw * 10) / 10 + ' kW' : '', c.hv && c.hv.kwh > 0.05 ? '+' + c.hv.kwh.toFixed(1) + ' kWh' : '', c.endT ? 'full by ' + hecHm(c.endT) : ''].filter(Boolean).join(' · ') }
       : { cls: c.err ? 'err' : '', icon: c.err ? 'mdi:alert-circle-outline' : /plug/i.test(c.label) && !/not/i.test(c.label) ? 'mdi:power-plug' : 'mdi:power-plug-off-outline', txt: c.label };
     const clim = c.climate && c.climate.state === 'on', climCtl = k.climate && k.climate.startsWith('switch.');
     const pic = !c.img ? '' : k.image_crop && k.image_size ? (() => { const [x0, y0, x1, y1] = String(k.image_crop).split(/[\s,]+/).map(Number), [W, H] = String(k.image_size).split(/[\s,]+/).map(Number), cw = x1 - x0, ch = y1 - y0;
       return `<div class="cimg" style="aspect-ratio:${cw}/${ch};background-image:url('${hecEsc(c.img)}');background-size:${(W / cw * 100).toFixed(2)}% auto;background-position:${(W > cw ? x0 / (W - cw) * 100 : 0).toFixed(2)}% ${(H > ch ? y0 / (H - ch) * 100 : 0).toFixed(2)}%"></div>`; })()
       : `<img src="${hecEsc(c.img)}" alt="" onerror="this.style.display='none'">`;
-    const det = [k.target && ['Charge limit', c.target != null ? Math.round(c.target) + '%' : '—'], k.ends && ['Full by', c.endT ? hecHm(c.endT) : '—'], k.lock && ['Doors', c.lock ? (c.locked ? 'Locked' : 'Unlocked') : '—'],
+    const det = [c.hv && c.hv.h.session && ['This session', c.hv.kwh != null ? c.hv.kwh.toFixed(1) + ' kWh' : '—'], k.target && ['Charge limit', c.target != null ? Math.round(c.target) + '%' : '—'], k.ends && ['Full by', c.endT ? hecHm(c.endT) : '—'], k.lock && ['Doors', c.lock ? (c.locked ? 'Locked' : 'Unlocked') : '—'],
       k.mileage && ['Mileage', c.mileage != null ? Math.round(c.mileage).toLocaleString('en-GB') + ' ' + c.unit : '—'], k.climate && ['Climate', c.climate ? (clim ? 'On' : 'Off') : '—'], ['Updated', c.upd ? hecAgo(c.upd) : '—']].filter(Boolean).slice(0, 6);
     const acts = climCtl || k.refresh ? `<div class="cacts">${climCtl ? `<button class="${clim ? 'on' : ''}" data-act="clim" data-i="${i}"><ha-icon icon="mdi:fan"></ha-icon>${clim ? 'Stop climate' : 'Start climate'}</button>` : ''}${k.refresh ? `<button data-act="ref" data-i="${i}"><ha-icon icon="mdi:refresh"></ha-icon>Update</button>` : ''}</div>` : '';
     el.innerHTML = `<div class="ch">${c.crest ? `<img class="crest${c.inv ? ' inv' : ''}" src="${hecEsc(c.crest)}" alt="" onerror="this.style.display='none'">` : ''}<span class="n">${hecEsc(c.name)}</span>${acts}${c.wordmark ? `<img class="wm" src="${hecEsc(c.wordmark)}" alt="" onerror="this.style.display='none'">` : ''}</div>
@@ -247,7 +249,7 @@ class HomeEnergyCard extends HTMLElement {
   }
   _update() {
     if (!this._root || !this._hass) return;
-    const R = this._c.rates, ids = Object.values(R).concat(...this._c.cars.map(k => Object.values(k).filter(v => typeof v === 'string' && v.includes('.'))));
+    const R = this._c.rates, ids = Object.values(R).concat(...this._c.cars.map(k => Object.values(k).filter(v => typeof v === 'string' && v.includes('.'))), Object.values(this._c.charger || {}).filter(v => typeof v === 'string' && v.includes('.')));
     const hsig = JSON.stringify(this._c.heating.map(z => { const e = this._st(z.entity); return e && [e.state, e.attributes]; })) + JSON.stringify(this._pend || {});
     if (hsig !== this._hsig) { this._hsig = hsig; this._renderHeat(); }
     const asig = JSON.stringify(this._c.appliances.map(a => [a.state, a.job, a.completion, a.power].map(id => { const e = this._st(id); return e && e.state; }))) + Math.floor(Date.now() / 60000);
