@@ -1042,7 +1042,8 @@ class HomePanelCard extends HTMLElement {
       crest: k.logo === undefined ? 'https://brands.home-assistant.io/porscheconnect/icon.png' : k.logo, wordmark: k.wordmark === undefined ? 'https://brands.home-assistant.io/porscheconnect/logo.png' : k.wordmark };
   }
   _socCol(v) { return v == null ? 'var(--sub)' : v < 20 ? '#e5484d' : v < 50 ? '#f0a43a' : '#22a06b'; }
-  _carStatus(c) {
+  _carStatus(c) { const s = this._carStatus0(c); if (c.hv && c.hv.h.logo) s.logo = c.hv.h.logo; return s; }
+  _carStatus0(c) {
     if (c.charging) return { cls: 'chg', icon: 'mdi:battery-charging', txt: ['Charging', c.pw ? Math.round(c.pw * 10) / 10 + ' kW' : '', c.hv && c.hv.kwh > 0.05 ? '+' + c.hv.kwh.toFixed(1) + ' kWh' : '', c.endT ? 'full by ' + hm(c.endT) : ''].filter(Boolean).join(' · ') };
     return { cls: c.err ? 'err' : '', icon: c.err ? 'mdi:alert-circle-outline' : /plug/i.test(c.label) && !/not/i.test(c.label) ? 'mdi:power-plug' : 'mdi:power-plug-off-outline', txt: c.label };
   }
@@ -1053,7 +1054,7 @@ class HomePanelCard extends HTMLElement {
       el.innerHTML = this._cars.map((_, i) => { const c = this._carInfo(i), s = this._carStatus(c);
         return `<div class="crow" data-act="car" data-i="${i}">${logo(c, 'clogo')}<div class="cx"><div class="cn">${esc(c.name)}</div>
           <div class="bbar"><i style="width:${c.soc || 0}%;background:${this._socCol(c.soc)}"></i></div>
-          <div class="cs ${s.cls}"><ha-icon icon="${s.icon}"></ha-icon><span>${esc(s.txt)}</span></div></div>
+          <div class="cs ${s.cls}">${s.logo ? `<img src="${esc(s.logo)}" alt="" style="width:15px;height:15px;border-radius:4px;flex:0 0 auto;object-fit:contain" onerror="this.style.display='none'">` : `<ha-icon icon="${s.icon}"></ha-icon>`}<span>${esc(s.txt)}</span></div></div>
           <div class="cv"><b>${c.soc != null ? Math.round(c.soc) + '%' : '—'}</b><small>${c.range != null ? Math.round(c.range) + ' ' + c.unit : ''}</small></div></div>`; }).join('');
       return;
     }
@@ -1061,7 +1062,7 @@ class HomePanelCard extends HTMLElement {
     el.innerHTML = `${logo(c, 'clogo')}<div class="cx"><div class="lbl">${esc(c.name)}</div>
       <div class="soc">${c.soc != null ? Math.round(c.soc) + '%' : '—'}<small>${c.range != null ? Math.round(c.range) + ' ' + c.unit : ''}</small></div>
       <div class="bbar"><i style="width:${c.soc || 0}%;background:${this._socCol(c.soc)}"></i></div>
-      <div class="cs ${s.cls}"><ha-icon icon="${s.icon}"></ha-icon><span>${esc(s.txt)}</span></div></div>`;
+      <div class="cs ${s.cls}">${s.logo ? `<img src="${esc(s.logo)}" alt="" style="width:15px;height:15px;border-radius:4px;flex:0 0 auto;object-fit:contain" onerror="this.style.display='none'">` : `<ha-icon icon="${s.icon}"></ha-icon>`}<span>${esc(s.txt)}</span></div></div>`;
   }
   _renderCarPop() {
     const i = this._carIdx || 0, el = this._$('carpop'), c = this._carInfo(i), s = this._carStatus(c), k = this._cars[i];
@@ -1077,7 +1078,7 @@ class HomePanelCard extends HTMLElement {
         : `<img src="${esc(c.img)}" alt="" onerror="this.style.display='none'">`) : ''}<div>
         <div class="big">${c.soc != null ? Math.round(c.soc) + '%' : '—'}<small>${c.range != null ? Math.round(c.range) + ' ' + c.unit + ' range' : ''}</small></div>
         <div class="bbar"><i style="width:${c.soc || 0}%;background:${this._socCol(c.soc)}"></i></div>
-        <div class="cs ${s.cls}" style="font-size:14px;display:flex;align-items:center;gap:6px"><ha-icon icon="${s.icon}" style="--mdc-icon-size:18px"></ha-icon>${esc(s.txt)}</div></div></div>
+        <div class="cs ${s.cls}" style="font-size:14px;display:flex;align-items:center;gap:6px">${s.logo ? `<img src="${esc(s.logo)}" alt="" style="width:18px;height:18px;border-radius:4px;flex:0 0 auto;object-fit:contain" onerror="this.style.display='none'">` : `<ha-icon icon="${s.icon}" style="--mdc-icon-size:18px"></ha-icon>`}${esc(s.txt)}</div></div></div>
       <div class="dets" style="margin-top:16px">${[k.target && det('Charge limit', c.target != null ? Math.round(c.target) : '—', '%'), k.power && det('Charging power', c.pw != null ? Math.round(c.pw * 10) / 10 : '—', 'kW'),
         k.ends && det('Full by', c.endT ? hm(c.endT) : '—'), k.lock && det('Doors', c.lock ? (locked ? 'Locked' : 'Unlocked') : '—'),
         k.mileage && det('Mileage', c.mileage != null ? Math.round(c.mileage).toLocaleString('en-GB') : '—', c.unit), k.climate && det('Climate', c.climate ? (clim ? 'On' : 'Off') : '—'),

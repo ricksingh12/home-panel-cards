@@ -253,6 +253,7 @@ class HomeEnergyCard extends HTMLElement {
     const c = this._carInfo(i), k = c.k, col = c.soc == null ? 'var(--sub)' : c.soc < 20 ? '#e5484d' : c.soc < 50 ? '#f0a43a' : '#22a06b';
     const s = c.charging ? { cls: 'chg', icon: 'mdi:battery-charging', txt: ['Charging', c.pw ? Math.round(c.pw * 10) / 10 + ' kW' : '', c.hv && c.hv.kwh > 0.05 ? '+' + c.hv.kwh.toFixed(1) + ' kWh' : '', c.endT ? 'full by ' + hecHm(c.endT) : ''].filter(Boolean).join(' · ') }
       : { cls: c.err ? 'err' : '', icon: c.err ? 'mdi:alert-circle-outline' : /plug/i.test(c.label) && !/not/i.test(c.label) ? 'mdi:power-plug' : 'mdi:power-plug-off-outline', txt: c.label };
+    if (c.hv && c.hv.h.logo) s.logo = c.hv.h.logo;
     const clim = c.climate && c.climate.state === 'on', climCtl = k.climate && k.climate.startsWith('switch.');
     const pic = !c.img ? '' : k.image_crop && k.image_size ? (() => { const [x0, y0, x1, y1] = String(k.image_crop).split(/[\s,]+/).map(Number), [W, H] = String(k.image_size).split(/[\s,]+/).map(Number), cw = x1 - x0, ch = y1 - y0;
       return `<div class="cimg" style="aspect-ratio:${cw}/${ch};background-image:url('${hecEsc(c.img)}');background-size:${(W / cw * 100).toFixed(2)}% auto;background-position:${(W > cw ? x0 / (W - cw) * 100 : 0).toFixed(2)}% ${(H > ch ? y0 / (H - ch) * 100 : 0).toFixed(2)}%"></div>`; })()
@@ -262,7 +263,7 @@ class HomeEnergyCard extends HTMLElement {
     const acts = climCtl || k.refresh ? `<div class="cacts">${climCtl ? `<button class="${clim ? 'on' : ''}" data-act="clim" data-i="${i}"><ha-icon icon="mdi:fan"></ha-icon>${clim ? 'Stop climate' : 'Start climate'}</button>` : ''}${k.refresh ? `<button data-act="ref" data-i="${i}"><ha-icon icon="mdi:refresh"></ha-icon>Update</button>` : ''}</div>` : '';
     el.innerHTML = `<div class="ch">${c.crest ? `<img class="crest${c.inv ? ' inv' : ''}" src="${hecEsc(c.crest)}" alt="" onerror="this.style.display='none'">` : ''}<span class="n">${hecEsc(c.name)}</span>${acts}${c.wordmark ? `<img class="wm" src="${hecEsc(c.wordmark)}" alt="" onerror="this.style.display='none'">` : ''}</div>
       <div class="pic">${pic}</div><div class="info"><div class="soc">${c.soc != null ? Math.round(c.soc) + '%' : '—'}<small>${c.range != null ? Math.round(c.range) + ' ' + c.unit + ' range' : ''}</small></div>
-      <div class="bbar"><i style="width:${c.soc || 0}%;background:${col}"></i></div><div class="cs ${s.cls}"><ha-icon icon="${s.icon}"></ha-icon><span>${hecEsc(s.txt)}</span></div>
+      <div class="bbar"><i style="width:${c.soc || 0}%;background:${col}"></i></div><div class="cs ${s.cls}">${s.logo ? `<img src="${hecEsc(s.logo)}" alt="" style="width:15px;height:15px;border-radius:4px;flex:0 0 auto;object-fit:contain" onerror="this.style.display='none'">` : `<ha-icon icon="${s.icon}"></ha-icon>`}<span>${hecEsc(s.txt)}</span></div>
       <div class="cd">${det.map(([a, b]) => `<div><div class="k">${a}</div><div class="v">${b}</div></div>`).join('')}</div>
       </div>`;
   }
