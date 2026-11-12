@@ -59,6 +59,7 @@ const FEELS = (t, rh, w, wu) => {
   if (t >= 27) { const f = t * 9 / 5 + 32, h = -42.379 + 2.04901523 * f + 10.14333127 * rh - .22475541 * f * rh - .00683783 * f * f - .05481717 * rh * rh + .00122874 * f * f * rh + .00085282 * f * rh * rh - .00000199 * f * f * rh * rh; return (h - 32) * 5 / 9; }
   const e = rh / 100 * 6.105 * Math.exp(17.27 * t / (237.7 + t)); return t + 0.33 * e - 0.70 * (kmh / 3.6) - 4.0;
 };
+window.__HPC_FEELS = a => a.apparent_temperature != null ? a.apparent_temperature : FEELS(a.temperature, a.humidity, a.wind_speed, a.wind_speed_unit);
 const ICOL = c => c === 'sunny' ? '#f59e0b' : c === 'clear-night' ? '#8a9bbd'
   : /rain|pour|hail|light/.test(c || '') ? '#5b9bf0' : c === 'partlycloudy' ? '#f0a43a' : '#9aa6b5';
 const WMO = (c, day = 1) => c === 0 ? (day ? 'sunny' : 'clear-night') : c <= 2 ? 'partlycloudy' : c === 3 ? 'cloudy' : c <= 48 ? 'fog'

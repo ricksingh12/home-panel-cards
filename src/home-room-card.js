@@ -3,6 +3,29 @@
    - home:  config has `rooms` (list of floors) → chips, greeting, shortcuts, people, room tiles
    - room:  config has `room` → chips with back, temperature/humidity graphs, every device in the room */
 const HRC_CSS = `:host{display:block}
+.rc.wl{padding-bottom:calc(96px + env(safe-area-inset-bottom))}.rc.wl .rcw{gap:12px}
+.rc .wh{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:6px 4px 0}.rc .wgr{font-size:30px;font-weight:800;letter-spacing:-.03em;line-height:1.08}.rc .wdt{font-size:14px;color:var(--sub);font-weight:500;margin-top:5px}
+.rc .wwx{text-align:right;cursor:pointer;flex:0 0 auto;font-size:12px;color:var(--sub);font-weight:500;line-height:1.45}.rc .wwx b{display:block;font-size:32px;font-weight:300;letter-spacing:-.04em;color:var(--text);line-height:1.1}
+.rc .wch{justify-content:flex-start;margin:0 -12px;padding:2px 12px 4px;gap:7px}.rc .wch>.chip{height:34px;padding:0 12px 0 9px;font-size:13px;gap:6px}.rc .wch>.chip ha-icon{--mdc-icon-size:17px}
+.rc .wgd{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.rc .ww{border-radius:22px;padding:12px 14px;min-height:140px;display:flex;flex-direction:column;cursor:pointer;min-width:0;box-sizing:border-box}
+.rc .wt{display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:var(--sub);letter-spacing:.05em;text-transform:uppercase}.rc .wt ha-icon{--mdc-icon-size:15px}
+.rc .wp{display:flex;align-items:center;gap:9px;margin-top:10px;min-width:0}.rc .wav{position:relative;width:34px;height:34px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px}.rc .wav img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+.rc .wav i{position:absolute;right:-2px;bottom:-2px;width:11px;height:11px;border-radius:50%;border:2px solid var(--card-solid,#fff)}:host(.dark) .rc .wav i{border-color:#1c1c1e}
+.rc .wpx{min-width:0}.rc .wpx b{display:block;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rc .wpx span{display:block;font-size:12px;color:var(--sub);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rc .wtm{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 10px;margin-top:10px}.rc .wtm>div{min-width:0}.rc .wtm span{display:block;font-size:12px;color:var(--sub);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rc .wtm b{display:block;font-size:20px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}.rc .wtm b.hot{color:#f06a3c}
+.rc .wcr{margin-top:9px}.rc .wcr>div:first-child{display:flex;justify-content:space-between;gap:6px;font-size:13px}.rc .wcr b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rc .wcr span{color:var(--sub);font-weight:500;white-space:nowrap}
+.rc .wbar{height:6px;border-radius:3px;background:var(--card2);margin-top:5px;overflow:hidden}.rc .wbar i{display:block;height:100%;border-radius:3px}
+.rc .wfoot{margin-top:auto;padding-top:8px;font-size:11.5px;color:var(--sub);font-weight:600;display:flex;align-items:center;gap:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rc .wfoot img{width:14px;height:14px;border-radius:4px;flex:0 0 auto}.rc .wfoot span{overflow:hidden;text-overflow:ellipsis}.rc .wfoot.chg{color:#22a06b}
+.rc .wln{font-size:13px;color:var(--sub);font-weight:500;margin-top:8px}.rc .wln b{font-weight:700}.rc .wln+.wbig{margin-top:auto}
+.rc .wbig{font-size:32px;font-weight:700;letter-spacing:-.03em;line-height:1.05;margin-top:auto;font-variant-numeric:tabular-nums}.rc .wbig small{font-size:14px;color:var(--sub);font-weight:600;margin-left:2px}.rc .wbig+.wln{margin-top:3px}
+.rc .wsec{font-size:19px;font-weight:700;letter-spacing:-.02em;margin:8px 4px -2px}
+.rc .wrm{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;margin:0 -12px;padding:2px 12px 4px;scroll-padding:0 12px;scroll-snap-type:x proximity}.rc .wrm::-webkit-scrollbar{display:none}
+.rc .wr{flex:0 0 112px;height:100px;border-radius:18px;padding:11px 12px;display:flex;flex-direction:column;cursor:pointer;box-sizing:border-box;scroll-snap-align:start;min-width:0}.rc .wr b{font-size:14px;font-weight:600;margin-top:auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rc .wr>span:last-child{font-size:12px;color:var(--sub);font-weight:500;white-space:nowrap}
+.rc .wri{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--card2);color:var(--sub)}.rc .wri ha-icon{--mdc-icon-size:18px}.rc .wr.on .wri{background:#ffd60a;color:#3b2a00}
+.rc .wtab{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;justify-content:space-around;padding:7px 6px calc(7px + env(safe-area-inset-bottom));background:var(--card);backdrop-filter:blur(24px) saturate(1.6);-webkit-backdrop-filter:blur(24px) saturate(1.6);border-top:1px solid var(--line)}
+.rc .wtab button{flex:1;max-width:96px;border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:2px;font:inherit;font-size:10.5px;font-weight:600;color:var(--sub);cursor:pointer;padding:3px 0}.rc .wtab button ha-icon{--mdc-icon-size:25px}.rc .wtab button.on{color:var(--accent,#007aff)}
+@media (min-width:601px){.rc .wgd{grid-template-columns:repeat(4,minmax(0,1fr))}.rc .wtab{left:50%;right:auto;transform:translateX(-50%);width:min(560px,92vw);bottom:14px;border-radius:24px;border:1px solid var(--line)}}
 .rc .hh{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:6px 4px 0}.rc .hhx{min-width:0}
 .rc .hwel{font-size:34px;font-weight:800;letter-spacing:-.03em;line-height:1.05}.rc .hdt{font-size:15px;font-weight:500;color:var(--sub);margin-top:6px}
 .rc .havs{display:flex;gap:8px;flex:0 0 auto}.rc .hav{position:relative;width:54px;height:54px;border-radius:50%;border:0;padding:0;background:var(--card);box-shadow:var(--shadow);cursor:pointer;color:var(--text)}
@@ -76,15 +99,20 @@ customElements.whenDefined('home-panel-card').then(() => {
         cameras: c.room ? ids(r.cameras) : [],
         media_players: c.room ? (r.media || []).map(m => typeof m === 'string' ? m : m.entity) : (c.media_players || []),
         cars: c.room ? r.cars || [] : c.cars || [], vacuum: c.room ? r.vacuum || null : null, doorbell: c.room ? r.doorbell || null : null,
-        heating: c.room && r.climate ? [{ entity: r.climate, name: r.climate_name || c.room.name }] : [], lights: [], calendars: c.calendars || [], tfl_lines: c.tfl_lines || [], energy: c.room ? null : c.energy || null, world_clocks: c.world_clocks || []
+        heating: c.room ? (r.climate ? [{ entity: r.climate, name: r.climate_name || c.room.name }] : []) : (c.heating || []), lights: [], calendars: c.calendars || [], tfl_lines: c.tfl_lines || [], energy: c.room ? null : c.energy || null, world_clocks: c.world_clocks || []
       }));
-      this._mode = c.rooms ? 'home' : 'room'; this._hist = {}; this._histAt = 0;
+      this._mode = c.rooms ? 'home' : 'room'; this._wl = this._mode === 'home' && c.layout === 'widgets'; this._hist = {}; this._histAt = 0;
     }
     getCardSize() { return 20; }
     _build() {
       this._built = true;
       const c = this._c, s = this.attachShadow({ mode: 'open' }), r = c.room || {}; if (this._c && this._c.icons === 'ios' && window.__hpcIosIcons) window.__hpcIosIcons(this, s);
-      const body = this._mode === 'home' ? `
+      const body = this._wl ? `
+        <div class="wh"><div class="whx"><div class="wgr" id="wgr"></div><div class="wdt" id="wdt"></div></div><div class="wwx" id="wwx" data-act="wx"></div></div>
+        <div class="chips wch" id="wch"></div>
+        <div class="wgd"><div class="card ww" id="wppl"></div><div class="card ww" id="wclim"></div>${this._cars.length ? '<div class="card ww" id="wcar" data-act="car" data-i="0"></div>' : ''}${c.energy ? '<div class="card ww" id="wen" data-act="en"></div>' : ''}</div>
+        ${(c.calendars || []).length ? '<div class="card hc hev" id="hev" data-act="cal"></div>' : ''}
+        <div id="wfl"></div><nav class="wtab" id="wtab"></nav>` : this._mode === 'home' ? `
         <div class="hh"><div class="hhx"><div class="hwel" id="hwel"></div><div class="hdt" id="hdt"></div></div><div class="havs" id="havs"></div></div>
         <div class="hbar"><div class="hnav" id="nav"></div><div class="htmp" id="htmp"></div></div>
         <div class="hdiv"></div>
@@ -108,7 +136,7 @@ customElements.whenDefined('home-panel-card').then(() => {
         ${c.vacuum ? '<div class="card vac" id="vac" data-act="vac"></div>' : ''}
         ${this._cars.length ? `<div class="card carc${this._cars.length > 1 ? ' multi' : ''}" id="car"${this._cars.length > 1 ? '' : ' data-act="car" data-i="0"'}></div>` : ''}
         ${c.media_players.length ? '<div id="mds" style="display:flex;flex-direction:column;gap:10px"></div>' : ''}</div></div>`;
-      s.innerHTML = `<style>${window.__HPC_CSS || ''}</style><style>${window.__HPC_CSS2 || ''}</style><style>${HRC_CSS}</style><div class="root rc"><div class="rcw">${body}</div>
+      s.innerHTML = `<style>${window.__HPC_CSS || ''}</style><style>${window.__HPC_CSS2 || ''}</style><style>${HRC_CSS}</style><div class="root rc${this._wl ? ' wl' : ''}"><div class="rcw">${body}</div>
         <div class="ov" id="wxov" data-act="closebg"><div class="pop" id="wxpop"></div></div>
         <div class="ov npov" id="npov"></div>
         <div class="ov" id="calov"><div class="pop" id="calpop"></div></div><div class="ov" id="clkov"><div class="pop" id="clkpop"></div></div><div class="ov" id="tflov" data-act="closebg"><div class="pop" id="tflpop"></div></div><div class="ov" id="enov"><div class="pop" id="enpop"></div></div>
@@ -164,7 +192,7 @@ customElements.whenDefined('home-panel-card').then(() => {
     /* ---------- data ---------- */
     _watch() {
       const c = this._c, r = c.room || {}, out = [c.sun, c.weather, c.alarm && c.alarm.entity];
-      if (this._mode === 'home') { (c.people || []).forEach(p => out.push(p.tracker, p.person, p.geocoded)); this._cars.forEach(k => out.push(k.battery, k.charging, k.power)); (c.rooms || []).forEach(f => (f.rooms || []).forEach(x => out.push(x.temperature, ...ids(x.lights).map(l => l.entity)))); }
+      if (this._mode === 'home') { (c.people || []).forEach(p => out.push(p.tracker, p.person, p.geocoded, p.battery)); (c.heating || []).forEach(h => out.push(h.entity)); if (c.alarm) (c.alarm.doors || []).forEach(d => out.push(d.entity || d)); if (c.energy) out.push(c.energy.live_power, c.energy.live_rate, c.energy.today_electricity_cost); this._cars.forEach(k => out.push(k.battery, k.charging, k.power)); (c.rooms || []).forEach(f => (f.rooms || []).forEach(x => out.push(x.temperature, ...ids(x.lights).map(l => l.entity)))); }
       else { out.push(r.temperature, r.humidity, r.climate, ...ids(r.lights).map(l => l.entity), ...ids(r.switches).map(l => l.entity), ...(r.remotes || []).map(l => l.entity), ...ids(r.sensors).map(l => l.entity), ...ids(r.values).map(l => l.entity), ...c.media_players, ...c.cameras.flatMap(x => [x.entity, x.motion])); }
       return out.filter(Boolean);
     }
@@ -252,6 +280,10 @@ customElements.whenDefined('home-panel-card').then(() => {
       if (c.internet) { const N = c.internet, d = this._netVal(N.download), u = this._netVal(N.upload), bl = this._netBlocked() === true, off = bl || (d == null && u == null);
         sm.push(`<div class="card hc hsm2" data-act="net"><ha-icon class="hsi" icon="${off ? 'mdi:web-off' : 'mdi:web'}" style="color:rgb(${bl ? RGB.amber : off ? RGB.red : RGB.blue})"></ha-icon><div><div class="hcn">Internet</div><div class="hcs">${bl ? 'Paused' : off ? 'Offline' : `<ha-icon icon="mdi:arrow-down"></ha-icon>${this._netFmt(d)} <ha-icon icon="mdi:arrow-up"></ha-icon>${this._netFmt(u)}`}</div></div></div>`); }
       $('hg2').innerHTML = sm.slice(nCt).concat(sm.slice(0, nCt)).join(''); $('hg2').hidden = !sm.length;
+      this._renderEv(now);
+    }
+    _renderEv(now) {
+      const c = this._c, $ = this._$;
       if ($('hev')) {
         const evs = this._events, ev = evs && evs.find(e => e.f > now), cal = ev && (c.calendars || [])[ev.ci], col = ev ? this._calColor(ev.ci) : 'var(--line)';
         const tm = d => d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
@@ -260,14 +292,14 @@ customElements.whenDefined('home-panel-card').then(() => {
             <div class="hcs"><ha-icon icon="mdi:clock-outline"></ha-icon>${ev.allDay ? 'All day' : ev.s <= now ? 'Now · until ' + tm(ev.f) : tm(ev.s) + ' – ' + tm(ev.f)}${cal ? ` · <span style="color:${col}">${E(cal.name || '')}</span>` : ''}</div>${ev.loc ? `<div class="hcs"><ha-icon icon="mdi:map-marker-outline"></ha-icon>${E(ev.loc.split('\n')[0])}</div>` : ''}</div>`;
       }
     }
-    _renderTfl() { if (!this._built || !this._hass) return; if (this._mode === 'home') this._renderHomeTop(); else if (this._$('chips')) this._$('chips').innerHTML = this._chips(true); }
+    _renderTfl() { if (!this._built || !this._hass) return; if (this._wl) this._renderW(); else if (this._mode === 'home') this._renderHomeTop(); else if (this._$('chips')) this._$('chips').innerHTML = this._chips(true); }
     _renderNet() { this._renderTfl(); }
     _renderEnergy() { this._renderTfl(); }
     _val(id, digits) { const e = id && this._st(id), v = e && NUM(e.state); return v == null ? null : (digits != null ? v.toFixed(digits) : Math.round(v)); }
     _render() { if (this._mode === 'home') this._renderHome(); else this._renderRoom(); }
     /* ---------- home view ---------- */
     _renderHome() {
-      const c = this._c, $ = this._$;
+      const c = this._c, $ = this._$; if (this._wl) return this._renderW();
       const n = c.name || (this._hass.user && this._hass.user.name ? this._hass.user.name.split(' ')[0] : '');
       $('hwel').textContent = 'Welcome' + (n ? ' ' + n : '');
       $('havs').innerHTML = (c.people || []).map((_, i) => { const x = this._pInfo(i), t = x.p.tracker && this._st(x.p.tracker), home = t && t.state === 'home', unk = !t || /unknown|unavailable/.test(t.state);
@@ -277,6 +309,58 @@ customElements.whenDefined('home-panel-card').then(() => {
         const on = ids(r.lights).filter(l => (this._st(l.entity) || {}).state === 'on').length, t = this._val(r.temperature, 1);
         const sub = [t != null ? t + '°' : '', on ? on + ' on' : ''].filter(Boolean).join(' · ') || (ids(r.lights).length ? 'Lights off' : '');
         return `<div class="card mc2 rt${on ? ' lit' : ''}" data-act="rnav" data-p="${E(r.path)}"><div class="mrow"><span class="msh"><ha-icon icon="${E(r.icon || 'mdi:door')}"></ha-icon></span><div class="mx"><div class="mp">${E(r.name)}</div>${sub ? `<div class="ms">${E(sub)}</div>` : ''}</div></div></div>`; }).join('')}</div>`).join('');
+    }
+    /* ---------- home view: widgets layout (layout: widgets) ---------- */
+    _renderW() {
+      const c = this._c, $ = this._$, now = new Date(); if (!$ || !$('wgr')) return;
+      const n = c.name || (this._hass.user && this._hass.user.name ? this._hass.user.name.split(' ')[0] : ''), h = now.getHours();
+      $('wgr').innerHTML = `${h < 5 ? 'Good night' : h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'}${n ? ',<br>' + E(n) : ''}`;
+      $('wdt').textContent = now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+      const w = this._st(c.weather), wa = w ? w.attributes : {}, sun = this._st(c.sun), up = sun && sun.state === 'above_horizon', sev = sun && new Date(sun.attributes[up ? 'next_setting' : 'next_rising']);
+      const fl = window.__HPC_FEELS ? window.__HPC_FEELS(wa) : (wa.apparent_temperature != null ? wa.apparent_temperature : null);
+      $('wwx').innerHTML = w ? `<b>${wa.temperature != null ? Math.round(wa.temperature) + '°' : '—'}</b><div>${E(WXL[w.state] || w.state)}${fl != null ? ' · feels ' + Math.round(fl) + '°' : ''}</div>${sev && !isNaN(sev) ? `<div>${up ? 'Sunset' : 'Sunrise'} ${sev.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</div>` : ''}` : '';
+      // status chips
+      const ch = [], chip = (act, ic, col, txt, extra) => `<button class="chip wc" data-act="${act}"${extra || ''}><ha-icon icon="${ic}" style="color:rgb(${col})"></ha-icon><span${col !== RGB.grey ? ` style="color:rgb(${col})"` : ''}>${txt}</span></button>`;
+      if (c.alarm) { const i = this._alInfo(); if (i) { const col = i.cls === 'disarmed' ? RGB.amber : i.cls === 'trig' ? RGB.red : RGB.green; ch.push(chip('alarm', i.icon, col, 'Alarm ' + E(({ disarmed: 'off', home: 'home', away: 'away', wait: 'arming', trig: 'TRIGGERED' }[i.cls] || i.label).toLowerCase ? ({ disarmed: 'off', home: 'home', away: 'away', wait: 'arming', trig: 'TRIGGERED' }[i.cls] || i.label) : ''))); }
+        const ds = (c.alarm.doors || []).map(d => typeof d === 'string' ? { entity: d } : d), op = ds.filter(d => (this._st(d.entity) || {}).state === 'on');
+        if (ds.length) ch.push(chip('alarm', op.length ? 'mdi:door-open' : 'mdi:door-closed', op.length ? RGB.red : RGB.green, op.length ? E(op.length === 1 ? (op[0].name || 'Door') + ' open' : op.length + ' doors open') : 'Doors shut')); }
+      const lts = (c.rooms || []).flatMap(f => (f.rooms || []).flatMap(r => ids(r.lights).map(l => l.entity))).filter((x, i, a) => a.indexOf(x) === i), lon = lts.filter(id => (this._st(id) || {}).state === 'on').length;
+      if (lts.length) ch.push(chip('rnav', lon ? 'mdi:lightbulb-on' : 'mdi:lightbulb-outline', lon ? RGB.yellow : RGB.grey, lon ? lon + (lon === 1 ? ' light on' : ' lights on') : 'Lights off', ` data-p="${E((c.shortcuts || []).some(x => x.path === 'lights') ? 'lights' : '')}"`));
+      const hz = (c.heating || []).filter(x => { const e = this._st(x.entity); return e && e.attributes.hvac_action === 'heating'; });
+      if ((c.heating || []).length) ch.push(chip(hz.length ? 'more' : 'more', 'mdi:fire', hz.length ? RGB.orange : RGB.grey, hz.length ? E(hz.length > 2 ? hz.length + ' zones heating' : hz.map(x => x.name).join(' & ')) : 'Heating idle', ` data-id="${E((hz[0] || c.heating[0]).entity)}"`));
+      (c.tfl_lines || []).forEach(id => { const l = this._tfl && (this._tfl.lines || []).find(x => x.id === id), t = this._tflInfo(id, l), col = { ok: RGB.green, minor: RGB.amber, bad: RGB.red, idle: RGB.grey }[t.cls] || RGB.grey;
+        const word = !this._tfl ? '…' : t.w ? ({ 'Good Service': 'Good service', 'Minor Delays': 'Minor delays', 'Severe Delays': 'Severe delays' }[t.w.statusSeverityDescription] || t.w.statusSeverityDescription) : 'No status';
+        ch.push(chip('tfl', 'mdi:subway-variant', col, E(((l && l.name) || id.replace(/^./, x => x.toUpperCase())) + ' · ' + word.toLowerCase()))); });
+      if (c.internet) { const N = c.internet, bl = this._netBlocked() === true, off = bl || (this._netVal(N.download) == null && this._netVal(N.upload) == null), le = N.latency && this._st(N.latency), lat = le ? parseFloat(le.state) : NaN;
+        ch.push(chip('net', off ? 'mdi:web-off' : 'mdi:web', bl ? RGB.amber : off ? RGB.red : RGB.green, bl ? 'Internet paused' : off ? 'Offline' : !isNaN(lat) ? Math.round(lat) + ' ms' : 'Online')); }
+      $('wch').innerHTML = ch.join('');
+      // people
+      $('wppl').innerHTML = `<div class="wt"><ha-icon icon="mdi:account-outline"></ha-icon>Home</div>` + (c.people || []).map((_, i) => { const x = this._pInfo(i), t = x.p.tracker && this._st(x.p.tracker), home = t && t.state === 'home', unk = !t || /unknown|unavailable/.test(t.state);
+        const cols = ['#3b82f6', '#a855f7', '#e5484d', '#eab308', '#22a06b'];
+        return `<div class="wp" data-act="ppl" data-i="${i}"><span class="wav" style="background:${cols[i % 5]}">${x.pic ? `<img src="${E(x.pic)}" alt="">` : E((x.name || '?').charAt(0))}<i style="background:${home ? '#30d158' : unk ? '#8a8f98' : '#3b82f6'}"></i></span><div class="wpx"><b>${E(x.name)}</b><span>${E(x.where)}${x.lvl != null ? ' · ' + x.lvl + '%' : ''}</span></div></div>`; }).join('');
+      // climate
+      const cl = (c.heating || []).length ? c.heating.slice(0, 4).map(x => { const e = this._st(x.entity), a = e ? e.attributes : {}; return { id: x.entity, n: x.name || a.friendly_name, v: a.current_temperature, hot: a.hvac_action === 'heating' }; })
+        : (c.rooms || []).flatMap(f => f.rooms || []).filter(r => r.temperature).filter((r, i, a) => a.findIndex(y => y.temperature === r.temperature) === i).slice(0, 4).map(r => ({ id: r.temperature, n: r.name, v: this._val(r.temperature, 1), hot: false }));
+      $('wclim').innerHTML = `<div class="wt"><ha-icon icon="mdi:thermometer"></ha-icon>Climate</div><div class="wtm">${cl.map(x => `<div data-act="more" data-id="${E(x.id)}"><span>${E(x.n)}</span><b${x.hot ? ' class="hot"' : ''}>${x.v != null && !isNaN(x.v) ? Number(x.v).toFixed(1) + '°' : '—'}</b></div>`).join('')}</div>`;
+      // cars + home charger
+      if ($('wcar')) { const cs = this._cars.map((_, i) => this._carInfo(i)), hv = cs.find(x => x.hv);
+        const ch2 = c.charger, hs = ch2 && this._st(ch2.start), hst = hs && /^\d\d:\d\d/.test(hs.state) ? hs.state.slice(0, 5) : null;
+        const hvl = hv ? (hv.charging ? `${E(hv.name)} · ${hv.pw ? (Math.round(hv.pw * 10) / 10) + ' kW' : 'charging'}` : `${E(hv.name)}${hv.hv.sched && hst ? ' · from ' + hst : ' · plugged in'}`) : ch2 ? (hst ? 'Ready · from ' + hst : 'Ready') : '';
+        $('wcar').innerHTML = `<div class="wt"><ha-icon icon="mdi:car-outline"></ha-icon>Cars</div>${cs.map((x, i) => { const col = x.soc == null ? '#8a8f98' : x.charging ? '#30d158' : x.soc < 20 ? '#e5484d' : x.soc < 50 ? '#f0a43a' : '#34c759';
+          return `<div class="wcr" data-act="car" data-i="${i}"><div><b>${E(x.name)}</b><span>${x.range != null ? Math.round(x.range) + ' ' + x.unit : x.soc != null ? Math.round(x.soc) + '%' : '—'}</span></div><div class="wbar"><i style="width:${x.soc || 0}%;background:${col}"></i></div></div>`; }).join('')}
+          ${hvl ? `<div class="wfoot${hv && hv.charging ? ' chg' : ''}">${ch2 && ch2.logo ? `<img src="${E(ch2.logo)}" alt="" onerror="this.remove()">` : `<ha-icon icon="mdi:ev-station" style="--mdc-icon-size:14px"></ha-icon>`}<span>${hvl}</span></div>` : ''}`; }
+      // energy
+      if ($('wen')) { const L = this._enLive(), r = L && L.rate, rl = r == null ? '' : (r < 1 ? (Math.round(r * 1000) / 10).toString().replace(/\.0$/, '') + 'p/kWh' : '£' + r.toFixed(2) + '/kWh'), tag = r == null ? '' : r <= .15 ? '<b style="color:#22a06b">off-peak</b>' : r >= .3 ? '<b style="color:#e5484d">peak</b>' : '';
+        $('wen').innerHTML = `<div class="wt"><ha-icon icon="mdi:lightning-bolt-outline"></ha-icon>Energy</div>${rl ? `<div class="wln">${rl}${tag ? ' · ' + tag : ''}</div>` : ''}<div class="wbig" style="color:${L ? L.col : 'inherit'}">${L ? L.pw : '—'}</div><div class="wln">${L && L.cost != null ? 'Today £' + L.cost.toFixed(2) : ''}${L && L.e != null ? ' · ' + Math.round(L.e) + ' kWh' : ''}</div>`; }
+      this._renderEv(now);
+      // rooms, one swipeable strip per floor
+      $('wfl').innerHTML = (c.rooms || []).map(f => `<div class="wsec">${E(f.name)}</div><div class="wrm">${(f.rooms || []).map(r => {
+        const on = ids(r.lights).filter(l => (this._st(l.entity) || {}).state === 'on').length, t = this._val(r.temperature, 0);
+        const sub = [t != null ? t + '°' : '', ids(r.lights).length ? (on ? on + ' on' : 'off') : ''].filter(Boolean).join(' · ');
+        return `<div class="card wr${on ? ' on' : ''}" data-act="rnav" data-p="${E(r.path)}"><span class="wri"><ha-icon icon="${E(r.icon || 'mdi:door')}"></ha-icon></span><b>${E(r.name)}</b><span>${E(sub || ' ')}</span></div>`; }).join('')}</div>`).join('');
+      // bottom tab bar
+      const nav = c.shortcuts || [];
+      $('wtab').innerHTML = `<button class="on" data-act="noop"><ha-icon icon="mdi:home"></ha-icon><span>Home</span></button>` + nav.slice(0, 4).map(x => `<button data-act="rnav" data-p="${E(x.path)}"><ha-icon icon="${E(x.icon)}"></ha-icon><span>${E(x.name)}</span></button>`).join('');
     }
     /* ---------- room view ---------- */
     _renderRoom() {
