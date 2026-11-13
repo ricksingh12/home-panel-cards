@@ -101,7 +101,7 @@ class HomeHealthCard extends HTMLElement {
         <div class="card hlc" data-act="more" data-id="${hhE(p.resting_hr)}"><div class="lbl"><ha-icon icon="mdi:heart-pulse" style="color:#e5484d"></ha-icon>Resting HR</div><div class="hlbig">${rhr != null ? Math.round(rhr) : '—'}<small>bpm</small></div>
           <div class="hlsub">${rAvg != null && rhr != null ? (Math.abs(rhr - rAvg) < 1 ? 'Steady vs last week' : (rhr > rAvg ? '▲ ' : '▼ ') + Math.abs(Math.round(rhr - rAvg)) + ' vs 7-day avg') : 'Daily resting rate'}</div>
           ${c.show_body && (wt != null || bf != null) ? `<div class="hlsub" style="margin-top:10px"><b style="color:var(--text);font-weight:600">${wt != null ? (Math.round(wt * 10) / 10) + ' kg' : ''}</b>${bf != null ? ' · ' + (Math.round(bf * 10) / 10) + '% fat' : ''}</div>` : ''}</div></div>
-      <div class="card hlch"><div class="lbl">Steps · 7 days <span>Goal ${goal.toLocaleString('en-GB')}</span></div>${this._bars(this._series(p.steps, 'max'), stepCol, goal, x => x >= 1000 ? (Math.round(x / 100) / 10) + 'k' : Math.round(x))}</div>
+      <div class="card hlch"><div class="lbl">Steps · 7 days <span>Goal ${goal.toLocaleString('en-GB')}</span></div>${this._bars(this._series(p.steps, 'change'), stepCol, goal, x => x >= 1000 ? (Math.round(x / 100) / 10) + 'k' : Math.round(x))}</div>
       <div class="card hlch"><div class="lbl">Sleep · 7 days <span>Goal ${sg}h</span></div>${this._bars(this._series(p.asleep, 'max'), sleepCol, sg, x => { const m = Math.round(x * 60); return Math.floor(m / 60) + ':' + String(m % 60).padStart(2, '0'); })}</div>
     </div>`;
   }
