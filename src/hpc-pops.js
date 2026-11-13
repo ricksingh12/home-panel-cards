@@ -20,6 +20,17 @@ const PXCSS = `.pxw{width:min(94%,760px)}.pxw.sm{width:min(94%,560px)}
 .pxdial .c{position:absolute;left:0;right:0;top:58px;text-align:center;line-height:1}.pxdial .c b{font-size:46px;font-weight:600}.pxdial .c b small{font-size:20px;vertical-align:top}.pxdial .c div{font-size:14px;font-weight:600;color:var(--sub);margin-top:6px}.pxdial .c div.h{color:#e0592a}
 .pxdial .pm{position:absolute;bottom:4px;width:46px;height:46px;border-radius:50%;border:0;background:var(--card2);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer}.pxdial .pm ha-icon{--mdc-icon-size:24px}.pxdial .pm.m{left:6px}.pxdial .pm.p{right:6px}.pxdial.off .pm{opacity:.35;pointer-events:none}
 .pxw .vchips{margin-top:0}.pic.on{background:#f5a623;color:#fff}.pic.red{background:#e5484d;color:#fff}.pic.heat{background:#f06a3c;color:#fff}
+.sch{border-radius:20px;background:var(--card2);padding:14px 14px 12px}.sch .shd{display:flex;align-items:center;gap:12px}.sch .shd>div{flex:1;min-width:0}.sch .shd b{display:block;font-size:15px;font-weight:600}.sch .shd span{display:block;font-size:12.5px;color:var(--sub);font-weight:500;margin-top:2px}
+.sch .tg{width:52px;height:32px;border-radius:16px;border:0;background:rgba(120,120,128,.32);position:relative;cursor:pointer;flex:0 0 auto;padding:0}.sch .tg i{position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:left .15s}.sch .tg.on{background:#34c759}.sch .tg.on i{left:23px}
+.sch .sdays{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:14px}.sch .sdays button{height:36px;border:0;border-radius:12px;background:var(--card);color:var(--text);font:inherit;font-size:13px;font-weight:700;cursor:pointer;padding:0}.sch .sdays button.sel{background:var(--accent);color:#fff}.sch .sdays button.td{box-shadow:inset 0 0 0 2px var(--accent)}.sch .sdays button.sel.td{box-shadow:none}
+.sch .sbar{position:relative;height:22px;border-radius:7px;background:var(--card);margin-top:12px;overflow:hidden}.sch .sbar i{position:absolute;top:0;bottom:0;background:#f06a3c;opacity:.85;border-radius:4px}.sch .sbar em{position:absolute;top:0;bottom:0;width:2px;background:var(--text);opacity:.6}
+.sch .sax{display:flex;justify-content:space-between;font-size:10.5px;color:var(--sub);font-weight:600;margin-top:3px}
+.sch .srows{display:flex;flex-direction:column;gap:8px;margin-top:12px}.sch .srow{display:flex;align-items:center;gap:8px;background:var(--card);border-radius:14px;padding:6px 6px 6px 10px}
+.sch .srow select{font:inherit;font-size:15px;font-weight:600;color:var(--text);background:var(--card2);border:0;border-radius:10px;padding:7px 8px;min-width:0;color-scheme:light dark;-webkit-appearance:none;appearance:none;text-align:center;cursor:pointer;font-variant-numeric:tabular-nums}.sch .srow .to{color:var(--sub);font-weight:600}
+.sch .stp{display:flex;align-items:center;gap:4px;margin-left:auto}.sch .stp b{min-width:46px;text-align:center;font-size:16px;font-weight:700;color:#f06a3c}.sch .stp button,.sch .sdl{width:32px;height:32px;border-radius:50%;border:0;background:var(--card2);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}.sch .stp button ha-icon,.sch .sdl ha-icon{--mdc-icon-size:18px}.sch .sdl{background:none;color:var(--sub)}
+.sch .sempty{font-size:13px;color:var(--sub);text-align:center;padding:10px 0}.sch .sbtns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.sch .sbtns button{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:999px;padding:8px 13px;font:inherit;font-size:13px;font-weight:600;background:var(--card);color:var(--text);cursor:pointer}.sch .sbtns button ha-icon{--mdc-icon-size:16px}
+.sch .sbtns .pri{background:var(--accent);color:#fff}.sch .serr{color:#e5484d;font-size:13px;font-weight:600;margin-top:8px}.sch .sbk{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13px;color:var(--sub);font-weight:600}.sch .sbk .stp{margin-left:auto}.sch .sbk .stp b{color:var(--text)}
+@media (max-width:640px){.sch .srow select{font-size:14px;padding:7px 6px}.sch .stp b{min-width:40px}}
 @media (max-width:640px){.pxcl{grid-template-columns:1fr;justify-items:center}.pxcl>div:last-child{justify-self:stretch}.pxg{grid-template-columns:1fr 1fr}}`;
 customElements.whenDefined('home-panel-card').then(() => {
   const Base = customElements.get('home-panel-card'), P = Base.prototype;
@@ -60,7 +71,7 @@ customElements.whenDefined('home-panel-card').then(() => {
   P._pxClose = function () { this._px = null; const ov = this.shadowRoot && this.shadowRoot.getElementById('pxov'); if (ov) ov.classList.remove('open'); };
   P._pxSync = function () {
     const p = this._px, e = p && this._st(p.id); if (!e) return;
-    const sg = JSON.stringify([e.state, e.attributes, (this._pend || {})[p.id]]);
+    const sg = JSON.stringify([e.state, e.attributes, (this._pend || {})[p.id], this._pxXs(e)]);
     if (sg === p.sig || (p.hold && Date.now() - p.hold < 2500)) return;
     this._pxRender();
     if (Date.now() - p.hAt > 300000) this._pxHist();
@@ -76,12 +87,13 @@ customElements.whenDefined('home-panel-card').then(() => {
   P._pxRender = function () {
     const p = this._px, el = this.shadowRoot.getElementById('pxpop'), e = p && this._st(p.id); if (!el) return;
     if (!e) { el.innerHTML = this._ph('pxclose', this._pic('mdi:help'), 'Device', E(p ? p.id : ''), 'Not found'); return; }
-    p.sig = JSON.stringify([e.state, e.attributes, (this._pend || {})[p.id]]);
+    p.sig = JSON.stringify([e.state, e.attributes, (this._pend || {})[p.id], this._pxXs(e)]);
     const k = kind(e), sc = el.scrollTop;
     el.className = 'pop pxw' + (k === 'light' || k === 'bin' || k === 'bat' ? ' sm' : '');
     el.innerHTML = k === 'light' ? this._pxLight(e) : k === 'clim' ? this._pxClim(e) : k === 'bin' ? this._pxBin(e) : this._pxNum(e, k === 'bat');
     el.scrollTop = sc;
   };
+  P._pxXs = function (e) { if (e.entity_id.split('.')[0] !== 'climate') return 0; const o = e.entity_id.split('.')[1], g = id => { const x = this._hass.states[id]; return x && x.state; }; return [g('input_boolean.' + o + '_follows_schedule'), g('input_number.heating_setback'), g('schedule.heating_' + o)]; };
   P._pxNm = function (e, strip) { let n = (e.attributes.friendly_name || e.entity_id).trim(); if (strip) n = n.replace(strip, '').trim() || n; return E(n); };
   P._pxActs = function (extra) { return `<div class="cacts">${extra || ''}<button data-px="more"><ha-icon icon="mdi:cog-outline"></ha-icon>More settings</button></div>`; };
   P._pxWait = function (txt) { const p = this._px; return p.herr ? `<div class="wxmsg">Couldn't load history</div>` : p.h ? '' : `<div class="wxmsg">${txt || 'Loading history…'}</div>`; };
@@ -144,7 +156,74 @@ customElements.whenDefined('home-panel-card').then(() => {
         ${(a.preset_modes || []).length ? `<div class="lbl" style="margin-top:14px">Preset</div><div class="vchips" style="margin-top:8px">${a.preset_modes.map(m => `<button class="${a.preset_mode === m ? 'sel' : ''}" data-px="preset" data-m="${E(m)}">${E(m.charAt(0).toUpperCase() + m.slice(1).replace(/_/g, ' '))}</button>`).join('')}</div>` : ''}
         <div class="pxg">${g('Now', cur != null ? cur.toFixed(1) + '°' : '—')}${g('Target', tgt != null ? tgt + '°' : '—')}${a.current_humidity != null ? g('Humidity', Math.round(a.current_humidity), '%') : ''}${g('Heating today', H.length ? DUR(heatMs) : '—')}</div></div></div>
       <div class="pxsec"><div class="lbl">Last 24 hours <span><span style="color:#3b82f6">●</span> Temperature &nbsp;<span style="color:#f06a3c">●</span> Target &nbsp;<span style="color:rgba(240,106,60,.5)">■</span> Heating</span></div>${H.length ? this._pxChart([{ pts: cp, col: '#3b82f6', fill: 1 }, { pts: tp, col: '#f06a3c', dash: 1, step: 1 }], 24, '°', bands) : this._pxWait()}</div>`
+      + this._pxSched(e)
       + this._pxActs();
+  };
+  /* ---------- heating schedule (schedule.heating_<zone> + input_boolean.<zone>_follows_schedule) ---------- */
+  const DK = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'], DL = ['M', 'T', 'W', 'T', 'F', 'S', 'S'], DN = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const HM = t => String(t || '').slice(0, 5), MIN = t => { const [h, m] = HM(t).split(':').map(Number); return h * 60 + (m || 0); };
+  const QF = q => String(Math.floor(q / 4)).padStart(2, '0') + ':' + String(q % 4 * 15).padStart(2, '0');
+  const TOPT = (a, z, v) => { let o = '', hit = false; for (let q = a; q <= z; q++) { const t = QF(q); if (t === v) hit = true; o += `<option${t === v ? ' selected' : ''}>${t}</option>`; } return (hit || !v ? '' : `<option selected>${v}</option>`) + o; };
+  P._pxSchIds = function (e) { const o = e.entity_id.split('.')[1]; return { sid: 'schedule.heating_' + o, fid: 'input_boolean.' + o + '_follows_schedule', obj: 'heating_' + o }; };
+  P._pxSchLoad = function () {
+    const p = this._px; if (!p || p.sload || !this._hass.callWS) return; p.sload = 1;
+    const ids = this._pxSchIds(this._st(p.id));
+    this._hass.callWS({ type: 'schedule/list' }).then(list => { if (!this._px || this._px.id !== p.id) return; const it = (list || []).find(x => x.id === ids.obj);
+      if (it) { p.sitem = it; p.sd = JSON.parse(JSON.stringify(DK.reduce((o, d) => (o[d] = (it[d] || []).map(b => ({ from: HM(b.from), to: HM(b.to), temp: (b.data && b.data.temp) != null ? +b.data.temp : 20 })), o), {}))); p.sdirty = false; }
+      else p.serr = 'Schedule helper not found'; p.sig = null; this._pxRender(); })
+      .catch(() => { if (this._px) { this._px.serr = "Couldn't load the schedule"; this._px.sig = null; this._pxRender(); } });
+  };
+  P._pxSched = function (e) {
+    const ids = this._pxSchIds(e), se = this._st(ids.sid); if (!se) return '';
+    const p = this._px, fe = this._st(ids.fid), fol = fe && fe.state === 'on', bk = NUM((this._st('input_number.heating_setback') || {}).state);
+    if (p.sday == null) p.sday = (new Date().getDay() + 6) % 7;
+    if (!p.sd) { this._pxSchLoad(); return `<div class="pxsec"><div class="lbl">Schedule</div><div class="sch"><div class="sempty">${E(p.serr || 'Loading schedule…')}</div></div></div>`; }
+    const day = DK[p.sday], bl = (p.sd[day] || []).slice(), today = (new Date().getDay() + 6) % 7, nowM = new Date().getHours() * 60 + new Date().getMinutes();
+    // next change today, for the status line
+    let nxt = ''; if (fol) { const tb = (p.sd[DK[today]] || []).slice().sort((a, b) => MIN(a.from) - MIN(b.from)), cur = tb.find(b => MIN(b.from) <= nowM && nowM < MIN(b.to)), up = tb.find(b => MIN(b.from) > nowM);
+      nxt = cur ? `${cur.temp}° until ${HM(cur.to) === '24:00' ? 'midnight' : HM(cur.to)}` : up ? `${bk != null ? bk + '° now · ' : ''}${up.temp}° from ${HM(up.from)}` : `${bk != null ? bk + '°' : 'Setback'} for the rest of today`; }
+    const sub = !fe ? 'Switch missing: ' + E(ids.fid) : fol ? 'Following schedule · ' + E(nxt) : 'Off — the thermostat keeps its own settings';
+    const bar = bl.map(b => { const a = MIN(b.from) / 14.4, z = MIN(b.to) / 14.4; return z > a ? `<i style="left:${a}%;width:${z - a}%"></i>` : ''; }).join('') + (p.sday === today ? `<em style="left:${nowM / 14.4}%"></em>` : '');
+    const rows = bl.length ? bl.map((b, i) => `<div class="srow"><select data-sf="${i}">${TOPT(0, 95, b.from)}</select><span class="to">–</span><select data-st="${i}">${TOPT(1, 96, b.to)}</select>
+        <div class="stp"><button data-px="stdn" data-i="${i}"><ha-icon icon="mdi:minus"></ha-icon></button><b>${b.temp}°</b><button data-px="stup" data-i="${i}"><ha-icon icon="mdi:plus"></ha-icon></button></div><button class="sdl" data-px="sdel" data-i="${i}" title="Remove"><ha-icon icon="mdi:trash-can-outline"></ha-icon></button></div>`).join('')
+      : `<div class="sempty">No heating periods on ${DN[p.sday]} — stays at ${bk != null ? bk + '°' : 'setback'}</div>`;
+    return `<div class="pxsec"><div class="lbl">Schedule <span>${E(DN[p.sday])}</span></div><div class="sch">
+      <div class="shd"><div><b>Follow schedule</b><span>${sub}</span></div>${fe ? `<button class="tg${fol ? ' on' : ''}" data-px="sfollow" title="Follow schedule"><i></i></button>` : ''}</div>
+      <div class="sdays">${DL.map((l, i) => `<button class="${i === p.sday ? 'sel' : ''}${i === today ? ' td' : ''}" data-px="sday" data-d="${i}" title="${DN[i]}">${l}</button>`).join('')}</div>
+      <div class="sbar">${bar}</div><div class="sax"><span>00</span><span>06</span><span>12</span><span>18</span><span>24</span></div>
+      <div class="srows">${rows}</div>
+      <div class="sbtns"><button data-px="sadd"><ha-icon icon="mdi:plus"></ha-icon>Add period</button><button data-px="scopy" data-w="wk"><ha-icon icon="mdi:content-copy"></ha-icon>Copy to weekdays</button><button data-px="scopy" data-w="we"><ha-icon icon="mdi:content-copy"></ha-icon>Weekend</button><button data-px="scopy" data-w="all"><ha-icon icon="mdi:content-copy"></ha-icon>All days</button></div>
+      ${bk != null ? `<div class="sbk"><ha-icon icon="mdi:thermometer-low" style="--mdc-icon-size:16px"></ha-icon>Between periods (all zones)<div class="stp"><button data-px="sbk" data-v="-0.5"><ha-icon icon="mdi:minus"></ha-icon></button><b>${bk}°</b><button data-px="sbk" data-v="0.5"><ha-icon icon="mdi:plus"></ha-icon></button></div></div>` : ''}
+      ${p.serr ? `<div class="serr">${E(p.serr)}</div>` : ''}
+      ${p.sdirty ? `<div class="sbtns"><button class="pri" data-px="ssave"><ha-icon icon="mdi:content-save-outline"></ha-icon>${p.ssaving ? 'Saving…' : 'Save schedule'}</button><button data-px="sundo">Discard changes</button></div>` : ''}
+    </div></div>`;
+  };
+  P._pxSchSave = function () {
+    const p = this._px, it = p && p.sitem; if (!it) return;
+    const out = {}; let bad = '';
+    DK.forEach((d, i) => { const bl = (p.sd[d] || []).map(b => ({ from: b.from + ':00', to: b.to + ':00', data: { temp: b.temp } })).sort((a, b) => MIN(a.from) - MIN(b.from));
+      bl.forEach((b, j) => { if (MIN(b.to) <= MIN(b.from)) bad = bad || `${DN[i]} ${HM(b.from)}: end must be after start`; if (j && MIN(b.from) < MIN(bl[j - 1].to)) bad = bad || `${DN[i]}: periods overlap at ${HM(b.from)}`; });
+      out[d] = bl; });
+    if (bad) { p.serr = bad; p.sig = null; return this._pxRender(); }
+    p.ssaving = 1; p.serr = null; p.sig = null; this._pxRender();
+    this._hass.callWS(Object.assign({ type: 'schedule/update', schedule_id: it.id, name: it.name }, { icon: it.icon || 'mdi:calendar-clock' }, out))
+      .then(r => { if (!this._px) return; this._px.sitem = r || it; this._px.sdirty = false; this._px.ssaving = 0; this._px.sig = null; this._pxRender(); })
+      .catch(err => { if (!this._px) return; this._px.ssaving = 0; this._px.serr = "Couldn't save: " + ((err && err.message) || 'error'); this._px.sig = null; this._pxRender(); });
+  };
+  P._pxSchClick = function (act, t) {
+    const p = this._px, e = this._st(p.id), ids = this._pxSchIds(e), d = DK[p.sday], bl = p.sd ? p.sd[d] : null, i = +t.dataset.i;
+    if (act === 'sday') p.sday = +t.dataset.d;
+    else if (act === 'sfollow') this._hass.callService('input_boolean', 'toggle', { entity_id: ids.fid });
+    else if (act === 'sbk') { const v = NUM((this._st('input_number.heating_setback') || {}).state); if (v != null) this._hass.callService('input_number', 'set_value', { entity_id: 'input_number.heating_setback', value: Math.min(20, Math.max(10, v + +t.dataset.v)) }); }
+    else if (!bl) return;
+    else if (act === 'stup' || act === 'stdn') { bl[i].temp = Math.min(28, Math.max(10, bl[i].temp + (act === 'stup' ? .5 : -.5))); p.sdirty = true; }
+    else if (act === 'sdel') { bl.splice(i, 1); p.sdirty = true; }
+    else if (act === 'sadd') { const last = bl.slice().sort((a, b) => MIN(a.to) - MIN(b.to)).pop(), st = last ? Math.min(MIN(last.to) + 60, 22 * 60) : 7 * 60, en = Math.min(st + 120, 23 * 60 + 45);
+      const f = m => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); bl.push({ from: f(st), to: f(en), temp: last ? last.temp : 20 }); p.sdirty = true; }
+    else if (act === 'scopy') { const tg = t.dataset.w === 'wk' ? [0, 1, 2, 3, 4] : t.dataset.w === 'we' ? [5, 6] : [0, 1, 2, 3, 4, 5, 6]; tg.forEach(k => { if (k !== p.sday) p.sd[DK[k]] = JSON.parse(JSON.stringify(bl)); }); p.sdirty = true; p.serr = null; }
+    else if (act === 'ssave') return this._pxSchSave();
+    else if (act === 'sundo') { p.sd = null; p.sload = 0; p.serr = null; p.sdirty = false; }
+    p.sig = null; this._pxRender();
   };
   /* ---------- door / window / motion ---------- */
   P._pxBin = function (e) {
@@ -198,6 +277,7 @@ customElements.whenDefined('home-panel-card').then(() => {
     else if (act === 'cup' || act === 'cdn') { this._heatStep(id, act === 'cup' ? 1 : -1); p.sig = null; this._pxRender(); }
     else if (act === 'mode') h.callService('climate', 'set_hvac_mode', { entity_id: id, hvac_mode: t.dataset.m });
     else if (act === 'preset') h.callService('climate', 'set_preset_mode', { entity_id: id, preset_mode: t.dataset.m });
+    else if (/^s(day|follow|bk|tup|tdn|del|add|copy|save|undo)$/.test(act)) this._pxSchClick(act, t);
   };
   P._pxInput = function (v) {
     if (!v || !this._px) return; this._px.hold = Date.now();
@@ -208,6 +288,7 @@ customElements.whenDefined('home-panel-card').then(() => {
     if (!v || !this._px) return; this._px.hold = Date.now();
     if (v.dataset.pxb) this._hass.callService('light', 'turn_on', { entity_id: this._px.id, brightness_pct: +v.value });
     if (v.dataset.pxct) this._hass.callService('light', 'turn_on', { entity_id: this._px.id, color_temp_kelvin: +v.value });
+    if ((v.dataset.sf || v.dataset.st) && this._px.sd && /^\d\d:\d\d$/.test(v.value)) { const p = this._px, b = p.sd[DK[p.sday]][+(v.dataset.sf || v.dataset.st)]; if (b) { b[v.dataset.sf ? 'from' : 'to'] = v.value.slice(0, 5); p.sdirty = true; p.serr = null; p.sig = null; this._pxRender(); } }
   };
   /* shared pop-up host used by the lights, security and energy pages */
   if (!customElements.get('home-popup-host')) customElements.define('home-popup-host', class extends Base {
