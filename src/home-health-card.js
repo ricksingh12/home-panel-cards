@@ -35,6 +35,7 @@ class HomeHealthCard extends HTMLElement {
   set hass(h) {
     const first = !this._hass; this._hass = h;
     if (!this._root) { this._build(); window.__hpcFit && window.__hpcFit(this, this._root.querySelector('.hlr'), 1380, 804); window.__hpcSwipe && window.__hpcSwipe(this); }
+    if (this._host) this._host.hass = h;
     const md = this._c.dark_mode || 'sun', sn = h.states[this._c.sun], td = !!(h.themes && h.themes.darkMode);
     const dk = md === 'dark' || (md === 'sun' ? (sn ? sn.state === 'below_horizon' : td) : md !== 'light' && td);
     if (dk !== this._dark) { this._dark = dk; this.classList.toggle('dark', dk); }
@@ -44,11 +45,12 @@ class HomeHealthCard extends HTMLElement {
   }
   _build() {
     const s = this.attachShadow({ mode: 'open' }); if (this._c.icons === 'ios' && window.__hpcIosIcons) window.__hpcIosIcons(this, s);
-    s.innerHTML = `<style>${window.__HPC_CSS || ''}</style><style>${HHL_CSS}</style><div class="hlr"><div class="hlh">${window.__hpcBack ? window.__hpcBack(this._c) : ''}<h1>${hhE(this._c.title)}</h1><span class="upd" id="upd"></span></div><div class="hlg" id="g"></div></div>`;
+    s.innerHTML = `<style>${window.__HPC_CSS || ''}</style><style>${HHL_CSS}</style><div class="hlr"><div class="hlh">${window.__hpcBack ? window.__hpcBack(this._c) : ''}<h1>${hhE(this._c.title)}</h1><span class="upd" id="upd"></span></div><div class="hlg" id="g"></div><home-popup-host id="host"></home-popup-host></div>`;
     this._root = s; this._$ = id => s.getElementById(id);
-    s.addEventListener('click', e => { const t = e.composedPath().find(n => n.dataset && n.dataset.act); if (!t) return;
+    const H = this._$('host'); if (H.setConfig) H.setConfig({ sun: this._c.sun, dark_mode: this._c.dark_mode, icons: this._c.icons }); this._host = H;
+    s.addEventListener('click', e => { const path = e.composedPath(); if (path.includes(this._host)) return; const t = path.find(n => n.dataset && n.dataset.act); if (!t) return;
       if (t.dataset.act === 'hback') return window.__hpcGoBack && window.__hpcGoBack();
-      if (t.dataset.act === 'more') this.dispatchEvent(new CustomEvent('hass-more-info', { bubbles: true, composed: true, detail: { entityId: t.dataset.id } })); });
+      if (t.dataset.act === 'more') { if (this._host && this._host._more) return this._host._more(t.dataset.id); } if (t.dataset.act === 'more') this.dispatchEvent(new CustomEvent('hass-more-info', { bubbles: true, composed: true, detail: { entityId: t.dataset.id } })); });
   }
   _st(id) { return id && this._hass ? this._hass.states[id] : null; }
   _num(id) { const e = this._st(id), v = e ? parseFloat(e.state) : NaN; return isFinite(v) ? v : null; }
@@ -110,5 +112,5 @@ class HomeHealthCard extends HTMLElement {
     const now = new Date(); this._$('upd').textContent = now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
   }
 }
-if (!customElements.get('home-health-card')) customElements.define('home-health-card', HomeHealthCard);
+customElements.whenDefined('home-popup-host').then(() => { if (!customElements.get('home-health-card')) customElements.define('home-health-card', HomeHealthCard); });
 window.customCards = window.customCards || []; window.customCards.push({ type: 'home-health-card', name: 'Home Health', description: 'Family health page (Google Health / Fitbit) in the home panel style' });

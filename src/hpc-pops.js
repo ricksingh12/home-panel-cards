@@ -254,13 +254,13 @@ customElements.whenDefined('home-panel-card').then(() => {
     const pts = H.map(x => [x.t, NUM(x.s)]).filter(x => x[1] != null); if (pts.length) pts.push([Date.now(), v]);
     const col = bat ? (v < 20 ? '#e5484d' : v < 50 ? '#f0a43a' : '#22a06b') : '#3b82f6';
     const vals = pts.map(x => x[1]), mn = vals.length ? Math.min(...vals) : null, mx = vals.length ? Math.max(...vals) : null;
-    const fmt = x => x == null ? '—' : (Math.abs(x) < 100 && x % 1 ? Math.round(x * 10) / 10 : Math.round(x));
+    const fmt = x => x == null ? '—' : (Math.abs(x) < 100 && x % 1 ? Math.round(x * 10) / 10 : Math.round(x).toLocaleString('en-GB')), su = /^[a-z]{3,}$/i.test(u) ? ' ' + u : u;
     let left = null; if (bat && pts.length > 1) { const [tA, vA] = pts[0], drop = vA - v, days = (Date.now() - tA) / 864e5; if (drop > 0.5 && days > 0.5) left = v / (drop / days); }
     const g = (k, val) => `<div class="blk"><div class="k">${k}</div><div class="v">${val}</div></div>`;
     const ic = bat ? 'mdi:battery' + (v >= 95 ? '' : v < 10 ? '-outline' : '-' + Math.max(10, Math.round(v / 10) * 10)) : (a.icon || 'mdi:gauge');
-    return this._ph('pxclose', `<span class="pic" style="color:${col}"><ha-icon icon="${E(ic)}"></ha-icon></span>`, bat ? 'Battery' : E(a.device_class ? a.device_class.replace(/_/g, ' ').replace(/^./, c => c.toUpperCase()) : 'Sensor'), this._pxNm(e, bat ? /\s*battery(\s*level)?$/i : null), 'Updated ' + AGO(e.last_updated))
+    return this._ph('pxclose', `<span class="pic" style="color:${col}"><ha-icon icon="${E(ic)}"></ha-icon></span>`, bat ? 'Battery' : E(({ steps: 'Activity', bpm: 'Heart rate', kcal: 'Calories', kg: 'Body' })[u] || (a.device_class ? a.device_class.replace(/_/g, ' ').replace(/^./, c => c.toUpperCase()) : 'Sensor')), this._pxNm(e, bat ? /\s*battery(\s*level)?$/i : null), 'Updated ' + AGO(e.last_updated))
       + `<div class="pxbig"><b style="color:${bat ? col : 'var(--text)'}">${fmt(v)}</b><small>${E(u)}</small></div>` + (bat ? `<div class="pxbar"><i style="width:${Math.max(0, Math.min(100, v))}%;background:${col}"></i></div>` : '')
-      + `<div class="pxg">${bat ? g('Status', v < 20 ? 'Replace soon' : v < 50 ? 'OK' : 'Good') + g('Estimated life', left == null ? (H.length ? 'Steady' : '—') : left > 365 ? 'Over a year' : left > 60 ? Math.round(left / 30) + ' months' : Math.round(left) + ' days') : g('Lowest', fmt(mn) + E(u)) + g('Highest', fmt(mx) + E(u))}${g(hrs > 48 ? '7 days ago' : '24h ago', pts.length ? fmt(pts[0][1]) + E(u) : '—')}</div>`
+      + `<div class="pxg">${bat ? g('Status', v < 20 ? 'Replace soon' : v < 50 ? 'OK' : 'Good') + g('Estimated life', left == null ? (H.length ? 'Steady' : '—') : left > 365 ? 'Over a year' : left > 60 ? Math.round(left / 30) + ' months' : Math.round(left) + ' days') : g('Lowest', fmt(mn) + E(su)) + g('Highest', fmt(mx) + E(su))}${g(hrs > 48 ? '7 days ago' : '24h ago', pts.length ? fmt(pts[0][1]) + E(su) : '—')}</div>`
       + `<div class="pxsec"><div class="lbl">${hrs > 48 ? 'Last 7 days' : 'Last 24 hours'}</div>${H.length ? this._pxChart([{ pts, col, fill: 1 }], hrs, bat ? '%' : '') : this._pxWait()}</div>`
       + this._pxActs();
   };
