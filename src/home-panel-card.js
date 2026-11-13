@@ -541,6 +541,9 @@ const PPLCSS = `.ppl{flex:0 0 auto;padding:12px 14px;display:grid;grid-template-
 .pav{width:38px;height:38px;border-radius:50%;object-fit:cover;flex:0 0 auto;background:var(--card2);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--sub)}
 .px{flex:1;min-width:0}.px .pn{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .px .pl{font-size:12px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}.px .pl.old{color:#d97706}
+.pbs{display:flex;align-items:center;column-gap:7px;flex-wrap:wrap;white-space:nowrap}.phr{position:relative;display:flex;flex:0 0 auto;border-radius:50%;padding:4px}.phr::before{content:'';position:absolute;inset:0;border-radius:50%;background:conic-gradient(var(--hc,#22a06b) var(--p),var(--line) 0);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2.5px));mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2.5px))}.cacts .pgo{margin-top:0}.phl{display:inline-flex;align-items:center;gap:2px;font-size:12px;font-weight:700;margin-top:2px;color:var(--sub)}.phl ha-icon{--mdc-icon-size:14px}.phl.ok{color:#22a06b}
+.phsec{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px;cursor:pointer}.phst{display:flex;gap:10px;align-items:flex-start;background:var(--card2);border-radius:16px;padding:12px 14px;min-width:0}.phst>ha-icon{--mdc-icon-size:22px;flex:0 0 auto;margin-top:2px}.phst>div{min-width:0;flex:1}
+.phst b{display:block;font-size:20px;font-weight:700;line-height:1.15}.phst b small{font-size:12px;font-weight:600;color:var(--sub)}.phst span{display:block;font-size:12px;color:var(--sub);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.phbar{display:block;height:5px;border-radius:3px;background:var(--line);margin-top:7px;overflow:hidden}.phbar i{display:block;height:100%;border-radius:3px}
 .pb{display:inline-flex;align-items:center;gap:2px;font-size:12px;font-weight:700;margin-top:2px}.pb ha-icon{--mdc-icon-size:15px}
 .pmap{width:100%;height:min(46vh,380px);border:0;border-radius:18px;margin-top:14px;background:var(--card2);display:block}
 .pinfo{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:12px;font-size:13px;color:var(--sub)}.pinfo b{color:var(--text);font-weight:600}
@@ -801,7 +804,7 @@ class HomePanelCard extends HTMLElement {
     if ((this._c.inside_temperatures || []).length) { const w = this._st(this._c.weather), hs = JSON.stringify([...this._c.inside_temperatures.map(id => (this._st(id) || {}).state), w && w.attributes.temperature]); if (hs !== this._sig.hvo) { this._sig.hvo = hs; this._renderHvo(); } }
     const csig = JSON.stringify(this._c.cameras.map(c => { const e = this._st(c.entity), mo = c.motion && this._st(c.motion); return [e && e.state, mo && mo.last_changed]; }));
     if (csig !== this._sig.cams) { this._sig.cams = csig; this._updateCams(); }
-    if ((this._c.people || []).length) { const psig = JSON.stringify(this._c.people.map(p => [p.tracker, p.battery, p.battery_state, p.geocoded, p.permission].map(id => { const e = id && this._st(id); return e && [e.state, e.last_updated, e.attributes.latitude]; }))) + Math.floor(Date.now() / 60000);
+    if ((this._c.people || []).length) { const psig = JSON.stringify(this._c.people.map(p => [p.tracker, p.battery, p.battery_state, p.geocoded, p.permission, ...(p.health ? ['steps', 'time_asleep', 'resting_heart_rate'].map(k => p.health + k) : [])].map(id => { const e = id && this._st(id); return e && [e.state, e.last_updated, e.attributes.latitude]; }))) + Math.floor(Date.now() / 60000);
       if (psig !== this._sig.ppl) { this._sig.ppl = psig; this._renderPeople(); if (this._pplOpen != null) this._renderPeoplePop(); } }
     if (this._c.vacuum) { const V = this._c.vacuum, vsg = JSON.stringify([V.entity, V.mode, V.state, V.error].map(id => { const e = id && this._st(id); return e && [e.state, e.attributes.fan_speed]; }));
       if (vsg !== this._sig.vac) { this._sig.vac = vsg; this._renderVac(); if (this._vacOpen) this._renderVacPop(); } }
@@ -1110,6 +1113,14 @@ class HomePanelCard extends HTMLElement {
     const limited = pm && /when in use|never|denied/i.test(pm.state);
     return { p, name: p.name || (pe && pe.attributes.friendly_name) || p.tracker, pic: pe && pe.attributes.entity_picture, lvl, chg, lat, lon, where, addr, upd, old, limited, acc: t && t.attributes.gps_accuracy };
   }
+  /* health (Google Health / Fitbit sensors, prefix per person) */
+  _pHl(i) {
+    const p = this._c.people[i] || {}, pre = p.health; if (!pre) return null;
+    const n = k => { const e = this._st(pre + k), v = e ? parseFloat(e.state) : NaN; return isFinite(v) ? v : null; };
+    const h = { steps: n('steps'), sleep: n('time_asleep'), rhr: n('resting_heart_rate'), goal: p.step_goal || this._c.step_goal || 10000, sleep_goal: this._c.sleep_goal || 8 };
+    return h.steps == null && h.sleep == null && h.rhr == null ? null : h;
+  }
+  _pSteps(v) { return v == null ? '—' : v >= 1000 ? (Math.round(v / 100) / 10).toLocaleString('en-GB') + 'k' : String(Math.round(v)); }
   _pBat(x) {
     if (x.lvl == null) return '';
     const col = x.lvl < 20 ? '#e5484d' : x.lvl < 50 ? '#f0a43a' : '#22a06b', ic = x.chg ? 'mdi:battery-charging' : 'mdi:battery-' + (x.lvl >= 95 ? 'high' : x.lvl >= 50 ? 'medium' : 'low');
@@ -1119,8 +1130,9 @@ class HomePanelCard extends HTMLElement {
   _renderPeople() {
     const el = this._$ && this._$('ppl'); if (!el) return;
     el.innerHTML = this._c.people.map((_, i) => { const x = this._pInfo(i);
-      return `<div class="pp" data-act="ppl" data-i="${i}">${this._pAv(x)}<div class="px"><div class="pn">${esc(x.name)}</div>
-        <div class="pl${x.old ? ' old' : ''}">${esc(x.where)}${x.upd ? ' · ' + ago(x.upd) : ''}</div>${this._pBat(x)}</div></div>`; }).join('');
+      const hl = this._pHl(i), hp = hl && hl.steps != null ? Math.min(100, hl.steps / hl.goal * 100) : null;
+      return `<div class="pp" data-act="ppl" data-i="${i}">${hp != null ? `<span class="phr" style="--p:${hp.toFixed(1)}%;--hc:${hp >= 100 ? '#22a06b' : '#3b82f6'}">${this._pAv(x)}</span>` : this._pAv(x)}<div class="px"><div class="pn">${esc(x.name)}</div>
+        <div class="pl${x.old ? ' old' : ''}">${esc(x.where)}${x.upd ? ' · ' + ago(x.upd) : ''}</div><div class="pbs">${this._pBat(x)}${(h => h && h.steps != null ? `<span class="phl${h.steps >= h.goal ? ' ok' : ''}"><ha-icon icon="mdi:shoe-print"></ha-icon>${this._pSteps(h.steps)}</span>` : '')(this._pHl(i))}</div></div></div>`; }).join('');
   }
   _renderPeoplePop() {
     const el = this._$('pplpop'), i = this._pplOpen || 0, x = this._pInfo(i); if (!el) return;
@@ -1128,11 +1140,15 @@ class HomePanelCard extends HTMLElement {
     const has = x.lat != null && x.lon != null, q = has ? `${x.lat},${x.lon}` : '';
     const fe = (this._c.people[i] || {}).find, fb = fe && this._st(fe) && !/unavailable/.test(this._st(fe).state), sent = this._pFindAt && this._pFindAt[i] && Date.now() - this._pFindAt[i] < 8000;
     const when = x.upd ? (new Date(x.upd).toDateString() === new Date().toDateString() ? 'today ' + hm(x.upd) : new Date(x.upd).getDate() + ' ' + MON[new Date(x.upd).getMonth()] + ' ' + hm(x.upd)) + ' (' + ago(x.upd) + ')' : '—';
-    el.innerHTML = this._ph('closeppl', this._pAv(x, 40), 'Location', esc(x.name), esc(x.where)) + tabs + `
+    el.innerHTML = this._ph('closeppl', this._pAv(x, 40), this._pHl(i) ? 'Location &amp; health' : 'Location', esc(x.name), esc(x.where)) + tabs + `
       ${has ? `<iframe class="pmap" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=${q}&z=15&output=embed"></iframe>` : '<div class="wxmsg">No location shared yet</div>'}
       <div class="pinfo"><span>Last location <b>${esc(when)}</b></span>${x.addr.length ? `<span>Address <b>${esc(x.addr.slice(0, 3).join(', '))}</b></span>` : ''}${x.acc ? `<span>Accuracy <b>±${Math.round(x.acc)} m</b></span>` : ''}${x.lvl != null ? `<span>Battery <b>${x.lvl}%${x.chg ? ' · charging' : ''}</b></span>` : ''}</div>
+      ${(h => { if (!h) return ''; const pct = h.steps != null ? Math.min(100, h.steps / h.goal * 100) : 0, sm = h.sleep != null ? Math.round(h.sleep * 60) : null;
+        return `<div class="phsec" data-act="phealth"><div class="phst"><ha-icon icon="mdi:shoe-print" style="color:#22a06b"></ha-icon><div><b>${h.steps != null ? Math.round(h.steps).toLocaleString('en-GB') : '—'}</b><span>Steps today · goal ${h.goal.toLocaleString('en-GB')}</span><i class="phbar"><i style="width:${pct.toFixed(0)}%;background:${pct >= 100 ? '#22a06b' : '#3b82f6'}"></i></i></div></div>
+          <div class="phst"><ha-icon icon="mdi:sleep" style="color:#8b5cf6"></ha-icon><div><b>${sm != null ? Math.floor(sm / 60) + '<small>h</small> ' + String(sm % 60).padStart(2, '0') + '<small>m</small>' : '—'}</b><span>Sleep last night</span></div></div>
+          <div class="phst"><ha-icon icon="mdi:heart-pulse" style="color:#e5484d"></ha-icon><div><b>${h.rhr != null ? Math.round(h.rhr) + '<small> bpm</small>' : '—'}</b><span>Resting heart rate</span></div></div></div>`; })(this._pHl(i))}
       ${x.limited ? '<div class="pwarn"><ha-icon icon="mdi:map-marker-alert-outline"></ha-icon>Location is only shared while the Home Assistant app is open on this phone, so it may be out of date.</div>' : x.old ? '<div class="pwarn"><ha-icon icon="mdi:clock-alert-outline"></ha-icon>This location is more than 6 hours old.</div>' : ''}
-      ${has || fb ? `<div class="cacts">${fb ? `<button class="${sent ? 'on' : ''}" data-act="pfind" data-i="${i}"${sent ? ' disabled' : ''}><ha-icon icon="${sent ? 'mdi:check' : 'mdi:volume-high'}"></ha-icon>${sent ? 'Playing sound on ' + esc(x.name) + "'s phone" : 'Find my phone'}</button>` : ''}${has ? `<a class="pgo" href="https://www.google.com/maps/search/?api=1&query=${q}" target="_blank" rel="noopener"><ha-icon icon="mdi:google-maps"></ha-icon>Open in Google Maps</a>` : ''}</div>` : ''}`;
+      ${has || fb || (this._pHl(i) && this._c.health_path) ? `<div class="cacts">${this._pHl(i) && this._c.health_path ? `<button data-act="phealth"><ha-icon icon="mdi:heart-pulse"></ha-icon>Health page</button>` : ''}${fb ? `<button class="${sent ? 'on' : ''}" data-act="pfind" data-i="${i}"${sent ? ' disabled' : ''}><ha-icon icon="${sent ? 'mdi:check' : 'mdi:volume-high'}"></ha-icon>${sent ? 'Playing sound on ' + esc(x.name) + "'s phone" : 'Find my phone'}</button>` : ''}${has ? `<a class="pgo" href="https://www.google.com/maps/search/?api=1&query=${q}" target="_blank" rel="noopener"><ha-icon icon="mdi:google-maps"></ha-icon>Open in Google Maps</a>` : ''}</div>` : ''}`;
   }
   /* ---------- vacuum ---------- */
   _vInfo() {
@@ -2388,6 +2404,7 @@ class HomePanelCard extends HTMLElement {
     else if (act === 'vmode') this._hass.callService('select', 'select_option', { entity_id: this._c.vacuum.mode, option: t.dataset.m });
     else if (act === 'vroom') { const r = (this._c.vacuum.rooms || [])[+t.dataset.i]; if (r) this._hass.callService('vacuum', 'clean_area', { entity_id: this._c.vacuum.entity, cleaning_area_id: [r.area] }); }
     else if (act === 'pfind') { const j = +t.dataset.i, fe = (this._c.people[j] || {}).find; if (fe) { this._hass.callService('button', 'press', { entity_id: fe }); (this._pFindAt = this._pFindAt || {})[j] = Date.now(); this._renderPeoplePop(); setTimeout(() => { if (this._pplOpen === j) this._renderPeoplePop(); }, 8100); } }
+    else if (act === 'phealth') { if (this._c.health_path) { this._$('pplov').classList.remove('open'); this._pplOpen = null; history.pushState(null, '', this._c.health_path); window.dispatchEvent(new CustomEvent('location-changed')); } }
     else if (act === 'ppl') { this._pplOpen = +t.dataset.i; this._renderPeoplePop(); this._$('pplov').classList.add('open'); }
     else if (act === 'pind') { const p = this._pin; if (p && !p.busy && p.v.length < 12) { p.v += t.dataset.d; p.err = ''; this._renderPin(); this._pinIdle(); } }
     else if (act === 'pinb') { const p = this._pin; if (p && !p.busy) { p.v = p.v.slice(0, -1); p.err = ''; this._renderPin(); this._pinIdle(); } }
