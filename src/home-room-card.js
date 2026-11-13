@@ -24,7 +24,7 @@ const HRC_CSS = `:host{display:block}
 .rc .wr{flex:0 0 112px;height:100px;border-radius:18px;padding:11px 12px;display:flex;flex-direction:column;cursor:pointer;box-sizing:border-box;scroll-snap-align:start;min-width:0}.rc .wr b{font-size:14px;font-weight:600;margin-top:auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rc .wr>span:last-child{font-size:12px;color:var(--sub);font-weight:500;white-space:nowrap}
 .rc .wri{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--card2);color:var(--sub)}.rc .wri ha-icon{--mdc-icon-size:18px}.rc .wr.on .wri{background:#ffd60a;color:#3b2a00}
 .rc .wtab{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;justify-content:space-around;padding:7px 6px calc(7px + env(safe-area-inset-bottom));background:var(--card);backdrop-filter:blur(24px) saturate(1.6);-webkit-backdrop-filter:blur(24px) saturate(1.6);border-top:1px solid var(--line)}
-.rc .wtab button{flex:1;max-width:96px;border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:2px;font:inherit;font-size:10.5px;font-weight:600;color:var(--sub);cursor:pointer;padding:3px 0}.rc .wtab button ha-icon{--mdc-icon-size:25px}.rc .wtab button.on{color:var(--accent,#007aff)}
+.rc .wtab button{flex:1;min-width:0;max-width:96px;border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:2px;font:inherit;font-size:10.5px;font-weight:600;color:var(--sub);cursor:pointer;padding:3px 0}.rc .wtab button ha-icon{--mdc-icon-size:25px}.rc .wtab button.on{color:var(--accent,#007aff)}
 @media (min-width:601px){.rc .wgd{grid-template-columns:repeat(4,minmax(0,1fr))}.rc .wtab{left:50%;right:auto;transform:translateX(-50%);width:min(560px,92vw);bottom:14px;border-radius:24px;border:1px solid var(--line)}}
 .rc .hh{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:6px 4px 0}.rc .hhx{min-width:0}
 .rc .hwel{font-size:34px;font-weight:800;letter-spacing:-.03em;line-height:1.05}.rc .hdt{font-size:15px;font-weight:500;color:var(--sub);margin-top:6px}
@@ -360,7 +360,7 @@ customElements.whenDefined('home-panel-card').then(() => {
         return `<div class="card wr${on ? ' on' : ''}" data-act="rnav" data-p="${E(r.path)}"><span class="wri"><ha-icon icon="${E(r.icon || 'mdi:door')}"></ha-icon></span><b>${E(r.name)}</b><span>${E(sub || ' ')}</span></div>`; }).join('')}</div>`).join('');
       // bottom tab bar
       const nav = c.shortcuts || [];
-      $('wtab').innerHTML = `<button class="on" data-act="noop"><ha-icon icon="mdi:home"></ha-icon><span>Home</span></button>` + nav.slice(0, 4).map(x => `<button data-act="rnav" data-p="${E(x.path)}"><ha-icon icon="${E(x.icon)}"></ha-icon><span>${E(x.name)}</span></button>`).join('');
+      $('wtab').innerHTML = `<button class="on" data-act="noop"><ha-icon icon="mdi:home"></ha-icon><span>Home</span></button>` + nav.slice(0, 5).map(x => `<button data-act="rnav" data-p="${E(x.path)}"><ha-icon icon="${E(x.icon)}"></ha-icon><span>${E(x.name)}</span></button>`).join('');
     }
     /* ---------- room view ---------- */
     _renderRoom() {
