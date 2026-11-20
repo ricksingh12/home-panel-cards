@@ -87,10 +87,10 @@ class HomeIntercomCard extends HTMLElement {
     s.innerHTML = `<style>${window.__HPC_CSS || ''}</style><style>${ICS}</style><div class="icr"><div class="ich">${window.__hpcBack ? window.__hpcBack(this._c) : ''}<h1>${icE(this._c.title)}</h1><span class="ics" id="cnt"></span></div>
       <div class="icg"><div class="card icl"><div class="icq" id="q"></div><div id="sp"></div></div>
       <div class="icr2"><div class="card ict"><button class="icb" id="talk" ${vb ? 'disabled' : ''} data-noswipe><span class="rng"></span><ha-icon icon="${vb ? 'mdi:microphone-off' : 'mdi:microphone'}"></ha-icon><b id="tl">${vb ? 'Voice unavailable' : 'Hold to talk'}</b></button>
-        <div class="ictm" id="tm"></div><div class="ichint" id="hint">${vb ? icE(vb) : 'Hold the button while you speak and let go to send, or tap once to start and again to send.'}</div>
+        <div class="ictm" id="tm"></div><div class="ichint" id="hint">${vb ? icE(vb) : 'Hold the button while you speak and let go to send, or tap once to start and again to send. Speakers go back to their own volume afterwards.'}</div>
         <button class="iccx" id="cx" style="display:none">Cancel</button><div class="icst" id="st"></div><button class="icre" id="again" style="display:none"><ha-icon icon="mdi:replay"></ha-icon>Play last message again</button></div>
       <div class="card icm"><div class="lbl">Type a message</div><div class="row"><input id="msg" type="text" maxlength="300" placeholder="Dinner's ready!" enterkeyhint="send"><button class="snd" id="say"><ha-icon icon="mdi:send"></ha-icon>Say</button></div>
-        <div class="icv"><ha-icon icon="mdi:volume-medium"></ha-icon><input id="vol" type="range" min="0.1" max="1" step="0.05" value="${this._vol}" data-noswipe><span id="vv">${Math.round(this._vol * 100)}%</span></div></div></div></div></div>`;
+        <div class="icv"><ha-icon icon="mdi:volume-medium"></ha-icon><span>Message volume</span><input id="vol" type="range" min="0.1" max="1" step="0.05" value="${this._vol}" data-noswipe><span id="vv">${Math.round(this._vol * 100)}%</span></div></div></div></div></div>`;
     this._root = s; this._$ = id => s.getElementById(id);
     s.addEventListener('click', e => this._click(e));
     const b = this._$('talk');
@@ -165,30 +165,38 @@ class HomeIntercomCard extends HTMLElement {
       const res = await this._hass.fetchWithAuth('/api/media_source/local_source/upload', { method: 'POST', body: fd });
       if (!res.ok) throw new Error(res.status === 401 ? 'this login is not allowed to upload media' : 'upload failed (' + res.status + ')');
       const js = await res.json(); this._last = js.media_content_id || 'media-source://media_source/local/' + name;
-      await this._play(this._last, 'Voice message'); this._cleanup(name);
+      this._lastSecs = r.secs + 0.3; await this._play(this._last, 'Voice message', this._lastSecs); this._cleanup(name);
     } catch (e) { this._status('Could not send: ' + (e && e.message || e), 'err'); }
     this._busy = false; this._setTalk('', 'Hold to talk');
   }
   _targets() { return [...this._sel].filter(id => this._ok(id)); }
-  async _play(mcid, what) {
+  async _play(mcid, what, secs) {
     const ids = this._targets(); if (!ids.length) { this._status('Choose at least one speaker first', 'err'); return false; }
     const h = this._hass, ann = ids.filter(id => (h.states[id].attributes.supported_features || 0) & IC_ANN), plain = ids.filter(id => !ann.includes(id));
     const base = { media_content_id: mcid, media_content_type: 'music' }, calls = [];
     if (ann.length) calls.push(h.callService('media_player', 'play_media', Object.assign({ entity_id: ann, announce: true, extra: { volume: this._vol } }, base)));
-    plain.forEach(id => calls.push(h.callService('media_player', 'play_media', Object.assign({ entity_id: id }, base))));
+    /* speakers that cannot announce: set the message volume, play, then put their own volume back afterwards */
+    this._restore = this._restore || {};
+    plain.forEach(id => calls.push((async () => {
+      const a = h.states[id].attributes, canVol = (a.supported_features || 0) & 4, prev = a.volume_level;
+      if (canVol) { if (!this._restore[id] && prev != null) this._restore[id] = { v: prev }; clearTimeout((this._restore[id] || {}).t);
+        try { await h.callService('media_player', 'volume_set', { entity_id: id, volume_level: this._vol }); } catch (e) {} }
+      await h.callService('media_player', 'play_media', Object.assign({ entity_id: id }, base));
+      const r = this._restore[id]; if (canVol && r) r.t = setTimeout(() => { delete this._restore[id]; this._hass.callService('media_player', 'volume_set', { entity_id: id, volume_level: r.v }).catch(() => {}); }, ((secs || 8) + 5) * 1000);
+    })()));
     const rs = await Promise.allSettled(calls), bad = rs.filter(x => x.status === 'rejected');
     if (bad.length === rs.length) { this._status(`${what} failed: ${(bad[0].reason && bad[0].reason.message) || 'speakers did not respond'}`, 'err'); return false; }
     this._status(bad.length ? `${what} sent, but some speakers did not respond` : `${what} sent to ${ids.length} speaker${ids.length === 1 ? '' : 's'}`, bad.length ? 'err' : 'ok');
     this._$('again').style.display = this._last ? '' : 'none'; return true;
   }
-  _replay() { if (this._last) this._play(this._last, 'Message'); }
+  _replay() { if (this._last) this._play(this._last, 'Message', this._lastSecs); }
   async _say() {
     const inp = this._$('msg'), m = (inp.value || '').trim(); if (!m) return inp.focus();
     const eng = this._c.tts || Object.keys(this._hass.states).find(id => id.startsWith('tts.'));
     if (!eng) return this._status('No text-to-speech engine is set up in Home Assistant', 'err');
     const btn = this._$('say'); btn.disabled = true; this._status('Sending…');
     const mcid = `media-source://tts/${eng}?message=${encodeURIComponent(m)}&cache=false`;
-    const ok = await this._play(mcid, 'Message'); btn.disabled = false; if (ok) { this._last = mcid; inp.value = ''; }
+    const est = m.split(/\s+/).length / 2.3 + 2, ok = await this._play(mcid, 'Message', est); btn.disabled = false; if (ok) { this._last = mcid; this._lastSecs = est; inp.value = ''; }
   }
   /* keep only the three newest voice clips in the media folder */
   async _cleanup(keep) {
